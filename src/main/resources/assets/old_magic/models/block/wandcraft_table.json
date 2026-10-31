@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "old_magic:block/wandcraft_table_bottom",
+    "east": "old_magic:block/wandcraft_table_side",
+    "west": "old_magic:block/wandcraft_table_side",
+    "south": "old_magic:block/wandcraft_table_side",
+    "north": "old_magic:block/wandcraft_table_side",
+    "up": "old_magic:block/wandcraft_table_top",
+    "particle": "old_magic:block/wandcraft_table_top"
+  }
+}

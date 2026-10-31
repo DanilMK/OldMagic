@@ -1,0 +1,10 @@
+{
+  "type": "old_magic:list",
+  "action_list": [
+    {
+      "type": "old_magic:damage_entities",
+      "amount": 3.0,
+      "damage_type": "minecraft:magic"
+    }
+  ]
+}

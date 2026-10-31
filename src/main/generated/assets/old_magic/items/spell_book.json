@@ -1,0 +1,82 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/basic"
+        },
+        "when": "old_magic:basic"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/fire"
+        },
+        "when": "old_magic:fire"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/ice"
+        },
+        "when": "old_magic:ice"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/collect_items"
+        },
+        "when": "old_magic:collect_items"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/pull"
+        },
+        "when": "old_magic:pull"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/push"
+        },
+        "when": "old_magic:push"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/grow_plants"
+        },
+        "when": "old_magic:grow_plants"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/severing_plants"
+        },
+        "when": "old_magic:severing_plants"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/puddle"
+        },
+        "when": "old_magic:puddle"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/flower_field"
+        },
+        "when": "old_magic:flower_field"
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "old_magic:item/spell_book"
+    },
+    "property": "old_magic:spell"
+  }
+}

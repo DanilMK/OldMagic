@@ -1,0 +1,56 @@
+{
+  "type": "old_magic:chain",
+  "action_list": [
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "maskSolid": false,
+      "maskSurface": true,
+      "range": 1,
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:blocks_transformation",
+      "transformList": [
+        {
+          "block": {
+            "Name": "minecraft:mud"
+          },
+          "ruleTest": {
+            "predicate_type": "minecraft:tag_match",
+            "tag": "minecraft:convertable_to_mud"
+          }
+        },
+        {
+          "block": {
+            "Name": "minecraft:farmland",
+            "Properties": {
+              "moisture": "7"
+            }
+          },
+          "ruleTest": {
+            "block": "minecraft:farmland",
+            "predicate_type": "minecraft:block_match"
+          }
+        },
+        {
+          "block": {
+            "Name": "minecraft:clay"
+          },
+          "ruleTest": {
+            "predicate_type": "minecraft:tag_match",
+            "tag": "minecraft:sand"
+          }
+        },
+        {
+          "block": {
+            "Name": "minecraft:wet_sponge"
+          },
+          "ruleTest": {
+            "block": "minecraft:sponge",
+            "predicate_type": "minecraft:block_match"
+          }
+        }
+      ]
+    }
+  ]
+}

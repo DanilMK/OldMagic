@@ -1,0 +1,32 @@
+{
+  "parent": "old_magic:old_magic/root",
+  "criteria": {
+    "has_scroll": {
+      "conditions": {
+        "items": [
+          {
+            "items": "old_magic:scroll"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.old_magic.scroll.description"
+    },
+    "icon": {
+      "id": "old_magic:scroll"
+    },
+    "title": {
+      "translate": "advancements.old_magic.scroll.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_scroll"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

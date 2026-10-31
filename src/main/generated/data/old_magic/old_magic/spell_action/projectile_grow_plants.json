@@ -1,0 +1,10 @@
+{
+  "type": "old_magic:projectile",
+  "onBlockHit": "old_magic:grow_plants",
+  "properties": {
+    "itemRender": "minecraft:air",
+    "particle": {
+      "type": "minecraft:composter"
+    }
+  }
+}

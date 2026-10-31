@@ -1,0 +1,59 @@
+{
+  "type": "old_magic:list",
+  "action_list": [
+    {
+      "type": "old_magic:chain",
+      "action_list": [
+        {
+          "type": "old_magic:target_by_shape_blocks",
+          "maskSolid": false,
+          "maskSurface": true,
+          "range": 3,
+          "shape": "sphere"
+        },
+        {
+          "type": "old_magic:blocks_transformation",
+          "transformList": [
+            {
+              "block": {
+                "Name": "minecraft:fire",
+                "Properties": {
+                  "age": "0",
+                  "east": "false",
+                  "north": "false",
+                  "south": "false",
+                  "up": "false",
+                  "west": "false"
+                }
+              },
+              "ruleTest": {
+                "block": "minecraft:air",
+                "predicate_type": "minecraft:random_block_match",
+                "probability": 0.2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "old_magic:chain",
+      "action_list": [
+        {
+          "type": "old_magic:target_by_nearby_entities",
+          "filter": "#old_magic:flameable",
+          "range": 3.0
+        },
+        {
+          "type": "old_magic:damage_entities",
+          "amount": 2.0,
+          "damage_type": "minecraft:magic"
+        },
+        {
+          "type": "old_magic:fire_control",
+          "fire_ticks": 20
+        }
+      ]
+    }
+  ]
+}

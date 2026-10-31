@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": "minecraft:copper_ingot",
+    "r": "minecraft:redstone_block"
+  },
+  "pattern": [
+    "  r",
+    " c ",
+    "c  "
+  ],
+  "result": {
+    "id": "old_magic:copper_wand"
+  }
+}

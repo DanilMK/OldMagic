@@ -1,0 +1,45 @@
+{
+  "parent": "old_magic:old_magic/fire_scroll",
+  "criteria": {
+    "has_scroll": {
+      "conditions": {
+        "items": [
+          {
+            "components": {
+              "old_magic:scroll_spell": {
+                "alwaysUnlock": false,
+                "spell": "old_magic:ice",
+                "unlockFirstTime": false
+              }
+            },
+            "items": "old_magic:scroll"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.old_magic.ice.description"
+    },
+    "icon": {
+      "components": {
+        "old_magic:spell": "old_magic:ice"
+      },
+      "id": "old_magic:spell_placeholder"
+    },
+    "title": {
+      "translate": "advancements.old_magic.ice.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_scroll"
+    ]
+  ],
+  "rewards": {
+    "function": "old_magic:unlock_ice"
+  },
+  "sends_telemetry_event": true
+}

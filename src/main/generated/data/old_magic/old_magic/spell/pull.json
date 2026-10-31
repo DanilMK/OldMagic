@@ -1,0 +1,10 @@
+{
+  "broken": "old_magic:projectile_basic_broken",
+  "castings": {
+    "cancelable": false,
+    "cast_ticks": 0,
+    "recharge_ticks": 10,
+    "single_use": false
+  },
+  "main": "old_magic:projectile_pull"
+}

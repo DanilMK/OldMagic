@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "old_magic:scroll",
+    "old_magic:scroll",
+    "minecraft:leather",
+    "minecraft:leather"
+  ],
+  "result": {
+    "id": "old_magic:spell_book"
+  }
+}

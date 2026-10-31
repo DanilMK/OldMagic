@@ -1,0 +1,6 @@
+{
+  "type": "old_magic:move_entity",
+  "direction": "push_from_caster",
+  "ignoreKnockbackResist": false,
+  "power": 1.0
+}

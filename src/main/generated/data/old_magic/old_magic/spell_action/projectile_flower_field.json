@@ -1,0 +1,11 @@
+{
+  "type": "old_magic:projectile",
+  "onBlockHit": "old_magic:flower_field",
+  "properties": {
+    "discardOnHitEntity": false,
+    "itemRender": "minecraft:air",
+    "particle": {
+      "type": "minecraft:composter"
+    }
+  }
+}

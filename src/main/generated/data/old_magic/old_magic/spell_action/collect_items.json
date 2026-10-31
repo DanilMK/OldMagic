@@ -1,0 +1,16 @@
+{
+  "type": "old_magic:chain",
+  "action_list": [
+    {
+      "type": "old_magic:target_by_nearby_entities",
+      "filter": "minecraft:item",
+      "range": 7.0
+    },
+    {
+      "type": "old_magic:move_entity",
+      "direction": "pull_to_caster",
+      "ignoreKnockbackResist": false,
+      "power": 2.0
+    }
+  ]
+}

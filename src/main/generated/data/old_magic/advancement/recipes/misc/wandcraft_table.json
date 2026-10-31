@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_scroll": {
+      "conditions": {
+        "items": [
+          {
+            "items": "old_magic:scroll"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "old_magic:wandcraft_table"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_scroll"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "old_magic:wandcraft_table"
+    ]
+  }
+}

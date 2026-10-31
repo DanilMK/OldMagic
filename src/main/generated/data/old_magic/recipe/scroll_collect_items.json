@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "scroll",
+  "ingredients": [
+    "old_magic:scroll",
+    "#minecraft:bundles"
+  ],
+  "result": {
+    "components": {
+      "old_magic:scroll_spell": {
+        "alwaysUnlock": false,
+        "spell": "old_magic:collect_items",
+        "unlockFirstTime": false
+      }
+    },
+    "id": "old_magic:scroll"
+  }
+}

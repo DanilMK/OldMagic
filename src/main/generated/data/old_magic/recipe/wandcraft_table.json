@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": "minecraft:gold_ingot",
+    "l": "minecraft:leather",
+    "p": "#minecraft:planks"
+  },
+  "pattern": [
+    "glg",
+    "ppp"
+  ],
+  "result": {
+    "id": "old_magic:wandcraft_table"
+  }
+}

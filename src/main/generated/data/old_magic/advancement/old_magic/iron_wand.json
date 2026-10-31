@@ -1,0 +1,32 @@
+{
+  "parent": "old_magic:old_magic/copper_wand",
+  "criteria": {
+    "has_wand": {
+      "conditions": {
+        "items": [
+          {
+            "items": "old_magic:iron_wand"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.old_magic.iron_wand.description"
+    },
+    "icon": {
+      "id": "old_magic:iron_wand"
+    },
+    "title": {
+      "translate": "advancements.old_magic.iron_wand.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_wand"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

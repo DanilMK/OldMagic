@@ -1,0 +1,8 @@
+{
+  "type": "old_magic:projectile",
+  "onBlockHit": "old_magic:fire_sphere",
+  "onEntityHit": "old_magic:fire_sphere",
+  "properties": {
+    "itemRender": "minecraft:fire_charge"
+  }
+}

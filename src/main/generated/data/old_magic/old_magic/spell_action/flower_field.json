@@ -1,0 +1,41 @@
+{
+  "type": "old_magic:chain",
+  "action_list": [
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "available_blocks": {
+        "type": "old_magic:random",
+        "predicate": {
+          "type": "minecraft:matching_blocks",
+          "blocks": "minecraft:air"
+        },
+        "probability": 0.33
+      },
+      "maskSolid": false,
+      "maskSurface": false,
+      "range": 3,
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:random_select",
+      "action_list": [
+        {
+          "type": "old_magic:place_feature",
+          "feature": "minecraft:flower_default"
+        },
+        {
+          "type": "old_magic:place_feature",
+          "feature": "minecraft:flower_cherry"
+        },
+        {
+          "type": "old_magic:place_feature",
+          "feature": "minecraft:flower_flower_forest"
+        },
+        {
+          "type": "old_magic:place_feature",
+          "feature": "minecraft:flower_meadow"
+        }
+      ]
+    }
+  ]
+}

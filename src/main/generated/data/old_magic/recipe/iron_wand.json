@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "d": "minecraft:diamond",
+    "i": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "  d",
+    " i ",
+    "i  "
+  ],
+  "result": {
+    "id": "old_magic:iron_wand"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "old_magic:chain",
+  "action_list": [
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "maskSolid": false,
+      "maskSurface": false,
+      "range": 3,
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:blocks_break",
+      "blocks": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "old_magic:severing_plants"
+      },
+      "dropResources": true
+    }
+  ]
+}

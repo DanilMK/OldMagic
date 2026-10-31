@@ -1,0 +1,78 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/basic"
+        },
+        "when": "old_magic:basic"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/fire"
+        },
+        "when": "old_magic:fire"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/ice"
+        },
+        "when": "old_magic:ice"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/collect_items"
+        },
+        "when": "old_magic:collect_items"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/pull"
+        },
+        "when": "old_magic:pull"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/push"
+        },
+        "when": "old_magic:push"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/grow_plants"
+        },
+        "when": "old_magic:grow_plants"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/severing_plants"
+        },
+        "when": "old_magic:severing_plants"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/puddle"
+        },
+        "when": "old_magic:puddle"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell/flower_field"
+        },
+        "when": "old_magic:flower_field"
+      }
+    ],
+    "property": "old_magic:spell"
+  }
+}

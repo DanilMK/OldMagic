@@ -1,0 +1,35 @@
+{
+  "parent": "old_magic:old_magic/wandcraft_table",
+  "criteria": {
+    "has_wand": {
+      "conditions": {
+        "items": [
+          {
+            "items": "old_magic:copper_wand"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.old_magic.copper_wand.description"
+    },
+    "icon": {
+      "id": "old_magic:copper_wand"
+    },
+    "title": {
+      "translate": "advancements.old_magic.copper_wand.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_wand"
+    ]
+  ],
+  "rewards": {
+    "function": "old_magic:unlock_basic"
+  },
+  "sends_telemetry_event": true
+}

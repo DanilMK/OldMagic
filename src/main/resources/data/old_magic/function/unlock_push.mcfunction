@@ -1,0 +1,1 @@
+spells player @s unlock old_magic:push

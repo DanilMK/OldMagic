@@ -1,0 +1,11 @@
+{
+  "type": "old_magic:projectile",
+  "onBlockHit": "old_magic:puddle",
+  "properties": {
+    "discardOnHitEntity": false,
+    "itemRender": "minecraft:air",
+    "particle": {
+      "type": "minecraft:dripping_water"
+    }
+  }
+}

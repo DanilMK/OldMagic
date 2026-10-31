@@ -1,0 +1,27 @@
+{
+  "type": "old_magic:first_enter",
+  "action_list": [
+    {
+      "type": "old_magic:bonemeal_blocks"
+    },
+    {
+      "type": "old_magic:chain",
+      "action_list": [
+        {
+          "type": "old_magic:target_by_shape_blocks",
+          "available_blocks": {
+            "type": "minecraft:matching_block_tag",
+            "tag": "old_magic:growable_plants"
+          },
+          "maskSolid": false,
+          "maskSurface": false,
+          "range": 3,
+          "shape": "sphere"
+        },
+        {
+          "type": "old_magic:bonemeal_blocks"
+        }
+      ]
+    }
+  ]
+}

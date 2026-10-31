@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "scroll",
+  "ingredients": [
+    "old_magic:scroll",
+    "#minecraft:flowers"
+  ],
+  "result": {
+    "components": {
+      "old_magic:scroll_spell": {
+        "alwaysUnlock": false,
+        "spell": "old_magic:flower_field",
+        "unlockFirstTime": false
+      }
+    },
+    "id": "old_magic:scroll"
+  }
+}

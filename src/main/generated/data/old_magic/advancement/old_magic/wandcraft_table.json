@@ -1,0 +1,32 @@
+{
+  "parent": "old_magic:old_magic/scroll",
+  "criteria": {
+    "has_table": {
+      "conditions": {
+        "items": [
+          {
+            "items": "old_magic:wandcraft_table"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.old_magic.wandcraft_table.description"
+    },
+    "icon": {
+      "id": "old_magic:wandcraft_table"
+    },
+    "title": {
+      "translate": "advancements.old_magic.wandcraft_table.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_table"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

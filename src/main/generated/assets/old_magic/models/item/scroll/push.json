@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "old_magic:item/scroll",
+    "layer1": "old_magic:item/spell/push"
+  }
+}

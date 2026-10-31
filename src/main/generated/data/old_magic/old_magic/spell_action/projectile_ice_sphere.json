@@ -1,0 +1,11 @@
+{
+  "type": "old_magic:projectile",
+  "onBlockHit": "old_magic:ice_sphere",
+  "onEntityHit": "old_magic:ice_sphere",
+  "properties": {
+    "itemRender": "minecraft:ice",
+    "particle": {
+      "type": "minecraft:bubble"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "e": "minecraft:emerald",
+    "g": "minecraft:gold_ingot"
+  },
+  "pattern": [
+    "  e",
+    " g ",
+    "g  "
+  ],
+  "result": {
+    "id": "old_magic:golden_wand"
+  }
+}

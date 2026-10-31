@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "old_magic:item/spell_book",
+    "layer1": "old_magic:item/spell/puddle"
+  }
+}
