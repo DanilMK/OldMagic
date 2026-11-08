@@ -11,9 +11,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
+import net.smok.om.utils.Shape;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
@@ -21,11 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public record NearbyEntitiesTarget(float range, HolderSet<EntityType<?>> filter) implements SpellAction {
+public record NearbyEntitiesTarget(float range, HolderSet<EntityType<?>> filter, Shape shape) implements SpellAction {
 
     public static final MapCodec<NearbyEntitiesTarget> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.FLOAT.fieldOf("range").forGetter(NearbyEntitiesTarget::range),
-            HolderSetCodec.create(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.holderByNameCodec(), false).fieldOf("filter").forGetter(NearbyEntitiesTarget::filter)
+            HolderSetCodec.create(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.holderByNameCodec(), false).fieldOf("filter").forGetter(NearbyEntitiesTarget::filter),
+            Shape.SHAPE_CODEC.fieldOf("shape").forGetter(NearbyEntitiesTarget::shape)
     ).apply(instance, NearbyEntitiesTarget::new));
 
     private static final EntityTypeTest<Entity, ?> ANY_ENTITY = new EntityTypeTest<>() {
@@ -41,16 +44,16 @@ public record NearbyEntitiesTarget(float range, HolderSet<EntityType<?>> filter)
     };
 
 
-    public NearbyEntitiesTarget(float range, EntityType<?> entity) {
-        this(range, HolderSet.direct(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity)));
+    public NearbyEntitiesTarget(float range, EntityType<?> entity, Shape shape) {
+        this(range, HolderSet.direct(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity)), shape);
     }
 
-    public NearbyEntitiesTarget(float range, EntityType<?>... entities) {
-        this(range, Arrays.stream(entities));
+    public NearbyEntitiesTarget(float range, Shape shape, EntityType<?>... entities) {
+        this(range, Arrays.stream(entities), shape);
     }
 
-    public NearbyEntitiesTarget(float range, @NotNull Stream<? extends EntityType<?>> stream) {
-        this(range, HolderSet.direct(stream.map(BuiltInRegistries.ENTITY_TYPE::createIntrusiveHolder).toList()));
+    public NearbyEntitiesTarget(float range, @NotNull Stream<? extends EntityType<?>> stream, Shape shape) {
+        this(range, HolderSet.direct(stream.map(BuiltInRegistries.ENTITY_TYPE::createIntrusiveHolder).toList()), shape);
     }
 
 
@@ -62,8 +65,9 @@ public record NearbyEntitiesTarget(float range, HolderSet<EntityType<?>> filter)
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
         return spellRunner.execute(level -> {
+            Vec3 center = spellRunner.getActor().position();
             ArrayList<Entity> entities = new ArrayList<>();
-            level.getEntities(ANY_ENTITY, AABB.unitCubeFromLowerCorner(spellRunner.getActor().position()).inflate(range, range, range), e -> e.is(filter), entities);
+            level.getEntities(ANY_ENTITY, AABB.unitCubeFromLowerCorner(spellRunner.getActor().position()).inflate(range, range, range), e -> e.is(filter) && shape.isInRange(center, e.position(), range), entities);
             spellRunner.replaceEntityTargets(entities);
             return !entities.isEmpty();
         });
