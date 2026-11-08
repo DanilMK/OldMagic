@@ -21,6 +21,7 @@ import net.smok.om.spell.Spell;
 import net.smok.om.spell.SpellAction;
 import net.smok.om.spell.SpellActionType;
 import net.smok.om.spell.block.target.RandomBlockPredicate;
+import net.smok.om.utils.StoredValueType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +41,12 @@ public class Values {
 
     public static final ResourceKey<Registry<Spell>> SPELLS_KEY =
             ResourceKey.createRegistryKey(id("spell"));
+
+    public static final ResourceKey<Registry<StoredValueType<?>>> STORED_VALUES_TYPE =
+            ResourceKey.createRegistryKey(id("stored_value_type"));
+
+    public static final Registry<StoredValueType<?>> STORED_VALUE_TYPES =
+            FabricRegistryBuilder.create(STORED_VALUES_TYPE).buildAndRegister();
 
 
     public static final BlockPredicateType<RandomBlockPredicate> RANDOM_BLOCK_PREDICATE_TYPE =
@@ -67,6 +74,7 @@ public class Values {
         FabricEntityDataRegistry.register(id("projectile"), ProjectileProps.DATA_SERIALIZER); // todo maybe it can be unsynced
 
 
+        StoredValueType.init();
         SpellActionType.init();
     }
 }
