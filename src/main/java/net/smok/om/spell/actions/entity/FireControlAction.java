@@ -20,7 +20,7 @@ public record FireControlAction(int fireTicks) implements SpellAction {
 
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
-        return spellRunner.executeForAnyEntity((level, entity) -> {
+        return spellRunner.executeForAnyEntity((_, entity) -> {
             if (fireTicks < 1) entity.extinguishFire();
             else if (!entity.fireImmune()) entity.setRemainingFireTicks(entity.getRemainingFireTicks() + fireTicks);
             else return false;

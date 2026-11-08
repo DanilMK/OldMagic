@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.smok.om.Debug;
 import net.smok.om.entity.SpellProjectile;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.utils.EntityHolder;

@@ -60,7 +60,7 @@ public record MoveEntityAction(Direction direction, float power, boolean ignoreK
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
         if (!(power > 0)) return SpellRunner.ProcessStatus.FAILURE;
 
-        return spellRunner.executeForAnyEntity((level, entity) -> {
+        return spellRunner.executeForAnyEntity((_, entity) -> {
 
             double knockbackResistance = !ignoreKnockbackResist && entity instanceof LivingEntity mob ? Math.max(0.0, 1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)) : 1;
 

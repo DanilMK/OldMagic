@@ -74,7 +74,7 @@ public record Spell(@NotNull Casting casting, @NotNull Holder<SpellAction> main,
     }
 
     private static List<Holder<Spell>> fromSlots(int size, List<SpellSlot> slots) {
-        Holder<Spell>[] holders = new Holder[size];
+        @SuppressWarnings("unchecked") Holder<Spell>[] holders = new Holder[size];
         for (SpellSlot slot : slots) {
             holders[slot.slot] = slot.spell;
         }

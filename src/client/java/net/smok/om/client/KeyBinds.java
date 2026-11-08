@@ -74,6 +74,7 @@ public class KeyBinds implements ClientTickEvents.EndTick {
         public void onTick(PlayerCaster caster) {
             if (caster.oldMagic$isCasting(slot)) {
                 if (!isDown()) caster.oldMagic$releaseCast(slot);
+                //noinspection StatementWithEmptyBody
                 while (consumeClick()) {}
             } else {
                 while (consumeClick()) caster.oldMagic$startCast(slot);

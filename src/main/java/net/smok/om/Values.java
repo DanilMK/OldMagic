@@ -1,9 +1,7 @@
 package net.smok.om;
 
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
-import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.fabricmc.fabric.api.item.v1.ItemComponentTooltipProviderRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityDataRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,6 +11,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;
 import net.smok.om.block.OMBlocks;
 import net.smok.om.entity.OMEntities;
+import net.smok.om.entity.ProjectileProps;
 import net.smok.om.item.OMDataComponents;
 import net.smok.om.item.OMItems;
 import net.smok.om.menu.OMMenus;

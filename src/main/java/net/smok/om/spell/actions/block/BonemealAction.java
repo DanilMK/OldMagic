@@ -1,7 +1,6 @@
 package net.smok.om.spell.actions.block;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.smok.om.spell.actions.SpellAction;

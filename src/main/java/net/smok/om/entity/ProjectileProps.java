@@ -47,7 +47,7 @@ public record ProjectileProps(float width, float height, float gravity, float it
             ProjectileProps::new
     );
 
-    public static final EntityDataSerializer<ProjectileProps> DATA_SERIALIZER = new EntityDataSerializer<ProjectileProps>() {
+    public static final EntityDataSerializer<ProjectileProps> DATA_SERIALIZER = new EntityDataSerializer<>() {
         @Override
         public StreamCodec<? super RegistryFriendlyByteBuf, ProjectileProps> codec() {
             return STREAM_CODEC;

@@ -11,7 +11,6 @@ import net.smok.om.spell.*;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActions;
 import net.smok.om.spell.cast.Casting;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +57,9 @@ public class SpellGenerator extends FabricDynamicRegistryProvider {
         return context.lookup(Values.SPELL_ACTIONS_KEY).getOrThrow(key);
     }
 
-    private @NotNull Holder.Reference<Spell> add(ResourceKey<Spell> resourceKey, Spell spell) {
+    private void add(ResourceKey<Spell> resourceKey, Spell spell) {
         Holder.Reference<Spell> value = context.register(resourceKey, spell);
         values.add(value);
-        return value;
     }
 
     @Override

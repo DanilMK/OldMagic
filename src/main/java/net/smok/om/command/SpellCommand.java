@@ -317,9 +317,8 @@ public class SpellCommand implements CommandRegistrationCallback {
         }
 
         AtomicInteger count = new AtomicInteger();
-        spells.forEach(spellReference -> {
-            count.addAndGet(wand.contents.removeIf(spellSlot -> spellSlot.spell().is(spellReference)));
-        });
+        spells.forEach(spellReference ->
+                count.addAndGet(wand.contents.removeIf(spellSlot -> spellSlot.spell().is(spellReference))));
 
         if (count.get() > 0) {
             wand.itemStack.set(OMDataComponents.WAND_CONTENTS, wand.contents.toImmutable());

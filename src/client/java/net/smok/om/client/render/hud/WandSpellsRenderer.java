@@ -31,7 +31,7 @@ public record WandSpellsRenderer(Minecraft minecraft) implements HudElement {
     public void extractRenderState(GuiGraphicsExtractor guiGraphicsExtractor, DeltaTracker deltaTracker) {
 
         if (minecraft.player instanceof PlayerCaster caster) {
-            caster.forWandItem((player, hand, wand) -> {
+            caster.forWandItem((player, hand, _) -> {
                 ItemStack itemStack = player.getItemInHand(hand);
 
 
