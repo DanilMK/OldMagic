@@ -3,13 +3,12 @@
 	"id": "old_magic",
 	"version": "${version}",
 	"name": "Old Magic",
-	"description": "",
+	"description": "Bring Old Magic back to world!",
 	"authors": [
 		"Smok419"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/DanilMK/OldMagic"
 	},
 	"license": "MIT",
 	"icon": "assets/old_magic/icon.png",
