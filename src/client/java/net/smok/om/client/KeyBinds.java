@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.smok.om.Values;
-import net.smok.om.spell.PlayerCaster;
+import net.smok.om.spell.cast.PlayerCaster;
 
 public class KeyBinds implements ClientTickEvents.EndTick {
 

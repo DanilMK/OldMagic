@@ -13,9 +13,10 @@ import net.smok.om.client.render.RenderUtils;
 import net.smok.om.item.OMDataComponents;
 import net.smok.om.item.WandContents;
 import net.smok.om.spell.*;
+import net.smok.om.spell.cast.CastHolder;
+import net.smok.om.spell.cast.PlayerCaster;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 

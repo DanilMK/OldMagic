@@ -11,8 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.smok.om.Values;
 import net.smok.om.item.BookContents;
 import net.smok.om.item.OMDataComponents;
-import net.smok.om.spell.SlotButton;
-import net.smok.om.spell.SpellContainer;
 
 public record SpellBookSelectPayload(int slot, int spell) implements CustomPacketPayload {
 

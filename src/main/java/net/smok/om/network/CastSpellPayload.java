@@ -7,7 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.smok.om.Values;
-import net.smok.om.spell.PlayerCaster;
+import net.smok.om.spell.cast.PlayerCaster;
 
 public record CastSpellPayload(int spellSlot, boolean startOrRelease) implements CustomPacketPayload {
 

@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.smok.om.Values;
 import net.smok.om.item.*;
-import net.smok.om.spell.PlayerCaster;
+import net.smok.om.spell.cast.PlayerCaster;
 import net.smok.om.spell.Spell;
 
 import java.util.ArrayList;

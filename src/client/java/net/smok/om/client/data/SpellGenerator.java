@@ -8,6 +8,9 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.smok.om.Values;
 import net.smok.om.spell.*;
+import net.smok.om.spell.actions.SpellAction;
+import net.smok.om.spell.actions.SpellActions;
+import net.smok.om.spell.cast.Casting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

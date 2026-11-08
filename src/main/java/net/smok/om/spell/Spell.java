@@ -10,7 +10,9 @@ import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.smok.om.Values;
-import net.smok.om.spell.logic.EmptyAction;
+import net.smok.om.spell.actions.SpellAction;
+import net.smok.om.spell.cast.Casting;
+import net.smok.om.spell.actions.logic.EmptyAction;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

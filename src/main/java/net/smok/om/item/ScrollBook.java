@@ -7,9 +7,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.smok.om.ScreenOpener;
+import net.smok.om.utils.ScreenOpener;
 import net.smok.om.Values;
-import net.smok.om.spell.SlotButton;
+import net.smok.om.utils.SlotButton;
 import net.smok.om.spell.Spell;
 import org.jetbrains.annotations.NotNull;
 

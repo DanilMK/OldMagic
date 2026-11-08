@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.smok.om.spell.*;
+import net.smok.om.utils.SlotButton;
 
 public class ScrollItem extends Item {
 

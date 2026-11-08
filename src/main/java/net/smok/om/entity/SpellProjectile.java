@@ -14,9 +14,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.*;
-import net.smok.om.spell.ProjectileProps;
-import net.smok.om.spell.SpellAction;
-import net.smok.om.spell.entity.action.ProjectileSpawn;
+import net.smok.om.spell.actions.SpellAction;
+import net.smok.om.spell.actions.entity.ProjectileSpawn;
 import org.jetbrains.annotations.Nullable;
 
 public class SpellProjectile extends AbstractHurtingProjectile implements ItemSupplier {

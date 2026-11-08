@@ -19,7 +19,8 @@ import net.smok.om.menu.OMMenus;
 import net.smok.om.network.CastSpellPayload;
 import net.smok.om.network.SpellCastPayload;
 import net.smok.om.network.SpellCooldownPayload;
-import net.smok.om.spell.PlayerCaster;
+import net.smok.om.spell.cast.PlayerCaster;
+import net.smok.om.utils.BlockParticleTemplate;
 
 public class OldMagicClient implements ClientModInitializer {
 	@Override

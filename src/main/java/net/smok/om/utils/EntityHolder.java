@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.smok.om.Debug;
 
 import java.util.UUID;
 

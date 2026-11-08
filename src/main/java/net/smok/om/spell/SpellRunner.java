@@ -33,25 +33,13 @@ public class SpellRunner {
 
     // Статический кодек для полной сериализации ранера
     public static final Codec<SpellRunner> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            SpellAction.HOLDER_CODEC.fieldOf("action").forGetter(r -> {
-                Debug.log("Action is null = " + (r.action == null));
-                return r.action;
-            }),
-            UUIDUtil.CODEC.fieldOf("actor_uuid").forGetter(r -> {
-                Debug.log("Actor is null = " + (r.actorUUID == null));
-                return r.actorUUID;
-            }),
-            ItemStack.CODEC.fieldOf("wand").forGetter(r -> {
-                Debug.log("Wand is null = " + (r.wand == null));
-                return r.wand;
-            }),
+            SpellAction.HOLDER_CODEC.fieldOf("action").forGetter(r -> r.action),
+            UUIDUtil.CODEC.fieldOf("actor_uuid").forGetter(r -> r.actorUUID),
+            ItemStack.CODEC.fieldOf("wand").forGetter(r -> r.wand),
             Codec.INT.fieldOf("random_seed").forGetter(r -> r.randomSeed),
             Codec.INT.fieldOf("last_index").forGetter(r -> r.lastIndex),
             Codec.INT.fieldOf("wait_ticks_left").forGetter(r -> r.waitTicksLeft),
-            StoredValues.CODEC.fieldOf("stored_values").forGetter(r -> {
-                Debug.log("Values is null = " + (r.storedValues == null));
-                return r.storedValues;
-            })
+            StoredValues.CODEC.fieldOf("stored_values").forGetter(r -> r.storedValues)
     ).apply(instance, SpellRunner::new));
 
     // Константные данные каста

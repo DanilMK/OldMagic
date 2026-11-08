@@ -26,6 +26,7 @@ public class StoredValues {
 
     public void init(ServerLevel level) {
         for (Map.Entry<? extends StoredValueType<?>, ?> entry : map.entrySet()) {
+            //noinspection unchecked
             StoredValueType<Object> storedValueType = (StoredValueType<Object>) entry.getKey();
             Object o = entry.getValue();
             if (storedValueType.levelInitHandler() != null)

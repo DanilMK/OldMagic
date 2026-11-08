@@ -1,12 +1,11 @@
 package net.smok.om.mixin;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.smok.om.spell.CastHolder;
-import net.smok.om.spell.PlayerCaster;
+import net.smok.om.spell.cast.CastHolder;
+import net.smok.om.spell.cast.PlayerCaster;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
