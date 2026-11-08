@@ -1,4 +1,4 @@
-package net.smok.om.spell;
+package net.smok.om.spell.actions;
 
 import net.minecraft.resources.ResourceKey;
 import net.smok.om.Values;
@@ -17,6 +17,7 @@ public interface SpellActions {
     ResourceKey<SpellAction> PUDDLE = register("puddle");
     ResourceKey<SpellAction> COLLECT_ITEMS = register("collect_items");
     ResourceKey<SpellAction> CHANGE_COLOR = register("change_color");
+    ResourceKey<SpellAction> FLOWER_FIELD = register("flower_field");
 
     ResourceKey<SpellAction> PROJECTILE_BASIC = register("projectile_basic");
     ResourceKey<SpellAction> PROJECTILE_BASIC_BROKEN = register("projectile_basic_broken");

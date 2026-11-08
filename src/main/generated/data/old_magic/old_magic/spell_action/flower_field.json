@@ -4,12 +4,17 @@
     {
       "type": "old_magic:target_by_shape_blocks",
       "available_blocks": {
-        "type": "old_magic:random",
-        "predicate": {
-          "type": "minecraft:matching_blocks",
-          "blocks": "minecraft:air"
-        },
-        "probability": 0.33
+        "type": "minecraft:all_of",
+        "predicates": [
+          {
+            "type": "old_magic:random",
+            "probability": 0.33
+          },
+          {
+            "type": "minecraft:matching_blocks",
+            "blocks": "minecraft:air"
+          }
+        ]
       },
       "maskSolid": false,
       "maskSurface": false,

@@ -1,57 +1,102 @@
 {
-  "type": "old_magic:list",
+  "type": "old_magic:first_enter",
   "action_list": [
     {
       "type": "old_magic:chain",
       "action_list": [
         {
-          "type": "old_magic:target_by_shape_blocks",
-          "maskSolid": false,
-          "maskSurface": true,
-          "range": 3,
-          "shape": "sphere"
+          "type": "old_magic:target_hit_block",
+          "filter": {
+            "type": "minecraft:matching_block_tag",
+            "tag": "minecraft:campfires"
+          }
         },
         {
-          "type": "old_magic:blocks_transformation",
-          "transformList": [
+          "type": "old_magic:block_state_transform",
+          "properties": [
             {
-              "block": {
-                "Name": "minecraft:fire",
-                "Properties": {
-                  "age": "0",
-                  "east": "false",
-                  "north": "false",
-                  "south": "false",
-                  "up": "false",
-                  "west": "false"
-                }
-              },
-              "ruleTest": {
-                "block": "minecraft:air",
-                "predicate_type": "minecraft:random_block_match",
-                "probability": 0.2
-              }
+              "name": "lit",
+              "valueChanger": "true"
             }
           ]
         }
       ]
     },
     {
-      "type": "old_magic:chain",
+      "type": "old_magic:list",
       "action_list": [
         {
-          "type": "old_magic:target_by_nearby_entities",
-          "filter": "#old_magic:flameable",
-          "range": 3.0
+          "type": "old_magic:chain",
+          "action_list": [
+            {
+              "type": "old_magic:target_by_shape_blocks",
+              "available_blocks": {
+                "type": "minecraft:all_of",
+                "predicates": [
+                  {
+                    "type": "minecraft:matching_block_tag",
+                    "offset": [
+                      0,
+                      -1,
+                      0
+                    ],
+                    "tag": "minecraft:planks"
+                  },
+                  {
+                    "type": "old_magic:random",
+                    "probability": 0.5
+                  }
+                ]
+              },
+              "maskSolid": false,
+              "maskSurface": false,
+              "range": 3,
+              "shape": "sphere"
+            },
+            {
+              "type": "old_magic:for_each_block_target",
+              "action": {
+                "type": "old_magic:block_place",
+                "blockState": {
+                  "Name": "minecraft:fire",
+                  "Properties": {
+                    "age": "0",
+                    "east": "false",
+                    "north": "false",
+                    "south": "false",
+                    "up": "false",
+                    "west": "false"
+                  }
+                },
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:air"
+                }
+              },
+              "combineAmount": 4,
+              "delay": 2
+            }
+          ]
         },
         {
-          "type": "old_magic:damage_entities",
-          "amount": 2.0,
-          "damage_type": "minecraft:magic"
-        },
-        {
-          "type": "old_magic:fire_control",
-          "fire_ticks": 20
+          "type": "old_magic:chain",
+          "action_list": [
+            {
+              "type": "old_magic:target_by_nearby_entities",
+              "filter": "#old_magic:flameable",
+              "range": 3.0,
+              "shape": "sphere"
+            },
+            {
+              "type": "old_magic:damage_entities",
+              "amount": 2.0,
+              "damage_type": "minecraft:magic"
+            },
+            {
+              "type": "old_magic:fire_control",
+              "fire_ticks": 20
+            }
+          ]
         }
       ]
     }

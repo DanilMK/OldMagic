@@ -5,11 +5,11 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.VegetationFeatures;
-import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -21,21 +21,16 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
-import net.smok.om.Values;
-import net.smok.om.spell.ProjectileProps;
-import net.smok.om.spell.SpellAction;
-import net.smok.om.spell.block.action.BlockTransformation;
-import net.smok.om.spell.block.action.BonemealAction;
-import net.smok.om.spell.block.action.BreakAction;
-import net.smok.om.spell.block.action.FeatureAction;
-import net.smok.om.spell.block.target.RandomBlockPredicate;
-import net.smok.om.spell.block.target.ShapeBlockTarget;
-import net.smok.om.spell.entity.action.*;
-import net.smok.om.spell.entity.target.NearbyEntitiesTarget;
-import net.smok.om.spell.logic.ChainListAction;
-import net.smok.om.spell.logic.FirstEnterAction;
-import net.smok.om.spell.logic.ListAction;
-import net.smok.om.spell.logic.RandomSelectAction;
+import net.smok.om.entity.ProjectileProps;
+import net.smok.om.spell.actions.SpellAction;
+import net.smok.om.spell.actions.SpellActions;
+import net.smok.om.spell.actions.block.*;
+import net.smok.om.spell.actions.entity.*;
+import net.smok.om.spell.actions.logic.ChainListAction;
+import net.smok.om.spell.actions.logic.FirstEnterAction;
+import net.smok.om.spell.actions.logic.ListAction;
+import net.smok.om.spell.actions.logic.RandomSelectAction;
+import net.smok.om.utils.Shape;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -168,18 +163,18 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
     private void addEntries() {
 
 
-        Holder<SpellAction> basic = add("basic", list(
+        Holder<SpellAction> basic = add(SpellActions.BASIC, list(
                 damageMagic(3),
-                Holder.direct(new MoveEntityAction(MoveEntityAction.Direction.KNOCKBACK, 1, false))
+                Holder.direct(new KnockbackEntity(1, false))
         ));
 
-        Holder.Reference<SpellAction> basicBroken = add("basic_broken", randomSelect(
+        Holder.Reference<SpellAction> basicBroken = add(SpellActions.BASIC_BROKEN, randomSelect(
                 damageMagic(2),
                 damageMagic(2),
                 damageMagic(2),
-                new MoveEntityAction(MoveEntityAction.Direction.KNOCKBACK, 1, false).inline(),
-                new MoveEntityAction(MoveEntityAction.Direction.KNOCKBACK, 1, false).inline(),
-                new MoveEntityAction(MoveEntityAction.Direction.KNOCKBACK, 1, false).inline(),
+                new KnockbackEntity(2, false).inline(),
+                new KnockbackEntity(2, false).inline(),
+                new KnockbackEntity(2, false).inline(),
                 chain(
                         shapeSphere(2, true, false),
                         list(
@@ -199,33 +194,37 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                 )
         ));
 
-        Holder<SpellAction> damage3 = add("damage_3", list(
-                damageMagic(3)
-        ));
-
-        Holder<SpellAction> fireSphere = add("fire_sphere", list(
+        Holder<SpellAction> fireSphere = add(SpellActions.FIRE_SPHERE, firstEnter(
                 chain(
-                        shapeSphere(3, true, false),
-                        transform(new RandomBlockMatchTest(Blocks.AIR, 0.2f), Blocks.FIRE.defaultBlockState())
+                        targetHitBlock(BlockPredicate.matchesTag(BlockTags.CAMPFIRES)),
+                        transformBlockState(BlockStateTransform.builder().set(CampfireBlock.LIT, true))
                 ),
-                chain(
-                        targetNear(3, FLAMEABLE_ENTITIES),
-                        damageMagic(2),
-                        fireControl(20)
+                list(
+                        chain(
+                                shapeSphere(3, false, false, BlockPredicate.allOf(
+                                        BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.PLANKS),
+                                        new RandomBlockPredicate(0.5f)
+                                )),
+                                forEachBlock(2, 4, placeBlock(Blocks.FIRE.defaultBlockState(), BlockPredicate.matchesBlocks(Blocks.AIR)))
+                        ),
+                        chain(
+                                targetNear(3, FLAMEABLE_ENTITIES),
+                                damageMagic(2),
+                                fireControl(20)
+                        )
                 )
         ));
 
-        Holder<SpellAction> iceSphere = add("ice_sphere", list(
+        Holder<SpellAction> iceSphere = add(SpellActions.ICE_SPHERE, list(
                 list(
                         shapeSphere(3, true, false),
-                        transform(
-                                new BlockMatchTest(Blocks.WATER), Blocks.FROSTED_ICE.defaultBlockState(),
-                                new BlockMatchTest(Blocks.FIRE), Blocks.AIR.defaultBlockState()
-                        ),
+                        transformBlock(Blocks.FROSTED_ICE, false, BlockPredicate.matchesBlocks(Blocks.WATER)),
                         new BreakAction(new BlockMatchTest(Blocks.TORCH), true).inline(),
                         new BreakAction(new BlockMatchTest(Blocks.WALL_TORCH), true).inline(),
                         new BreakAction(new BlockMatchTest(Blocks.COPPER_TORCH), true).inline(),
-                        new BreakAction(new BlockMatchTest(Blocks.COPPER_WALL_TORCH), true).inline()
+                        new BreakAction(new BlockMatchTest(Blocks.COPPER_WALL_TORCH), true).inline(),
+                        new BreakAction(new BlockMatchTest(Blocks.FIRE), false).inline(),
+                        transformBlockState(BlockStateTransform.builder().set(CampfireBlock.LIT, false))
                 ),
                 chain(
                         targetNear(3, FLAMEABLE_ENTITIES),
@@ -234,33 +233,33 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                 )
         ));
 
-        Holder<SpellAction> growPlants = add("grow_plants", firstEnter(
+        Holder<SpellAction> growPlants = add(SpellActions.GROW_PLANTS, firstEnter(
                 Holder.direct(BonemealAction.INSTANCE),
                 chain(
                         shapeSphere(3, false, false, BlockPredicate.matchesTag(GROWABLE_PLANTS)),
                         Holder.direct(BonemealAction.INSTANCE))
         ));
 
-        Holder<SpellAction> servingPlants = add("serving_plants", chain(
+        Holder<SpellAction> servingPlants = add(SpellActions.SERVING_PLANTS, chain(
                 shapeSphere(3, false, false),
                 Holder.direct(new BreakAction(new TagMatchTest(SEVERING_PLANTS), true))
         ));
 
-        Holder.Reference<SpellAction> pull = add("pull", new MoveEntityAction(MoveEntityAction.Direction.PULL_TO_CASTER, 1, false).inline());
-        Holder.Reference<SpellAction> push = add("push", new MoveEntityAction(MoveEntityAction.Direction.PUSH_FROM_CASTER, 1, false).inline());
+        Holder.Reference<SpellAction> pull = add(SpellActions.PULL, new MoveEntityAction(MoveEntityAction.Direction.PULL_TO_CASTER, 1, false).inline());
+        Holder.Reference<SpellAction> push = add(SpellActions.PUSH, new MoveEntityAction(MoveEntityAction.Direction.PUSH_FROM_CASTER, 1, false).inline());
 
-        Holder.Reference<SpellAction> puddle = add("puddle", chain(
+        Holder.Reference<SpellAction> puddle = add(SpellActions.PUDDLE, chain(
                 shapeSphere(1, true, false),
-                transform(
-                        new TagMatchTest(BlockTags.CONVERTABLE_TO_MUD), Blocks.MUD.defaultBlockState(),
-                        new BlockMatchTest(Blocks.FARMLAND), Blocks.FARMLAND.defaultBlockState().setValue(FarmlandBlock.MOISTURE, FarmlandBlock.MAX_MOISTURE),
-                        new TagMatchTest(BlockTags.SAND), Blocks.CLAY.defaultBlockState(),
-                        new BlockMatchTest(Blocks.SPONGE), Blocks.WET_SPONGE.defaultBlockState()
-                )
+                forEachBlock(0, 0, list(
+                        transformBlock(Blocks.MUD, false, BlockPredicate.matchesTag(BlockTags.CONVERTABLE_TO_MUD)),
+                        transformBlockState(BlockStateTransform.builder().set(FarmlandBlock.MOISTURE, FarmlandBlock.MAX_MOISTURE)),
+                        transformBlock(Blocks.CLAY, false, BlockPredicate.matchesTag(BlockTags.SAND)),
+                        transformBlock(Blocks.WET_SPONGE, false, BlockPredicate.matchesBlocks(Blocks.SPONGE))
+                ))
         ));
 
-        Holder.Reference<SpellAction> flowerField = add("flower_field", chain(
-                shapeSphere(3, false, false, new RandomBlockPredicate(0.33f, BlockPredicate.matchesBlocks(Blocks.AIR))),
+        Holder.Reference<SpellAction> flowerField = add(SpellActions.FLOWER_FIELD, chain(
+                shapeSphere(3, false, false, BlockPredicate.allOf(new RandomBlockPredicate(0.33f), BlockPredicate.matchesBlocks(Blocks.AIR))),
                 randomSelect(
                         new FeatureAction(VegetationFeatures.FLOWER_DEFAULT).inline(),
                         new FeatureAction(VegetationFeatures.FLOWER_CHERRY).inline(),
@@ -279,20 +278,20 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
 
         //add("invisible", new EffectAction(Potions.INVISIBILITY, 1))
 
-        add("collect_items", chain(
-                Holder.direct(new NearbyEntitiesTarget(7, EntityType.ITEM)),
+        add(SpellActions.COLLECT_ITEMS, chain(
+                Holder.direct(new NearbyEntitiesTarget(7, EntityType.ITEM, Shape.SPHERE)),
                 Holder.direct(new MoveEntityAction(MoveEntityAction.Direction.PULL_TO_CASTER, 2, false))
         ));
-        add("projectile_basic", projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ELECTRIC_SPARK).build(), null, basic));
-        add("projectile_basic_broken", projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ASH).build(), basicBroken, basicBroken));
-        add("projectile_fire_sphere", projectileHit(propsWithItem(Items.FIRE_CHARGE).build(), fireSphere, fireSphere));
-        add("projectile_ice_sphere", projectileHit(propsWithItem(Items.ICE).setParticleOptions(ParticleTypes.BUBBLE).build(), iceSphere, iceSphere));
-        add("projectile_grow_plants", projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), growPlants, null));
-        add("projectile_serving_plants", projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).setDiscardOnHitEntity(false).build(), servingPlants, null));
-        add("projectile_pull", projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), null, pull));
-        add("projectile_push", projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), null, push));
-        add("projectile_puddle", projectileHit(propsEmpty().setParticleOptions(ParticleTypes.DRIPPING_WATER).setDiscardOnHitEntity(false).build(), puddle, null));
-        add("projectile_flower_field", projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).setDiscardOnHitEntity(false).build(), flowerField, null));
+        add(SpellActions.PROJECTILE_BASIC, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ELECTRIC_SPARK).build(), null, basic));
+        add(SpellActions.PROJECTILE_BASIC_BROKEN, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ASH).build(), basicBroken, basicBroken));
+        add(SpellActions.PROJECTILE_FIRE_SPHERE, projectileHit(propsWithItem(Items.FIRE_CHARGE).build(), fireSphere, fireSphere));
+        add(SpellActions.PROJECTILE_ICE_SPHERE, projectileHit(propsWithItem(Items.ICE).setParticleOptions(ParticleTypes.BUBBLE).build(), iceSphere, iceSphere));
+        add(SpellActions.PROJECTILE_GROW_PLANTS, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), growPlants, null));
+        add(SpellActions.PROJECTILE_SERVING_PLANTS, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).setDiscardOnHitEntity(false).build(), servingPlants, null));
+        add(SpellActions.PROJECTILE_PULL, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), null, pull));
+        add(SpellActions.PROJECTILE_PUSH, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), null, push));
+        add(SpellActions.PROJECTILE_PUDDLE, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.DRIPPING_WATER).setDiscardOnHitEntity(false).build(), puddle, null));
+        add(SpellActions.PROJECTILE_FLOWER_FIELD, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).setDiscardOnHitEntity(false).build(), flowerField, null));
         //add("projectile_change_color", projectileHit(propsEmpty().setDiscardOnHitEntity(false).build(), changeColor, null));
 
     }
@@ -317,17 +316,14 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
 
 
 
-    private Holder.Reference<SpellAction> add(String path, Holder<SpellAction> action) {
-        Holder.Reference<SpellAction> value = context.register(ResourceKey.create(Values.SPELL_ACTIONS_KEY, Values.id(path)), action.value());
+    private Holder.Reference<SpellAction> add(ResourceKey<SpellAction> key, Holder<SpellAction> action) {
+        Holder.Reference<SpellAction> value = context.register(key, action.value());
         values.add(value);
         return value;
     }
 
 
 
-    public static ProjectileProps propsDefault() {
-        return ProjectileProps.DEFAULT;
-    }
 
     @Contract(" -> new")
     public static ProjectileProps.@NotNull Builder propsEmpty() {
@@ -378,11 +374,8 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
         return Holder.direct(new BlockTransformation(new BlockTransformation.TransformEntry(ruleTest, blockState)));
     }
 
-    public static Holder<SpellAction> transform(RuleTest ruleTest, BlockState blockState, RuleTest ruleTest1, BlockState blockState1) {
-        return Holder.direct(new BlockTransformation(
-                new BlockTransformation.TransformEntry(ruleTest, blockState),
-                new BlockTransformation.TransformEntry(ruleTest1, blockState1)
-        ));
+    public static Holder<SpellAction> placeBlock(BlockState blockState, BlockPredicate filter) {
+        return new BlockPlaceAction(blockState, filter).inline();
     }
 
     public static Holder<SpellAction> transform(
@@ -446,43 +439,47 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
     }
 
     public static Holder<SpellAction> shapeSphere(int range, boolean maskSurface, boolean maskSolid) {
-        return Holder.direct(new ShapeBlockTarget(ShapeBlockTarget.Shape.SPHERE, range, maskSurface, maskSolid));
+        return Holder.direct(new ShapeBlockTarget(Shape.SPHERE, range, maskSurface, maskSolid));
     }
 
     public static Holder<SpellAction> cubeSphere(int range, boolean maskSurface, boolean maskSolid) {
-        return Holder.direct(new ShapeBlockTarget(ShapeBlockTarget.Shape.CUBE, range, maskSurface, maskSolid));
+        return Holder.direct(new ShapeBlockTarget(Shape.CUBE, range, maskSurface, maskSolid));
     }
 
     public static Holder<SpellAction> diamondSphere(int range, boolean maskSurface, boolean maskSolid) {
-        return Holder.direct(new ShapeBlockTarget(ShapeBlockTarget.Shape.DIAMOND, range, maskSurface, maskSolid));
+        return Holder.direct(new ShapeBlockTarget(Shape.DIAMOND, range, maskSurface, maskSolid));
     }
 
     public static Holder<SpellAction> shapeSphere(int range, boolean maskSurface, boolean maskSolid, BlockPredicate filter) {
-        return Holder.direct(new ShapeBlockTarget(ShapeBlockTarget.Shape.SPHERE, range, maskSurface, maskSolid, filter));
+        return Holder.direct(new ShapeBlockTarget(Shape.SPHERE, range, maskSurface, maskSolid, filter));
     }
 
     public static Holder<SpellAction> cubeSphere(int range, boolean maskSurface, boolean maskSolid, BlockPredicate filter) {
-        return Holder.direct(new ShapeBlockTarget(ShapeBlockTarget.Shape.CUBE, range, maskSurface, maskSolid, filter));
+        return Holder.direct(new ShapeBlockTarget(Shape.CUBE, range, maskSurface, maskSolid, filter));
     }
 
     public static Holder<SpellAction> diamondSphere(int range, boolean maskSurface, boolean maskSolid, BlockPredicate filter) {
-        return Holder.direct(new ShapeBlockTarget(ShapeBlockTarget.Shape.DIAMOND, range, maskSurface, maskSolid, filter));
+        return Holder.direct(new ShapeBlockTarget(Shape.DIAMOND, range, maskSurface, maskSolid, filter));
     }
 
     public static Holder<SpellAction> targetNear(float range, EntityType<?> entityType) {
-        return new NearbyEntitiesTarget(range, entityType).inline();
+        return new NearbyEntitiesTarget(range, entityType, Shape.SPHERE).inline();
     }
 
     public static Holder<SpellAction> targetNear(float range, EntityType<?>... entityTypes) {
-        return new NearbyEntitiesTarget(range, entityTypes).inline();
+        return new NearbyEntitiesTarget(range, Shape.SPHERE, entityTypes).inline();
     }
 
     public static Holder<SpellAction> targetNear(float range, HolderSet<EntityType<?>> entityTypes) {
-        return new NearbyEntitiesTarget(range, entityTypes).inline();
+        return new NearbyEntitiesTarget(range, entityTypes, Shape.SPHERE).inline();
+    }
+
+    public static Holder<SpellAction> forEachBlock(int delay, int combine, Holder<SpellAction> action) {
+        return new ForEachBlockTarget(delay, combine, action).inline();
     }
 
     public Holder<SpellAction> targetNear(float range, TagKey<EntityType<?>> entityTypes) {
-        return new NearbyEntitiesTarget(range, context.lookup(Registries.ENTITY_TYPE).getOrThrow(entityTypes)).inline();
+        return new NearbyEntitiesTarget(range, context.lookup(Registries.ENTITY_TYPE).getOrThrow(entityTypes), Shape.SPHERE).inline();
     }
 
     public static @NotNull Holder<SpellAction> damageMagic(int damageAmount) {
@@ -493,4 +490,16 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
         return Holder.direct(new FireControlAction(fireTicks));
     }
 
+    public static @NotNull Holder<SpellAction> targetHitBlock(@Nullable BlockPredicate filter) {
+        if (filter == null) return TargetHitBlock.ANY.inline();
+        return new TargetHitBlock(filter).inline();
+    }
+
+    public static @NotNull Holder<SpellAction> transformBlock(Block block, boolean keepProperties, @Nullable BlockPredicate filter) {
+        return new BlockTransform(block, keepProperties, Objects.requireNonNullElse(filter, BlockPredicate.alwaysTrue())).inline();
+    }
+
+    public static @NotNull Holder<SpellAction> transformBlockState(BlockStateTransform.Builder blockStateBuilder) {
+        return blockStateBuilder.build().inline();
+    }
 }

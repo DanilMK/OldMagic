@@ -4,7 +4,8 @@
     {
       "type": "old_magic:target_by_nearby_entities",
       "filter": "minecraft:item",
-      "range": 7.0
+      "range": 7.0,
+      "shape": "sphere"
     },
     {
       "type": "old_magic:move_entity",

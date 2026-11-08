@@ -7,9 +7,7 @@
       "damage_type": "minecraft:magic"
     },
     {
-      "type": "old_magic:move_entity",
-      "direction": "knockback",
-      "ignoreKnockbackResist": false,
+      "type": "old_magic:knockback_entity",
       "power": 1.0
     }
   ]

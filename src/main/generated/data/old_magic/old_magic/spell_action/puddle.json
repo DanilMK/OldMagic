@@ -9,48 +9,50 @@
       "shape": "sphere"
     },
     {
-      "type": "old_magic:blocks_transformation",
-      "transformList": [
-        {
-          "block": {
-            "Name": "minecraft:mud"
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:block_transform",
+            "block": "minecraft:mud",
+            "filter": {
+              "type": "minecraft:matching_block_tag",
+              "tag": "minecraft:convertable_to_mud"
+            },
+            "keepProperties": false
           },
-          "ruleTest": {
-            "predicate_type": "minecraft:tag_match",
-            "tag": "minecraft:convertable_to_mud"
-          }
-        },
-        {
-          "block": {
-            "Name": "minecraft:farmland",
-            "Properties": {
-              "moisture": "7"
-            }
+          {
+            "type": "old_magic:block_state_transform",
+            "properties": [
+              {
+                "name": "moisture",
+                "valueChanger": "7"
+              }
+            ]
           },
-          "ruleTest": {
-            "block": "minecraft:farmland",
-            "predicate_type": "minecraft:block_match"
-          }
-        },
-        {
-          "block": {
-            "Name": "minecraft:clay"
+          {
+            "type": "old_magic:block_transform",
+            "block": "minecraft:clay",
+            "filter": {
+              "type": "minecraft:matching_block_tag",
+              "tag": "minecraft:sand"
+            },
+            "keepProperties": false
           },
-          "ruleTest": {
-            "predicate_type": "minecraft:tag_match",
-            "tag": "minecraft:sand"
+          {
+            "type": "old_magic:block_transform",
+            "block": "minecraft:wet_sponge",
+            "filter": {
+              "type": "minecraft:matching_blocks",
+              "blocks": "minecraft:sponge"
+            },
+            "keepProperties": false
           }
-        },
-        {
-          "block": {
-            "Name": "minecraft:wet_sponge"
-          },
-          "ruleTest": {
-            "block": "minecraft:sponge",
-            "predicate_type": "minecraft:block_match"
-          }
-        }
-      ]
+        ]
+      },
+      "combineAmount": 0,
+      "delay": 0
     }
   ]
 }
