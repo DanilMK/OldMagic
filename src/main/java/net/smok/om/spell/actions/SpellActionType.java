@@ -3,6 +3,7 @@ package net.smok.om.spell.actions;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.Vec3;
 import net.smok.om.Values;
 import net.smok.om.spell.SpellRunner;
 import net.smok.om.spell.actions.block.*;
@@ -13,6 +14,7 @@ import net.smok.om.spell.actions.position.PositionBlockTarget;
 import net.smok.om.spell.actions.position.RelativeEntityPositionTarget;
 import net.smok.om.utils.StoredValueType;
 
+import java.util.List;
 import java.util.function.Function;
 
 public interface SpellActionType<A extends SpellAction> {
@@ -23,10 +25,10 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<FeatureAction> PLACE_FEATURE = register("place_feature", FeatureAction.MAP_CODEC);
     SpellActionType<BonemealAction> BONEMEAL_BLOCKS = register("bonemeal_blocks", BonemealAction.MAP_CODEC);
     SpellActionType<ForEachBlockTarget> FOR_EACH_BLOCK_TARGET = register("for_each_block_target", ForEachBlockTarget.MAP_CODEC);
-    SpellActionType<?> BLOCK_PLACE = register("block_place", BlockPlaceAction.MAP_CODEC);
-    SpellActionType<?> BLOCKS_TRANSFORM = register("block_transform", BlockTransform.MAP_CODEC);
-    SpellActionType<?> BLOCK_STATE_TRANSFORM = register("block_state_transform", BlockStateTransform.MAP_CODEC);
-    SpellActionType<?> TARGET_HIT_BLOCK = register("target_hit_block", TargetHitBlock.MAP_CODEC);
+    SpellActionType<BlockPlaceAction> BLOCK_PLACE = register("block_place", BlockPlaceAction.MAP_CODEC);
+    SpellActionType<BlockTransform> BLOCKS_TRANSFORM = register("block_transform", BlockTransform.MAP_CODEC);
+    SpellActionType<BlockStateTransform> BLOCK_STATE_TRANSFORM = register("block_state_transform", BlockStateTransform.MAP_CODEC);
+    SpellActionType<TargetHitBlock> TARGET_HIT_BLOCK = register("target_hit_block", TargetHitBlock.MAP_CODEC);
 
 
     SpellActionType<NearbyEntitiesTarget> TARGET_NEARBY_ENTITIES = register("target_by_nearby_entities", NearbyEntitiesTarget.MAP_CODEC);
@@ -34,12 +36,21 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<DiscardProjectile> DISCARD_PROJECTILE = register("discard_projectile", DiscardProjectile.MAP_CODEC);
     SpellActionType<EffectAction> POTION_EFFECT = register("potion_effect", EffectAction.MAP_CODEC);
     SpellActionType<ProjectileSpawn> PROJECTILE = register("projectile", ProjectileSpawn.MAP_CODEC);
-    SpellActionType<CasterEntityTarget> CASTER_ENTITY_TARGET = register("caster_entity_target", CasterEntityTarget.MAP_CODEC);
-    SpellActionType<TeleportEntityToPosition> TELEPORT_ENTITY_TO_POSITION = register("teleport_entity_to_position", TeleportEntityToPosition.MAP_CODEC);
+    UnitAction.Type CASTER_ENTITY_TARGET = register("caster_entity_target", spellRunner -> spellRunner.execute(_ -> {
+        spellRunner.addEntityTarget(spellRunner.caster());
+        return true;
+    }));
+    UnitAction.Type TELEPORT_ENTITY_TO_POSITION = register("teleport_entity_to_position", spellRunner -> spellRunner.executeForAnyEntity((_, entity) -> {
+        List<Vec3> positionTargets = spellRunner.getPositionTargets();
+        if (positionTargets.isEmpty()) return false;
+        Vec3 position = positionTargets.getFirst();
+        entity.teleportTo(position.x, position.y, position.z);
+        return true;
+    }));
     SpellActionType<MoveEntityToPosition> MOVE_ENTITY_TO_POSITION = register("move_entity_to_position", MoveEntityToPosition.MAP_CODEC);
     SpellActionType<KnockbackEntity> KNOCKBACK_ENTITY = register("knockback_entity", KnockbackEntity.MAP_CODEC);
 
-    SpellActionType<UnitAction> TARGET_HIT_ENTITY = register("target_hit_entity", spellRunner -> spellRunner.getOptional(StoredValueType.HIT).map(hitHolder -> {
+    UnitAction.Type TARGET_HIT_ENTITY = register("target_hit_entity", spellRunner -> spellRunner.getOptional(StoredValueType.HIT).map(hitHolder -> {
         if (hitHolder.entity() == null) return SpellRunner.ProcessStatus.FAILURE;
         spellRunner.put(StoredValueType.ENTITY, hitHolder.entity());
         return SpellRunner.ProcessStatus.SUCCESS;
@@ -62,15 +73,12 @@ public interface SpellActionType<A extends SpellAction> {
 
     MapCodec<A> codec();
 
-    default A instance() {
-        return null;
-    }
 
-    private static SpellActionType<UnitAction> register(final String id, Function<SpellRunner, SpellRunner.ProcessStatus> action) {
+    private static UnitAction.Type register(final String id, Function<SpellRunner, SpellRunner.ProcessStatus> action) {
         return Registry.register(Values.SPELL_ACTION_TYPES, Values.id(id), new UnitAction(action).actionType());
     }
 
-    static SpellActionType<UnitAction> register(final Identifier id, Function<SpellRunner, SpellRunner.ProcessStatus> action) {
+    static UnitAction.Type register(final Identifier id, Function<SpellRunner, SpellRunner.ProcessStatus> action) {
         return Registry.register(Values.SPELL_ACTION_TYPES, id, new UnitAction(action).actionType());
     }
 
