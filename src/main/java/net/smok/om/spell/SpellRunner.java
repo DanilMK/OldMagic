@@ -150,16 +150,17 @@ public class SpellRunner {
         return ProcessStatus.SUCCESS;
     }
 
-    public ProcessStatus executeWait(int ticks) {
-        if (shouldExecute()) {
+    public boolean executeWait(int ticks) {
+        if (shouldExecute() && ticks > 0) {
             this.waitTicksLeft = ticks;
-            return ProcessStatus.RUNNING;
+            return true;
         }
-        return ProcessStatus.SUCCESS;
+        return false;
     }
 
     public <T> ProcessStatus executeFor(String key, StoredValueType<T> valueType, BiPredicate<ServerLevel, T> action) {
-        return getOptional(key, valueType).filter(value -> action.test(level, value)).map(_ -> ProcessStatus.SUCCESS).orElse(ProcessStatus.FAILURE);
+        if (shouldExecute()) return getOptional(key, valueType).filter(value -> action.test(level, value)).map(_ -> ProcessStatus.SUCCESS).orElse(ProcessStatus.FAILURE);
+        return ProcessStatus.SUCCESS;
     }
 
     public ProcessStatus executeForAnyBlock(BlockTargetPredicate action) {

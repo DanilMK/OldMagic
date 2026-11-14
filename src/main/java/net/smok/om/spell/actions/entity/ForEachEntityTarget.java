@@ -35,8 +35,8 @@ public record ForEachEntityTarget(int delay, int combineAmount, String entitiesL
         for (BlockPos blockTarget : blockTargets) {
 
             if (delay > 0 && combined > combineAmount) {
-                SpellRunner.ProcessStatus waitStatus = spellRunner.executeWait(delay);
-                if (waitStatus == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
+                combined -= combineAmount;
+                if (spellRunner.executeWait(delay)) return SpellRunner.ProcessStatus.RUNNING;
             }
 
             spellRunner.put(setEntityTarget, StoredValueType.BLOCK, blockTarget);

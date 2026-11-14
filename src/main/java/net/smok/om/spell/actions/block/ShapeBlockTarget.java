@@ -89,7 +89,7 @@ public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, bo
 
     public @NotNull ArrayList<BlockPos> collectSimpleBlocks(ServerLevel level, BlockPos center) {
         return new ArrayList<>(BlockPos.betweenClosedStream(center.offset(-range, -range, -range), center.offset(range, range, range))
-                .filter(blockPos -> shape.isInRange(center, blockPos, range) && filter.test(level, blockPos)).toList());
+                .filter(blockPos -> shape.isInRange(center, blockPos, range) && filter.test(level, blockPos)).map(BlockPos::immutable).toList());
     }
 
 

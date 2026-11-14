@@ -20,6 +20,6 @@ public record WaitAction(int waitTicks) implements SpellAction {
 
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
-        return spellRunner.executeWait(waitTicks);
+        return spellRunner.executeWait(waitTicks) ? SpellRunner.ProcessStatus.RUNNING : SpellRunner.ProcessStatus.SUCCESS;
     }
 }

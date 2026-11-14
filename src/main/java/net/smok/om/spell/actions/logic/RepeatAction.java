@@ -8,12 +8,13 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 
-public record RepeatAction(Holder<SpellAction> action, int delay, int count, SpellRunner.StatusHandle handleStatus) implements SpellAction {
+public record RepeatAction(Holder<SpellAction> action, int delay, int count, int combineAmount, SpellRunner.StatusHandle handleStatus) implements SpellAction {
 
     public static final MapCodec<RepeatAction> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             SpellAction.HOLDER_CODEC.fieldOf("action").forGetter(RepeatAction::action),
             Codec.INT.fieldOf("delay").forGetter(RepeatAction::delay),
             Codec.INT.fieldOf("count").forGetter(RepeatAction::count),
+            Codec.INT.fieldOf("combine_amount").forGetter(RepeatAction::combineAmount),
             SpellRunner.StatusHandle.CODEC.fieldOf("handle_status").forGetter(RepeatAction::handleStatus)
     ).apply(instance, RepeatAction::new));
 
@@ -24,13 +25,15 @@ public record RepeatAction(Holder<SpellAction> action, int delay, int count, Spe
 
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
+        int combined = 1;
         for (int i = 0; i < count; i++) {
-            if (delay > 0) {
-                SpellRunner.ProcessStatus waitStatus = spellRunner.executeWait(delay);
-                if (waitStatus == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
+            if (delay > 0 && combined > combineAmount) {
+                combined -= combineAmount;
+                if (spellRunner.executeWait(delay)) return SpellRunner.ProcessStatus.RUNNING;
             }
 
             SpellRunner.ProcessStatus run = action.value().run(spellRunner);
+            if (run == SpellRunner.ProcessStatus.SUCCESS) combined++;
             if (run == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
             SpellRunner.ProcessStatus result = handleStatus.handle(run);
             if (result != SpellRunner.ProcessStatus.RUNNING) return result;

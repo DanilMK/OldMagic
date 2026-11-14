@@ -42,8 +42,8 @@ public record BlockTransformation(List<TransformEntry> transformList, int delay,
                 if (transform.ruleTest.test(target.getSecond(), spellRunner.getRandom())) {
 
                     if (delay > 0 && combined > combineAmount) {
-                        SpellRunner.ProcessStatus waitStatus = spellRunner.executeWait(delay);
-                        if (waitStatus == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
+                        combined -= combineAmount;
+                        if (spellRunner.executeWait(delay)) return SpellRunner.ProcessStatus.RUNNING;
                     }
 
                     SpellRunner.ProcessStatus status = spellRunner.execute((level) -> {

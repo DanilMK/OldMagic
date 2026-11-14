@@ -52,13 +52,14 @@ public record ForEachBlockTarget(Holder<SpellAction> action, int delay, int comb
 
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
-        int combined = 0;
+        int combined = 1;
         List<BlockPos> blockTargets = spellRunner.getOrCreateList(blocksListTarget, StoredValueType.BLOCK);
         for (BlockPos blockTarget : blockTargets) {
 
+
             if (delay > 0 && combined > combineAmount) {
-                SpellRunner.ProcessStatus waitStatus = spellRunner.executeWait(delay);
-                if (waitStatus == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
+                combined -= combineAmount;
+                if (spellRunner.executeWait(delay)) return SpellRunner.ProcessStatus.RUNNING;
             }
 
             spellRunner.put(setBlockTarget, StoredValueType.BLOCK, blockTarget);
