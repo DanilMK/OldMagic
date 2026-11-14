@@ -17,6 +17,7 @@ import net.smok.om.utils.StoredValueType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, boolean continuesPick, boolean shuffle, String setBlocksListTarget, String centerBlockTarget) implements SpellAction {
 
@@ -30,12 +31,16 @@ public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, bo
             Codec.STRING.optionalFieldOf("center_block_target", "actor").forGetter(ShapeBlockTarget::centerBlockTarget)
     ).apply(instance, ShapeBlockTarget::new));
 
-    public ShapeBlockTarget(Shape shape, int range, boolean maskSurface) {
-        this(shape, range, maskSurface, false, BlockPredicate.alwaysTrue());
+    public static ShapeBlockTarget sphere(@NotNull UnaryOperator<Builder> builder) {
+        return builder.apply(new Builder(Shape.SPHERE)).build();
     }
 
-    public ShapeBlockTarget(Shape shape, int range, boolean maskSurface, boolean maskSolid) {
-        this(shape, range, maskSurface, maskSolid, BlockPredicate.alwaysTrue());
+    public static ShapeBlockTarget cube(@NotNull UnaryOperator<Builder> builder) {
+        return builder.apply(new Builder(Shape.CUBE)).build();
+    }
+
+    public static ShapeBlockTarget diamond(@NotNull UnaryOperator<Builder> builder) {
+        return builder.apply(new Builder(Shape.DIAMOND)).build();
     }
 
     @Override
@@ -135,5 +140,23 @@ public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, bo
             return this;
         }
 
+        public Builder setBlocksListTarget(@NotNull String setBlocksListTarget) {
+            this.setBlocksListTarget = setBlocksListTarget;
+            return this;
+        }
 
+        public Builder filterSurface() {
+            this.filter = filter == null ? SURFACE_FILTER : BlockPredicate.allOf(filter, SURFACE_FILTER);
+            return this;
+        }
+
+        public Builder centerBlockTarget(String centerBlockTarget) {
+            this.centerBlockTarget = centerBlockTarget;
+            return this;
+        }
+
+        public ShapeBlockTarget build() {
+            return new ShapeBlockTarget(shape, range, filter, continuesPick, shuffle, setBlocksListTarget, centerBlockTarget);
+        }
+    }
 }

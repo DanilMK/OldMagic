@@ -8,6 +8,8 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 import net.smok.om.utils.StoredValueType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public record BreakAction(String blockTarget, BlockPredicate filter, boolean dropResources) implements SpellAction {
 
@@ -16,6 +18,26 @@ public record BreakAction(String blockTarget, BlockPredicate filter, boolean dro
             BlockPredicate.CODEC.fieldOf("filter").forGetter(BreakAction::filter),
             Codec.BOOL.fieldOf("drop_resources").forGetter(BreakAction::dropResources)
     ).apply(instance, BreakAction::new));
+
+    @Contract(" -> new")
+    public static @NotNull BreakAction anyWithDrops() {
+        return new BreakAction("block", BlockPredicate.alwaysTrue(), true);
+    }
+
+    @Contract(" -> new")
+    public static @NotNull BreakAction anyWithoutDrop() {
+        return new BreakAction("block", BlockPredicate.alwaysTrue(), false);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull BreakAction breakBlock(BlockPredicate filter, boolean dropResources) {
+        return new BreakAction("block", filter, dropResources);
+    }
+
+    @Contract("_, _, _ -> new")
+    public static @NotNull BreakAction breakBlock(String target, BlockPredicate filter, boolean dropResources) {
+        return new BreakAction(target, filter, dropResources);
+    }
 
 
     @Override

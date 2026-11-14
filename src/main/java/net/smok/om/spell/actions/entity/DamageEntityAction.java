@@ -12,6 +12,8 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 import net.smok.om.utils.StoredValueType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public record DamageEntityAction(ResourceKey<DamageType> damageType, float damageAmount, String target) implements SpellAction {
 
@@ -21,6 +23,25 @@ public record DamageEntityAction(ResourceKey<DamageType> damageType, float damag
             Codec.STRING.optionalFieldOf("target", "entity").forGetter(DamageEntityAction::target)
     ).apply(instance, DamageEntityAction::new));
 
+    @Contract("_, _, _ -> new")
+    public static @NotNull DamageEntityAction damage(ResourceKey<DamageType> damageType, float damageAmount, String target) {
+        return new DamageEntityAction(damageType, damageAmount, target);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull DamageEntityAction damage(ResourceKey<DamageType> damageType, float damageAmount) {
+        return new DamageEntityAction(damageType, damageAmount, "entity");
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull DamageEntityAction damage(float damageAmount) {
+        return new DamageEntityAction(DamageTypes.MAGIC, damageAmount, "entity");
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull DamageEntityAction damage(float damageAmount, String target) {
+        return new DamageEntityAction(DamageTypes.MAGIC, damageAmount, target);
+    }
 
     @Override
     public SpellActionType<?> actionType() {

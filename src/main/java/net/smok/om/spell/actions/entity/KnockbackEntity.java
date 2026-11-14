@@ -11,6 +11,8 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 import net.smok.om.utils.StoredValueType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public record KnockbackEntity(float power, boolean ignoreKnockbackResistance, String target) implements SpellAction {
 
@@ -19,6 +21,26 @@ public record KnockbackEntity(float power, boolean ignoreKnockbackResistance, St
             Codec.BOOL.optionalFieldOf("ignore_knockback_resistance", false).forGetter(KnockbackEntity::ignoreKnockbackResistance),
             Codec.STRING.optionalFieldOf("target", "entity").forGetter(KnockbackEntity::target)
     ).apply(instance, KnockbackEntity::new));
+
+    @Contract("_ -> new")
+    public static @NotNull KnockbackEntity defaultKnockback(String target) {
+        return new KnockbackEntity(1, false, target);
+    }
+
+    @Contract(" -> new")
+    public static @NotNull KnockbackEntity defaultKnockback() {
+        return new KnockbackEntity(1, false, "entity");
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull KnockbackEntity knockback(float power, boolean ignoreKnockbackResistance) {
+        return new KnockbackEntity(power, ignoreKnockbackResistance, "entity");
+    }
+
+    @Contract("_, _, _ -> new")
+    public static @NotNull KnockbackEntity knockback(float power, boolean ignoreKnockbackResistance, String target) {
+        return new KnockbackEntity(power, ignoreKnockbackResistance, target);
+    }
 
     @Override
     public SpellActionType<?> actionType() {

@@ -18,7 +18,7 @@ import net.smok.om.menu.OMMenus;
 import net.smok.om.spell.*;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
-import net.smok.om.spell.actions.block.RandomBlockPredicate;
+import net.smok.om.utils.RandomBlockPredicate;
 import net.smok.om.utils.StoredValueType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

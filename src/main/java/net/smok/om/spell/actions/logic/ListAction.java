@@ -18,7 +18,34 @@ public record ListAction(List<Holder<SpellAction>> actionList, SpellRunner.Statu
 
     @SafeVarargs
     public ListAction(Holder<SpellAction>... actions) {
-        this(List.of(actions));
+        this(List.of(actions), SpellRunner.StatusHandle.IGNORE);
+    }
+
+    @SafeVarargs
+    public static ListAction list(Holder<SpellAction>... actions) {
+        return new ListAction(List.of(actions), SpellRunner.StatusHandle.IGNORE);
+    }
+
+    public static ListAction list(List<Holder<SpellAction>> actions) {
+        return new ListAction(actions, SpellRunner.StatusHandle.IGNORE);
+    }
+
+    @SafeVarargs
+    public static ListAction chain(Holder<SpellAction>... actions) {
+        return new ListAction(List.of(actions), SpellRunner.StatusHandle.CHAIN);
+    }
+
+    public static ListAction chain(List<Holder<SpellAction>> actions) {
+        return new ListAction(actions, SpellRunner.StatusHandle.CHAIN);
+    }
+
+    @SafeVarargs
+    public static ListAction firstEnter(Holder<SpellAction>... actions) {
+        return new ListAction(List.of(actions), SpellRunner.StatusHandle.FIRST_ENTER);
+    }
+
+    public static ListAction firstEnter(List<Holder<SpellAction>> actions) {
+        return new ListAction(actions, SpellRunner.StatusHandle.FIRST_ENTER);
     }
 
     @Override

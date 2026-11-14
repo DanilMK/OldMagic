@@ -24,6 +24,18 @@ public record MoveEntityToPosition(float power, boolean ignoreKnockbackResistanc
     ).apply(instance, MoveEntityToPosition::new));
 
 
+
+
+    @Contract("_, _ -> new")
+    public static @NotNull MoveEntityToPosition move(float power, boolean ignoreKnockbackResistance) {
+        return new MoveEntityToPosition(power, ignoreKnockbackResistance, "entity", "position");
+    }
+
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull MoveEntityToPosition move(float power, boolean ignoreKnockbackResistance, String entityTarget, String positionTarget) {
+        return new MoveEntityToPosition(power, ignoreKnockbackResistance, entityTarget, positionTarget);
+    }
+
     @Override
     public SpellActionType<?> actionType() {
         return SpellActionType.MOVE_ENTITY_TO_POSITION;

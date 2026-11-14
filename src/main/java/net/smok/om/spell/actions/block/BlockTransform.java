@@ -12,6 +12,8 @@ import net.smok.om.spell.SpellRunner;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.utils.StoredValueType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public record BlockTransform(String blockTarget, Block block, boolean keepProperties, BlockPredicate filter) implements SpellAction {
 
@@ -21,6 +23,31 @@ public record BlockTransform(String blockTarget, Block block, boolean keepProper
             Codec.BOOL.optionalFieldOf("keep_properties", true).forGetter(BlockTransform::keepProperties),
             BlockPredicate.CODEC.optionalFieldOf("filter", BlockPredicate.alwaysTrue()).forGetter(BlockTransform::filter)
     ).apply(instance, BlockTransform::new));
+
+    public BlockTransform(Block block, boolean keepProperties, BlockPredicate filter) {
+        this("block", block, keepProperties, filter);
+    }
+
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull BlockTransform transform(String blockTarget, Block block, boolean keepProperties, BlockPredicate filter) {
+        return new BlockTransform(blockTarget, block, keepProperties, filter);
+    }
+
+    @Contract("_, _, _ -> new")
+    public static @NotNull BlockTransform transform(Block block, boolean keepProperties, BlockPredicate filter) {
+        return new BlockTransform("block", block, keepProperties, filter);
+    }
+
+    @Contract("_, _, _ -> new")
+    public static @NotNull BlockTransform transform(String blockTarget, Block block, boolean keepProperties) {
+        return new BlockTransform(blockTarget, block, keepProperties, BlockPredicate.alwaysTrue());
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull BlockTransform transform(Block block, boolean keepProperties) {
+        return new BlockTransform("block", block, keepProperties, BlockPredicate.alwaysTrue());
+    }
+
 
 
     @Override

@@ -9,6 +9,8 @@ import net.smok.om.spell.SpellRunner;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.utils.StoredValueType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -22,6 +24,26 @@ public record ForEachBlockTarget(Holder<SpellAction> action, int delay, int comb
             Codec.STRING.optionalFieldOf("set_block_target", "block").forGetter(ForEachBlockTarget::setBlockTarget)
     ).apply(instance, ForEachBlockTarget::new));
 
+
+    @Contract("_, _, _, _, _ -> new")
+    public static @NotNull ForEachBlockTarget target(Holder<SpellAction> action, int delay, int combineAmount, String blocksListTarget, String setBlockTarget) {
+        return new ForEachBlockTarget(action, delay, combineAmount, blocksListTarget, setBlockTarget);
+    }
+
+    @Contract("_, _, _ -> new")
+    public static @NotNull ForEachBlockTarget target(Holder<SpellAction> action, int delay, int combineAmount) {
+        return new ForEachBlockTarget(action, delay, combineAmount, "blocks", "block");
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull ForEachBlockTarget target(Holder<SpellAction> action) {
+        return new ForEachBlockTarget(action, 0, 1, "blocks", "block");
+    }
+
+    @Contract("_, _, _ -> new")
+    public static @NotNull ForEachBlockTarget target(Holder<SpellAction> action, String blocksListTarget, String setBlockTarget) {
+        return new ForEachBlockTarget(action, 0, 1, blocksListTarget, setBlockTarget);
+    }
 
     @Override
     public SpellActionType<?> actionType() {

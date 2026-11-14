@@ -11,18 +11,20 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 import net.smok.om.utils.EntityHolder;
 import net.smok.om.utils.Shape;
 import net.smok.om.utils.StoredValueType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public record NearbyEntitiesTarget(float range, @Nullable HolderSet<EntityType<?>> filter, Shape shape, String entityTargets, String centerTarget) implements SpellAction {
@@ -53,18 +55,11 @@ public record NearbyEntitiesTarget(float range, @Nullable HolderSet<EntityType<?
         }
     };
 
-
-    public NearbyEntitiesTarget(float range, EntityType<?> entity, Shape shape) {
-        this(range, HolderSet.direct(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity)), shape);
+    @Contract
+    public static NearbyEntitiesTarget builder(@NotNull UnaryOperator<Builder> builder) {
+        return builder.apply(new Builder()).build();
     }
 
-    public NearbyEntitiesTarget(float range, Shape shape, EntityType<?>... entities) {
-        this(range, Arrays.stream(entities), shape);
-    }
-
-    public NearbyEntitiesTarget(float range, @NotNull Stream<? extends EntityType<?>> stream, Shape shape) {
-        this(range, HolderSet.direct(stream.map(BuiltInRegistries.ENTITY_TYPE::createIntrusiveHolder).toList()), shape);
-    }
 
 
     @Override
@@ -82,4 +77,58 @@ public record NearbyEntitiesTarget(float range, @Nullable HolderSet<EntityType<?
             return !entities.isEmpty();
         });
     }
+
+    public static class Builder {
+        private HolderSet<EntityType<?>> filter;
+        private float range = 1;
+        private Shape shape = Shape.CUBE;
+        private String entityTarget = "entities";
+        private String centerTarget = "actor";
+
+
+        public Builder filter(HolderSet<EntityType<?>> filter) {
+            this.filter = filter;
+            return this;
+        }
+
+        public Builder filter(EntityType<?> entity) {
+            filter(HolderSet.direct(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity)));
+            return this;
+        }
+
+        public Builder filter(@NotNull Stream<? extends EntityType<?>> stream) {
+            filter(HolderSet.direct(stream.map(BuiltInRegistries.ENTITY_TYPE::createIntrusiveHolder).toList()));
+            return this;
+        }
+
+        public Builder filter(EntityType<?>... entities) {
+            filter(Arrays.stream(entities));
+            return this;
+        }
+
+        public Builder range(float range) {
+            this.range = range;
+            return this;
+        }
+
+        public Builder shape(Shape shape) {
+            this.shape = shape;
+            return this;
+        }
+
+        public Builder entityTarget(String entityTarget) {
+            this.entityTarget = entityTarget;
+            return this;
+        }
+
+        public Builder centerTarget(String centerTarget) {
+            this.centerTarget = centerTarget;
+            return this;
+        }
+
+        public NearbyEntitiesTarget build() {
+            return new NearbyEntitiesTarget(range, filter, shape, entityTarget, centerTarget);
+        }
+    }
+
 }
