@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -18,6 +19,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.smok.om.entity.SpellProjectile;
 import net.smok.om.spell.actions.SpellAction;
+import net.smok.om.spell.cast.PlayerCaster;
 import net.smok.om.utils.EntityHolder;
 import net.smok.om.utils.HitHolder;
 import net.smok.om.utils.StoredValueType;
@@ -74,6 +76,13 @@ public class SpellRunner {
         this.randomSource = level.getRandom().fork();
         this.randomSeed = randomSource.nextInt();
         this.storedValues = new StoredValues();
+        storedValues.put("actor", StoredValueType.ENTITY, new EntityHolder(actor));
+        if (actor instanceof Projectile projectile) {
+            storedValues.put("projectile", StoredValueType.ENTITY, new EntityHolder(projectile));
+            if (projectile.getOwner() != null) storedValues.put("caster", StoredValueType.ENTITY, new EntityHolder(projectile.getOwner()));
+        } else {
+            if (actor instanceof PlayerCaster) storedValues.put("caster", StoredValueType.ENTITY, new EntityHolder(actor));
+        }
     }
 
     // Десериализационный конструктор для Codec
