@@ -1,71 +1,98 @@
 package net.smok.om.utils;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class StoredValues {
 
-    public static final Codec<StoredValues> CODEC = Codec.<StoredValueType<?>, Object>dispatchedMap(
-            StoredValueType.TYPE_CODEC,
-            StoredValueType::valueCodec
-    ).xmap(StoredValues::new, storedValues -> storedValues.map);
+    public static final Codec<StoredValues> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.unboundedMap(Codec.STRING,
+                    StoredValueType.TYPE_CODEC.<StoredValueType.Value<?>>
+                            dispatch(StoredValueType.Value::type, StoredValueType::valueMapCodec))
+                    .fieldOf("singles").forGetter(values -> values.singles),
 
-    private final Map<StoredValueType<?>, Object> map;
+            Codec.unboundedMap(Codec.STRING, StoredValueType.TYPE_CODEC.<StoredValueType.ListValue<?>>
+                            dispatch(StoredValueType.ListValue::type, StoredValueType::listValueMapCodec))
+                    .fieldOf("lists").forGetter(values -> values.lists)
+    ).apply(instance, StoredValues::new));
+
+
+    private final Map<String, StoredValueType.Value<?>> singles;
+    private final Map<String, StoredValueType.ListValue<?>> lists;
 
     public StoredValues() {
-        map = new HashMap<>();
+        singles = new HashMap<>();
+        lists = new HashMap<>();
     }
 
-    public StoredValues(Map<StoredValueType<?>, Object> map) {
-        this.map = new HashMap<>(map);
+    public StoredValues(Map<String, StoredValueType.Value<?>> singles, Map<String, StoredValueType.ListValue<?>> lists) {
+        this.singles = new HashMap<>(singles);
+        this.lists = new HashMap<>(lists);
     }
 
     public void init(ServerLevel level) {
-        for (Map.Entry<? extends StoredValueType<?>, ?> entry : map.entrySet()) {
-            //noinspection unchecked
-            StoredValueType<Object> storedValueType = (StoredValueType<Object>) entry.getKey();
-            Object o = entry.getValue();
-            if (storedValueType.levelInitHandler() != null)
-                storedValueType.levelInitHandler().accept(o, level);
+        singles.values().forEach(value -> value.init(level));
+        lists.values().forEach(listValue -> listValue.init(level));
+    }
+
+
+    public <T> void put(String key, StoredValueType<T> type, T value) {
+        if (value == null) singles.remove(key);
+        else singles.put(key, new StoredValueType.Value<>(type, value));
+    }
+
+    public <T> void putIfAbsent(String key, StoredValueType<T> type, T value) {
+        if (value != null) singles.putIfAbsent(key, new StoredValueType.Value<>(type, value));
+    }
+
+    public <T> T get(@NotNull String key, @NotNull StoredValueType<T> type) {
+        StoredValueType.Value<?> value = singles.get(key);
+        if (value == null) return null;
+        if (value.type().equals(type)) //noinspection unchecked
+            return (T) value.value();
+        return value.toType(type).orElse(null);
+    }
+
+    public <T> T getOrCreateDefault(String key, StoredValueType<T> type) {
+        if (singles.containsKey(key)) return get(key, type);
+        if (type.defaultValue() == null) return null;
+        T result = type.defaultValue().get();
+        if (result != null) put(key, type, result);
+        return result;
+    }
+
+    public <T> List<T> getOrCreateList(String key, StoredValueType<T> type) {
+        if (lists.containsKey(key)) {
+            StoredValueType.ListValue<?> listValue = lists.get(key);
+            if (listValue.type().equals(type)) {
+                //noinspection unchecked
+                return (List<T>) listValue.list();
+            }
         }
 
+        StoredValueType.ListValue<T> list = new StoredValueType.ListValue<>(type, new ArrayList<>());
+        lists.put(key, list);
+        return list.list();
     }
 
-    public <T> void put(StoredValueType<T> type, T value) {
-        if (value == null) map.remove(type);
-        else map.put(type, value);
+    public <T> void replaceList(String key, StoredValueType<T> type, ArrayList<T> list) {
+        lists.put(key, new StoredValueType.ListValue<>(type, list));
     }
 
-    public <T> void putIfAbsent(StoredValueType<T> type, T value) {
-        if (value == null) map.remove(type);
-        else map.putIfAbsent(type, value);
+
+    public <T> Optional<T> getOptional(String key, StoredValueType<T> type) {
+        StoredValueType.Value<?> value = singles.get(key);
+        if (value == null) {
+            if (type.defaultValue() == null) return Optional.empty();
+            return Optional.ofNullable(type.defaultValue().get());
+        }
+        if (value.type().equals(type)) //noinspection unchecked
+            return Optional.ofNullable((T) value.value());
+        return value.toType(type);
     }
-
-    public <T> T get(StoredValueType<T> type) {
-        //noinspection unchecked
-        return (T) map.get(type);
-    }
-
-    public <T> T getOrCreateDefault(StoredValueType<T> type) {
-        if (map.containsKey(type)) //noinspection unchecked
-            return (T) map.get(type);
-        if (type.defaultValue() == null) return null;
-
-        T t = type.defaultValue().get();
-        if (t != null) put(type, t);
-        return t;
-    }
-
-    public <T> Optional<T> getOptional(StoredValueType<T> type) {
-        if (map.containsKey(type)) //noinspection unchecked
-            return Optional.of((T) map.get(type));
-        if (type.defaultValue() != null) return Optional.ofNullable(type.defaultValue().get());
-        return Optional.empty();
-    }
-
 
 }

@@ -149,8 +149,8 @@ public class SpellRunner {
         return ProcessStatus.SUCCESS;
     }
 
-    public <T> ProcessStatus executeFor(StoredValueType<T> valueType, BiPredicate<ServerLevel, T> action) {
-        return getOptional(valueType).filter(value -> action.test(level, value)).map(_ -> ProcessStatus.SUCCESS).orElse(ProcessStatus.FAILURE);
+    public <T> ProcessStatus executeFor(String key, StoredValueType<T> valueType, BiPredicate<ServerLevel, T> action) {
+        return getOptional(key, valueType).filter(value -> action.test(level, value)).map(_ -> ProcessStatus.SUCCESS).orElse(ProcessStatus.FAILURE);
     }
 
     public ProcessStatus executeForAnyBlock(BlockTargetPredicate action) {
@@ -164,16 +164,16 @@ public class SpellRunner {
     public ProcessStatus executeForAnyEntity(BiPredicate<ServerLevel, Entity> action) {
 
         boolean check = false;
-        for (EntityHolder entity : new ArrayList<>(getOrCreateDefault(StoredValueType.ENTITIES))) {
+        for (EntityHolder entity : new ArrayList<>(getOrCreateList("entities", StoredValueType.ENTITY))) {
             check |= action.test(level, entity.getEntity());
         }
         return check ? ProcessStatus.SUCCESS : ProcessStatus.FAILURE;
     }
 
     // Геттеры для работы логики действий заклинаний
-    public List<BlockPos> getBlockTargets() { return getOrCreateDefault(StoredValueType.BLOCKS); }
-    public List<Entity> getEntityTargets() { return getOrCreateDefault(StoredValueType.ENTITIES).stream().map(EntityHolder::getEntity).toList(); }
-    public List<Vec3> getPositionTargets() { return getOrCreateDefault(StoredValueType.POSITIONS); }
+    public List<BlockPos> getBlockTargets() { return getOrCreateList("blocks", StoredValueType.BLOCK); }
+    public List<Entity> getEntityTargets() { return getOrCreateList("entities", StoredValueType.ENTITY).stream().map(EntityHolder::getEntity).toList(); }
+    public List<Vec3> getPositionTargets() { return getOrCreateList("positions", StoredValueType.POSITION); }
 
 
     public RandomSource getRandom() {
@@ -186,51 +186,59 @@ public class SpellRunner {
     }
 
     public List<Pair<BlockPos, BlockState>> getBlockTargetStates() {
-        return getOptional(StoredValueType.BLOCKS).map(list -> list.stream().map(blockPos -> new Pair<>(blockPos, level.getBlockState(blockPos))).toList()).orElse(List.of());
+        return getOrCreateList("blocks", StoredValueType.BLOCK).stream().map(blockPos -> new Pair<>(blockPos, level.getBlockState(blockPos))).toList();
     }
 
     public void replaceEntityTargets(Collection<Entity> entities) {
-        put(StoredValueType.ENTITIES, new ArrayList<>(entities.stream().map(EntityHolder::new).toList()));
+        replaceList("entities", StoredValueType.ENTITY, new ArrayList<>(entities.stream().map(EntityHolder::new).toList()));
     }
 
     public void addBlockTargets(Collection<BlockPos> blockPos) {
-        getOrCreateDefault(StoredValueType.BLOCKS).addAll(blockPos);
+        getOrCreateList("blocks", StoredValueType.BLOCK).addAll(blockPos);
     }
 
     public void addEntityTarget(Entity entity) {
-        getOrCreateDefault(StoredValueType.ENTITIES).add(new EntityHolder(entity));
+        getOrCreateList("blocks", StoredValueType.ENTITY).add(new EntityHolder(entity));
     }
 
     public void addPositionTarget(Vec3 position) {
-        getOrCreateDefault(StoredValueType.POSITIONS).add(position);
+        getOrCreateList("positions", StoredValueType.POSITION).add(position);
     }
 
     public void targetEntityByHit(@NotNull EntityHitResult hitResult) {
-        put(StoredValueType.HIT, HitHolder.byHit(hitResult));
+        put("hit", StoredValueType.HIT, HitHolder.byHit(hitResult));
     }
 
     public void targetBlockByHit(@NotNull BlockHitResult blockHitResult) {
-        put(StoredValueType.HIT, HitHolder.byHit(blockHitResult));
+        put("hit", StoredValueType.HIT, HitHolder.byHit(blockHitResult));
     }
 
-    public <T> void put(StoredValueType<T> type, T value) {
-        storedValues.put(type, value);
+    public <T> void put(String key, StoredValueType<T> type, T value) {
+        storedValues.put(key, type, value);
     }
 
-    public <T> void putIfAbsent(StoredValueType<T> type, T value) {
-        storedValues.putIfAbsent(type, value);
+    public <T> void putIfAbsent(String key, StoredValueType<T> type, T value) {
+        storedValues.putIfAbsent(key, type, value);
     }
 
-    public <T> T get(StoredValueType<T> type) {
-        return storedValues.get(type);
+    public <T> T get(String key, StoredValueType<T> type) {
+        return storedValues.get(key, type);
     }
 
-    public <T> T getOrCreateDefault(StoredValueType<T> type) {
-        return storedValues.getOrCreateDefault(type);
+    public <T> T getOrCreateDefault(String key, StoredValueType<T> type) {
+        return storedValues.getOrCreateDefault(key, type);
     }
 
-    public <T> Optional<T> getOptional(StoredValueType<T> type) {
-        return storedValues.getOptional(type);
+    public <T> Optional<T> getOptional(String key, StoredValueType<T> type) {
+        return storedValues.getOptional(key, type);
+    }
+
+    public <T> List<T> getOrCreateList(String key, StoredValueType<T> type) {
+        return storedValues.getOrCreateList(key, type);
+    }
+
+    public <T> void replaceList(String key, StoredValueType<T> type, ArrayList<T> list) {
+        storedValues.replaceList(key, type, list);
     }
 
     public Entity getActor() {
@@ -253,22 +261,27 @@ public class SpellRunner {
 
 
     public enum StatusHandle implements StringRepresentable {
-        WHILE_SUCCESS("while_success"), WHILE_FAILURE("while_failure"), IGNORE("ignore");
+        CHAIN("chain", ProcessStatus.SUCCESS),
+        FIRST_ENTER("first_enter", ProcessStatus.FAILURE),
+        IGNORE("ignore", ProcessStatus.SUCCESS);
+
         public static final Codec<StatusHandle> CODEC = StringRepresentable.fromEnum(StatusHandle::values);
 
         private final String name;
+        private final ProcessStatus onEnd;
 
-        StatusHandle(String name) {
+        StatusHandle(String name, ProcessStatus onEnd) {
             this.name = name;
+            this.onEnd = onEnd;
         }
 
         public ProcessStatus handle(ProcessStatus status) {
             switch (this) {
-                case WHILE_SUCCESS -> {
+                case CHAIN -> {
                     if (status == ProcessStatus.FAILURE) return ProcessStatus.FAILURE;
                     return ProcessStatus.RUNNING;
                 }
-                case WHILE_FAILURE -> {
+                case FIRST_ENTER -> {
                     if (status == ProcessStatus.SUCCESS) return ProcessStatus.SUCCESS;
                     return ProcessStatus.RUNNING;
                 }
@@ -277,6 +290,10 @@ public class SpellRunner {
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + this);
             }
+        }
+
+        public ProcessStatus getOnEnd() {
+            return onEnd;
         }
 
         @Override
