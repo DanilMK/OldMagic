@@ -8,13 +8,13 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 
-public record RepeatAction(Holder<SpellAction> action, int delay, int count, SpellRunner.StatusHandle handle) implements SpellAction {
+public record RepeatAction(Holder<SpellAction> action, int delay, int count, SpellRunner.StatusHandle handleStatus) implements SpellAction {
 
     public static final MapCodec<RepeatAction> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             SpellAction.HOLDER_CODEC.fieldOf("action").forGetter(RepeatAction::action),
             Codec.INT.fieldOf("delay").forGetter(RepeatAction::delay),
             Codec.INT.fieldOf("count").forGetter(RepeatAction::count),
-            SpellRunner.StatusHandle.CODEC.fieldOf("handle").forGetter(RepeatAction::handle)
+            SpellRunner.StatusHandle.CODEC.fieldOf("handle_status").forGetter(RepeatAction::handleStatus)
     ).apply(instance, RepeatAction::new));
 
     @Override
@@ -32,7 +32,7 @@ public record RepeatAction(Holder<SpellAction> action, int delay, int count, Spe
 
             SpellRunner.ProcessStatus run = action.value().run(spellRunner);
             if (run == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
-            SpellRunner.ProcessStatus result = handle.handle(run);
+            SpellRunner.ProcessStatus result = handleStatus.handle(run);
             if (result != SpellRunner.ProcessStatus.RUNNING) return result;
         }
         return SpellRunner.ProcessStatus.SUCCESS;

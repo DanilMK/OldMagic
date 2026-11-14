@@ -5,14 +5,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import net.smok.om.Values;
+import net.smok.om.entity.SpellProjectile;
 import net.smok.om.spell.SpellRunner;
 import net.smok.om.spell.actions.block.*;
 import net.smok.om.spell.actions.entity.*;
 import net.smok.om.spell.actions.logic.*;
-import net.smok.om.spell.actions.position.EntityPositionTarget;
-import net.smok.om.spell.actions.position.PositionBlockTarget;
-import net.smok.om.spell.actions.position.RelativeEntityPositionTarget;
-import net.smok.om.utils.StoredValueType;
+import net.smok.om.spell.actions.misc.*;
 
 import java.util.List;
 import java.util.function.Function;

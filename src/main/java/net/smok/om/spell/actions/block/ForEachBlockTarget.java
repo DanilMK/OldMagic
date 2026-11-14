@@ -12,12 +12,14 @@ import net.smok.om.utils.StoredValueType;
 
 import java.util.List;
 
-public record ForEachBlockTarget(int delay, int combineAmount, Holder<SpellAction> action) implements SpellAction {
+public record ForEachBlockTarget(Holder<SpellAction> action, int delay, int combineAmount, String blocksListTarget, String setBlockTarget) implements SpellAction {
 
     public static final MapCodec<ForEachBlockTarget> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-        Codec.INT.fieldOf("delay").forGetter(ForEachBlockTarget::delay),
-        Codec.INT.fieldOf("combineAmount").forGetter(ForEachBlockTarget::combineAmount),
-        SpellAction.HOLDER_CODEC.fieldOf("action").forGetter(ForEachBlockTarget::action)
+            SpellAction.HOLDER_CODEC.fieldOf("action").forGetter(ForEachBlockTarget::action),
+            Codec.INT.fieldOf("delay").forGetter(ForEachBlockTarget::delay),
+            Codec.INT.fieldOf("combine_amount").forGetter(ForEachBlockTarget::combineAmount),
+            Codec.STRING.optionalFieldOf("blocks_list_target", "blocks").forGetter(ForEachBlockTarget::blocksListTarget),
+            Codec.STRING.optionalFieldOf("set_block_target", "block").forGetter(ForEachBlockTarget::setBlockTarget)
     ).apply(instance, ForEachBlockTarget::new));
 
 
@@ -29,7 +31,7 @@ public record ForEachBlockTarget(int delay, int combineAmount, Holder<SpellActio
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
         int combined = 0;
-        List<BlockPos> blockTargets = spellRunner.getBlockTargets();
+        List<BlockPos> blockTargets = spellRunner.getOrCreateList(blocksListTarget, StoredValueType.BLOCK);
         for (BlockPos blockTarget : blockTargets) {
 
             if (delay > 0 && combined > combineAmount) {
@@ -37,7 +39,7 @@ public record ForEachBlockTarget(int delay, int combineAmount, Holder<SpellActio
                 if (waitStatus == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
             }
 
-            spellRunner.put(StoredValueType.BLOCK, blockTarget);
+            spellRunner.put(setBlockTarget, StoredValueType.BLOCK, blockTarget);
             SpellRunner.ProcessStatus run = action.value().run(spellRunner);
             if (run == SpellRunner.ProcessStatus.SUCCESS) combined++;
 

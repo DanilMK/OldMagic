@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.StateHolder;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.smok.om.spell.SpellRunner;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
@@ -20,12 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-public record BlockStateTransform(List<PropertyChanger> properties) implements SpellAction {
+public record BlockStateTransform(String blockTarget, BlockPredicate filter, List<PropertyChanger> properties) implements SpellAction {
 
     private static final RandomProperty RANDOM_PROPERTY = new RandomProperty();
     private static final CycleProperty CYCLE_PROPERTY = new CycleProperty();
 
     public static final MapCodec<BlockStateTransform> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            Codec.STRING.optionalFieldOf("blockTarget", "block").forGetter(BlockStateTransform::blockTarget),
+            BlockPredicate.CODEC.optionalFieldOf("filter", BlockPredicate.alwaysTrue()).forGetter(BlockStateTransform::filter),
             PropertyChanger.CODEC.listOf().fieldOf("properties").forGetter(BlockStateTransform::properties)
     ).apply(instance, BlockStateTransform::new));
 
@@ -41,7 +44,8 @@ public record BlockStateTransform(List<PropertyChanger> properties) implements S
 
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
-        return spellRunner.executeFor(StoredValueType.BLOCK, (level, blockPos) -> {
+        return spellRunner.executeFor(blockTarget, StoredValueType.BLOCK, (level, blockPos) -> {
+            if (!filter.test(level, blockPos)) return false;
             BlockState actualState = level.getBlockState(blockPos);
             BlockState blockState = actualState;
             StateDefinition<Block, BlockState> definition = blockState.getBlock().getStateDefinition();
@@ -118,6 +122,8 @@ public record BlockStateTransform(List<PropertyChanger> properties) implements S
     }
 
     public static class Builder {
+        private String blockTarget = "block";
+        private BlockPredicate filter = BlockPredicate.alwaysTrue();
         private final ImmutableList.Builder<PropertyChanger> list = new ImmutableList.Builder<>();
 
         public <T extends Comparable<T>> Builder set(Property<T> property, T value) {
@@ -135,8 +141,18 @@ public record BlockStateTransform(List<PropertyChanger> properties) implements S
             return this;
         }
 
+        public Builder setBlockTarget(String blockTarget) {
+            this.blockTarget = blockTarget;
+            return this;
+        }
+
+        public Builder setFilter(BlockPredicate filter) {
+            this.filter = filter;
+            return this;
+        }
+
         public BlockStateTransform build() {
-            return new BlockStateTransform(list.build());
+            return new BlockStateTransform(blockTarget, filter, list.build());
         }
     }
 }

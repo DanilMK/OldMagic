@@ -9,10 +9,11 @@ import net.smok.om.spell.SpellRunner;
 
 import java.util.List;
 
-public record ListAction(List<Holder<SpellAction>> actionList) implements SpellAction {
+public record ListAction(List<Holder<SpellAction>> actionList, SpellRunner.StatusHandle handleStatus) implements SpellAction {
 
     public static final MapCodec<ListAction> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            SpellAction.HOLDER_CODEC.listOf().fieldOf("action_list").forGetter(ListAction::actionList)
+            SpellAction.HOLDER_CODEC.listOf().fieldOf("action_list").forGetter(ListAction::actionList),
+            SpellRunner.StatusHandle.CODEC.optionalFieldOf("handle_status", SpellRunner.StatusHandle.IGNORE).forGetter(ListAction::handleStatus)
     ).apply(instance, ListAction::new));
 
     @SafeVarargs
@@ -30,7 +31,10 @@ public record ListAction(List<Holder<SpellAction>> actionList) implements SpellA
         for (Holder<SpellAction> action : actionList) {
             SpellRunner.ProcessStatus run = action.value().run(spellRunner);
             if (run == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
+            SpellRunner.ProcessStatus result = handleStatus.handle(run);
+            if (result != SpellRunner.ProcessStatus.RUNNING) return result;
         }
-        return SpellRunner.ProcessStatus.SUCCESS;
+
+        return handleStatus.getOnEnd();
     }
 }

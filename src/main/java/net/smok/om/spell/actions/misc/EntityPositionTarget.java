@@ -1,4 +1,4 @@
-package net.smok.om.spell.actions.position;
+package net.smok.om.spell.actions.misc;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -7,6 +7,7 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 
+@Deprecated
 public record EntityPositionTarget(Vec3 offset) implements SpellAction {
     public static final MapCodec<EntityPositionTarget> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Vec3.CODEC.optionalFieldOf("offset", Vec3.ZERO).forGetter(EntityPositionTarget::offset)

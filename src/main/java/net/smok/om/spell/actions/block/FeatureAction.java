@@ -25,7 +25,7 @@ public record FeatureAction(ResourceKey<ConfiguredFeature<?, ?>> feature) implem
 
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
-        return spellRunner.executeFor(StoredValueType.BLOCK, (level, blockPos) -> level.holderLookup(Registries.CONFIGURED_FEATURE).get(feature)
+        return spellRunner.executeFor("block", StoredValueType.BLOCK, (level, blockPos) -> level.holderLookup(Registries.CONFIGURED_FEATURE).get(feature)
                 .map(Holder.Reference::value)
                 .map(feature1 -> feature1.place(level, level.getChunkSource().getGenerator(), level.getRandom(), blockPos))
                 .orElse(false));

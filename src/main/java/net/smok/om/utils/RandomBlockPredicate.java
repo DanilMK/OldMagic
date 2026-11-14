@@ -1,4 +1,4 @@
-package net.smok.om.spell.actions.block;
+package net.smok.om.utils;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

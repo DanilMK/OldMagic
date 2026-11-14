@@ -14,6 +14,7 @@ import net.smok.om.spell.SpellRunner;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public record BlockTransformation(List<TransformEntry> transformList, int delay, int combineAmount) implements SpellAction {
 
     public static final Codec<TransformEntry> TRANSFORM_ENTRY_CODEC = RecordCodecBuilder.create(instance -> instance.group(

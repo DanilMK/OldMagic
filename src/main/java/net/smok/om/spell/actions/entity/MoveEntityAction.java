@@ -13,6 +13,7 @@ import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public record MoveEntityAction(Direction direction, float power, boolean ignoreKnockbackResist) implements SpellAction {
 
     public static final Codec<Direction> DIRECTION_CODEC = StringRepresentable.fromEnum(Direction::values);

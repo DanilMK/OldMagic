@@ -3,20 +3,24 @@ package net.smok.om.spell.actions.entity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.phys.Vec3;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
+import net.smok.om.utils.StoredValueType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public record MoveEntityToPosition(float power, boolean ignoreKnockbackResistance) implements SpellAction {
+public record MoveEntityToPosition(float power, boolean ignoreKnockbackResistance, String entityTarget, String positionTarget) implements SpellAction {
 
     public static final MapCodec<MoveEntityToPosition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.FLOAT.fieldOf("power").forGetter(MoveEntityToPosition::power),
-            Codec.BOOL.optionalFieldOf("ignore_knockback_resistance", false).forGetter(MoveEntityToPosition::ignoreKnockbackResistance)
+            Codec.BOOL.optionalFieldOf("ignore_knockback_resistance", false).forGetter(MoveEntityToPosition::ignoreKnockbackResistance),
+            Codec.STRING.optionalFieldOf("entityTarget", "entity").forGetter(MoveEntityToPosition::entityTarget),
+            Codec.STRING.optionalFieldOf("positionTarget", "position").forGetter(MoveEntityToPosition::positionTarget)
     ).apply(instance, MoveEntityToPosition::new));
 
 
@@ -27,10 +31,10 @@ public record MoveEntityToPosition(float power, boolean ignoreKnockbackResistanc
 
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
-        return spellRunner.executeForAnyEntity((_, entity) -> {
-            List<Vec3> positions = spellRunner.getPositionTargets();
-            if (positions.isEmpty()) return false;
-            Vec3 position = positions.getFirst();
+        return spellRunner.executeFor(entityTarget, StoredValueType.ENTITY, (_, entityHolder) -> {
+            Entity entity = entityHolder.getEntity();
+            Vec3 position = spellRunner.get(positionTarget, StoredValueType.POSITION);
+            if (position == null) return false;
             double knockbackResistance = !ignoreKnockbackResistance && entity instanceof LivingEntity mob ? Math.max(0.0, 1.0 - mob.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)) : 1;
 
             Vec3 movement = position.subtract(entity.position()).scale(power * knockbackResistance);

@@ -13,11 +13,12 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.utils.StoredValueType;
 
-public record BlockTransform(Block block, boolean keepProperties, BlockPredicate filter) implements SpellAction {
+public record BlockTransform(String blockTarget, Block block, boolean keepProperties, BlockPredicate filter) implements SpellAction {
 
     public static final MapCodec<BlockTransform> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            Codec.STRING.optionalFieldOf("block_target", "block").forGetter(BlockTransform::blockTarget),
             BuiltInRegistries.BLOCK.byNameCodec().fieldOf("block").forGetter(BlockTransform::block),
-            Codec.BOOL.optionalFieldOf("keepProperties", true).forGetter(BlockTransform::keepProperties),
+            Codec.BOOL.optionalFieldOf("keep_properties", true).forGetter(BlockTransform::keepProperties),
             BlockPredicate.CODEC.optionalFieldOf("filter", BlockPredicate.alwaysTrue()).forGetter(BlockTransform::filter)
     ).apply(instance, BlockTransform::new));
 
@@ -29,7 +30,7 @@ public record BlockTransform(Block block, boolean keepProperties, BlockPredicate
 
     @Override
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
-        return spellRunner.executeFor(StoredValueType.BLOCK, (level, blockPos) -> {
+        return spellRunner.executeFor(blockTarget, StoredValueType.BLOCK, (level, blockPos) -> {
             if (filter.test(level, blockPos)) {
                 if (keepProperties) {
                     BlockState existing = level.getBlockState(blockPos);

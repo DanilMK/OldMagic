@@ -9,6 +9,7 @@ import net.smok.om.spell.SpellRunner;
 
 import java.util.List;
 
+@Deprecated
 public record FirstEnterAction(List<Holder<SpellAction>> actionList) implements SpellAction {
 
     public static final MapCodec<FirstEnterAction> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -33,6 +34,6 @@ public record FirstEnterAction(List<Holder<SpellAction>> actionList) implements 
             if (run == SpellRunner.ProcessStatus.RUNNING) return SpellRunner.ProcessStatus.RUNNING;
             if (run == SpellRunner.ProcessStatus.SUCCESS) return SpellRunner.ProcessStatus.SUCCESS;
         }
-        return SpellRunner.ProcessStatus.SUCCESS;
+        return SpellRunner.ProcessStatus.FAILURE;
     }
 }
