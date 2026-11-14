@@ -31,14 +31,20 @@ public interface SpellActionType<A extends SpellAction> {
 
     SpellActionType<NearbyEntitiesTarget> TARGET_NEARBY_ENTITIES = register("target_by_nearby_entities", NearbyEntitiesTarget.MAP_CODEC);
     SpellActionType<DamageEntityAction> DAMAGE_ENTITIES = register("damage_entities", DamageEntityAction.MAP_CODEC);
-    SpellActionType<DiscardProjectile> DISCARD_PROJECTILE = register("discard_projectile", DiscardProjectile.MAP_CODEC);
-    SpellActionType<EffectAction> POTION_EFFECT = register("potion_effect", EffectAction.MAP_CODEC);
+    StaticActionType DISCARD_PROJECTILE = register("discard_projectile", spellRunner -> {
+        if (spellRunner.getActor() instanceof SpellProjectile spellProjectile) {
+            spellProjectile.discard();
+            return SpellRunner.ProcessStatus.SUCCESS;
+        }
+        return SpellRunner.ProcessStatus.FAILURE;
+    });
+    SpellActionType<PotionAction> POTION_EFFECT = register("potion_effect", PotionAction.MAP_CODEC);
     SpellActionType<ProjectileSpawn> PROJECTILE = register("projectile", ProjectileSpawn.MAP_CODEC);
-    UnitAction.Type CASTER_ENTITY_TARGET = register("caster_entity_target", spellRunner -> spellRunner.execute(_ -> {
+    StaticActionType CASTER_ENTITY_TARGET = register("caster_entity_target", spellRunner -> spellRunner.execute(_ -> {
         spellRunner.addEntityTarget(spellRunner.caster());
         return true;
     }));
-    UnitAction.Type TELEPORT_ENTITY_TO_POSITION = register("teleport_entity_to_position", spellRunner -> spellRunner.executeForAnyEntity((_, entity) -> {
+    StaticActionType TELEPORT_ENTITY_TO_POSITION = register("teleport_entity_to_position", spellRunner -> spellRunner.executeForAnyEntity((_, entity) -> {
         List<Vec3> positionTargets = spellRunner.getPositionTargets();
         if (positionTargets.isEmpty()) return false;
         Vec3 position = positionTargets.getFirst();
@@ -48,11 +54,12 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<MoveEntityToPosition> MOVE_ENTITY_TO_POSITION = register("move_entity_to_position", MoveEntityToPosition.MAP_CODEC);
     SpellActionType<KnockbackEntity> KNOCKBACK_ENTITY = register("knockback_entity", KnockbackEntity.MAP_CODEC);
 
+    /*
     UnitAction.Type TARGET_HIT_ENTITY = register("target_hit_entity", spellRunner -> spellRunner.getOptional(StoredValueType.HIT).map(hitHolder -> {
         if (hitHolder.entity() == null) return SpellRunner.ProcessStatus.FAILURE;
         spellRunner.put(StoredValueType.ENTITY, hitHolder.entity());
         return SpellRunner.ProcessStatus.SUCCESS;
-    }).orElse(SpellRunner.ProcessStatus.FAILURE));
+    }).orElse(SpellRunner.ProcessStatus.FAILURE));*/
 
 
     SpellActionType<ListAction> LIST = register("list", ListAction.MAP_CODEC);
@@ -68,16 +75,17 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<PositionBlockTarget> POSITION_BLOCK_TARGET = register("position_block_target", PositionBlockTarget.MAP_CODEC);
     SpellActionType<RelativeEntityPositionTarget> RELATIVE_ENTITY_POSITION_TARGET = register("relative_entity_position_target", RelativeEntityPositionTarget.MAP_CODEC);
     SpellActionType<EntityPositionTarget> ENTITY_POSITION_TARGET = register("entity_position_target", EntityPositionTarget.MAP_CODEC);
+    SpellActionType<?> REPOSITION_TARGET = register("reposition_target", RepositionTarget.MAP_CODEC);
 
     MapCodec<A> codec();
 
 
-    private static UnitAction.Type register(final String id, Function<SpellRunner, SpellRunner.ProcessStatus> action) {
-        return Registry.register(Values.SPELL_ACTION_TYPES, Values.id(id), new UnitAction(action).actionType());
+    private static StaticActionType register(final String id, Function<SpellRunner, SpellRunner.ProcessStatus> action) {
+        return Registry.register(Values.SPELL_ACTION_TYPES, Values.id(id), new StaticActionType(action));
     }
 
-    static UnitAction.Type register(final Identifier id, Function<SpellRunner, SpellRunner.ProcessStatus> action) {
-        return Registry.register(Values.SPELL_ACTION_TYPES, id, new UnitAction(action).actionType());
+    static StaticActionType register(final Identifier id, Function<SpellRunner, SpellRunner.ProcessStatus> action) {
+        return Registry.register(Values.SPELL_ACTION_TYPES, id, new StaticActionType(action));
     }
 
     private static <A extends SpellAction> SpellActionType<A> register(final String id, final MapCodec<A> codec) {

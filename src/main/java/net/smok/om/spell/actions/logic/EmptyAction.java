@@ -5,6 +5,7 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 
+@Deprecated
 public class EmptyAction implements SpellAction {
 
     public static final EmptyAction INSTANCE = new EmptyAction();

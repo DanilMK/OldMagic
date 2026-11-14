@@ -6,6 +6,7 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 
+@Deprecated
 public class DiscardProjectile implements SpellAction {
 
     public static final DiscardProjectile INSTANCE = new DiscardProjectile();
