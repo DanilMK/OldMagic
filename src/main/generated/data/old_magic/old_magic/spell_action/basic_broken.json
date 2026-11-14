@@ -29,12 +29,97 @@
       "power": 2.0
     },
     {
-      "type": "old_magic:chain",
+      "type": "old_magic:list",
       "action_list": [
         {
           "type": "old_magic:target_by_shape_blocks",
-          "maskSolid": false,
-          "maskSurface": true,
+          "available_blocks": {
+            "type": "minecraft:all_of",
+            "predicates": [
+              {
+                "type": "minecraft:true"
+              },
+              {
+                "type": "minecraft:all_of",
+                "predicates": [
+                  {
+                    "type": "minecraft:solid"
+                  },
+                  {
+                    "type": "minecraft:any_of",
+                    "predicates": [
+                      {
+                        "type": "minecraft:not",
+                        "predicate": {
+                          "type": "minecraft:solid",
+                          "offset": [
+                            -1,
+                            0,
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "type": "minecraft:not",
+                        "predicate": {
+                          "type": "minecraft:solid",
+                          "offset": [
+                            1,
+                            0,
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "type": "minecraft:not",
+                        "predicate": {
+                          "type": "minecraft:solid",
+                          "offset": [
+                            0,
+                            0,
+                            -1
+                          ]
+                        }
+                      },
+                      {
+                        "type": "minecraft:not",
+                        "predicate": {
+                          "type": "minecraft:solid",
+                          "offset": [
+                            0,
+                            0,
+                            1
+                          ]
+                        }
+                      },
+                      {
+                        "type": "minecraft:not",
+                        "predicate": {
+                          "type": "minecraft:solid",
+                          "offset": [
+                            0,
+                            -1,
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "type": "minecraft:not",
+                        "predicate": {
+                          "type": "minecraft:solid",
+                          "offset": [
+                            0,
+                            1,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
           "range": 2,
           "shape": "sphere"
         },
@@ -42,105 +127,163 @@
           "type": "old_magic:list",
           "action_list": [
             {
-              "type": "old_magic:blocks_transformation",
-              "transformList": [
-                {
-                  "block": {
-                    "Name": "minecraft:brown_mushroom"
-                  },
-                  "ruleTest": {
-                    "block": "minecraft:air",
-                    "predicate_type": "minecraft:random_block_match",
+              "type": "old_magic:block_place",
+              "block_state": {
+                "Name": "minecraft:brown_mushroom"
+              },
+              "filter": {
+                "type": "minecraft:all_of",
+                "predicates": [
+                  {
+                    "type": "old_magic:random",
                     "probability": 0.3
+                  },
+                  {
+                    "type": "minecraft:matching_block_tag",
+                    "tag": "minecraft:air"
+                  },
+                  {
+                    "type": "minecraft:not",
+                    "predicate": {
+                      "type": "minecraft:matching_block_tag",
+                      "offset": [
+                        0,
+                        -1,
+                        0
+                      ],
+                      "tag": "minecraft:air"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             },
             {
-              "type": "old_magic:blocks_transformation",
-              "transformList": [
-                {
-                  "block": {
-                    "Name": "minecraft:red_mushroom"
-                  },
-                  "ruleTest": {
-                    "block": "minecraft:air",
-                    "predicate_type": "minecraft:random_block_match",
+              "type": "old_magic:block_place",
+              "block_state": {
+                "Name": "minecraft:red_mushroom"
+              },
+              "filter": {
+                "type": "minecraft:all_of",
+                "predicates": [
+                  {
+                    "type": "old_magic:random",
                     "probability": 0.3
+                  },
+                  {
+                    "type": "minecraft:matching_block_tag",
+                    "tag": "minecraft:air"
+                  },
+                  {
+                    "type": "minecraft:not",
+                    "predicate": {
+                      "type": "minecraft:matching_block_tag",
+                      "offset": [
+                        0,
+                        -1,
+                        0
+                      ],
+                      "tag": "minecraft:air"
+                    }
                   }
-                }
-              ]
+                ]
+              }
             }
           ]
         }
-      ]
+      ],
+      "handle_status": "chain"
     },
     {
-      "type": "old_magic:chain",
+      "type": "old_magic:list",
       "action_list": [
         {
           "type": "old_magic:target_by_shape_blocks",
-          "maskSolid": true,
-          "maskSurface": true,
+          "available_blocks": {
+            "type": "minecraft:any_of",
+            "predicates": [
+              {
+                "type": "minecraft:matching_blocks",
+                "blocks": "minecraft:grass_block"
+              },
+              {
+                "type": "minecraft:matching_blocks",
+                "blocks": "minecraft:stone"
+              },
+              {
+                "type": "minecraft:matching_blocks",
+                "blocks": "minecraft:gravel"
+              },
+              {
+                "type": "minecraft:matching_blocks",
+                "blocks": "minecraft:sand"
+              }
+            ]
+          },
           "range": 2,
           "shape": "sphere"
         },
         {
-          "type": "old_magic:blocks_transformation",
-          "transformList": [
-            {
-              "block": {
-                "Name": "minecraft:warped_nylium"
+          "type": "old_magic:for_each_block_target",
+          "action": {
+            "type": "old_magic:list",
+            "action_list": [
+              {
+                "type": "old_magic:random_select",
+                "action_list": [
+                  {
+                    "type": "old_magic:block_transform",
+                    "block": "minecraft:warped_nylium",
+                    "filter": {
+                      "type": "minecraft:matching_blocks",
+                      "blocks": "minecraft:grass_block"
+                    },
+                    "keep_properties": false
+                  },
+                  {
+                    "type": "old_magic:block_transform",
+                    "block": "minecraft:crimson_nylium",
+                    "filter": {
+                      "type": "minecraft:matching_blocks",
+                      "blocks": "minecraft:grass_block"
+                    },
+                    "keep_properties": false
+                  }
+                ]
               },
-              "ruleTest": {
-                "block": "minecraft:grass_block",
-                "predicate_type": "minecraft:random_block_match",
-                "probability": 0.3
-              }
-            },
-            {
-              "block": {
-                "Name": "minecraft:crimson_nylium"
+              {
+                "type": "old_magic:block_transform",
+                "block": "minecraft:netherrack",
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:stone"
+                },
+                "keep_properties": false
               },
-              "ruleTest": {
-                "block": "minecraft:grass_block",
-                "predicate_type": "minecraft:random_block_match",
-                "probability": 0.3
-              }
-            },
-            {
-              "block": {
-                "Name": "minecraft:netherrack"
+              {
+                "type": "old_magic:block_transform",
+                "block": "minecraft:soul_sand",
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:sand"
+                },
+                "keep_properties": false
               },
-              "ruleTest": {
-                "block": "minecraft:stone",
-                "predicate_type": "minecraft:random_block_match",
-                "probability": 0.3
+              {
+                "type": "old_magic:block_transform",
+                "block": "minecraft:soul_soil",
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:gravel"
+                },
+                "keep_properties": false
               }
-            },
-            {
-              "block": {
-                "Name": "minecraft:soul_sand"
-              },
-              "ruleTest": {
-                "block": "minecraft:sand",
-                "predicate_type": "minecraft:random_block_match",
-                "probability": 0.3
-              }
-            },
-            {
-              "block": {
-                "Name": "minecraft:soul_soil"
-              },
-              "ruleTest": {
-                "block": "minecraft:gravel",
-                "predicate_type": "minecraft:random_block_match",
-                "probability": 0.3
-              }
-            }
-          ]
+            ]
+          },
+          "combine_amount": 1,
+          "delay": 1
         }
-      ]
+      ],
+      "handle_status": "chain"
     }
   ]
 }

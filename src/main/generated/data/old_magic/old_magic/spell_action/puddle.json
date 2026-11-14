@@ -1,11 +1,96 @@
 {
-  "type": "old_magic:chain",
+  "type": "old_magic:list",
   "action_list": [
     {
       "type": "old_magic:target_by_shape_blocks",
-      "maskSolid": false,
-      "maskSurface": true,
-      "range": 1,
+      "available_blocks": {
+        "type": "minecraft:all_of",
+        "predicates": [
+          {
+            "type": "minecraft:true"
+          },
+          {
+            "type": "minecraft:all_of",
+            "predicates": [
+              {
+                "type": "minecraft:solid"
+              },
+              {
+                "type": "minecraft:any_of",
+                "predicates": [
+                  {
+                    "type": "minecraft:not",
+                    "predicate": {
+                      "type": "minecraft:solid",
+                      "offset": [
+                        -1,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:not",
+                    "predicate": {
+                      "type": "minecraft:solid",
+                      "offset": [
+                        1,
+                        0,
+                        0
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:not",
+                    "predicate": {
+                      "type": "minecraft:solid",
+                      "offset": [
+                        0,
+                        0,
+                        -1
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:not",
+                    "predicate": {
+                      "type": "minecraft:solid",
+                      "offset": [
+                        0,
+                        0,
+                        1
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:not",
+                    "predicate": {
+                      "type": "minecraft:solid",
+                      "offset": [
+                        0,
+                        -1,
+                        0
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:not",
+                    "predicate": {
+                      "type": "minecraft:solid",
+                      "offset": [
+                        0,
+                        1,
+                        0
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "range": 2,
       "shape": "sphere"
     },
     {
@@ -14,45 +99,82 @@
         "type": "old_magic:list",
         "action_list": [
           {
-            "type": "old_magic:block_transform",
-            "block": "minecraft:mud",
-            "filter": {
-              "type": "minecraft:matching_block_tag",
-              "tag": "minecraft:convertable_to_mud"
-            },
-            "keepProperties": false
-          },
-          {
-            "type": "old_magic:block_state_transform",
-            "properties": [
+            "type": "old_magic:list",
+            "action_list": [
               {
-                "name": "moisture",
-                "valueChanger": "7"
+                "type": "old_magic:block_transform",
+                "block": "minecraft:mud",
+                "filter": {
+                  "type": "minecraft:matching_block_tag",
+                  "tag": "minecraft:convertable_to_mud"
+                },
+                "keep_properties": false
+              },
+              {
+                "type": "old_magic:block_state_transform",
+                "properties": [
+                  {
+                    "name": "moisture",
+                    "valueChanger": "7"
+                  }
+                ]
+              },
+              {
+                "type": "old_magic:block_transform",
+                "block": "minecraft:clay",
+                "filter": {
+                  "type": "minecraft:matching_block_tag",
+                  "tag": "minecraft:sand"
+                },
+                "keep_properties": false
+              },
+              {
+                "type": "old_magic:block_transform",
+                "block": "minecraft:wet_sponge",
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:sponge"
+                },
+                "keep_properties": false
               }
-            ]
+            ],
+            "handle_status": "first_enter"
           },
           {
-            "type": "old_magic:block_transform",
-            "block": "minecraft:clay",
-            "filter": {
-              "type": "minecraft:matching_block_tag",
-              "tag": "minecraft:sand"
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "outline",
+                "thickness": 0.0
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 50,
+              "move": {
+                "moveRule": "static",
+                "randomness": 0.0,
+                "speed": 0.0
+              },
+              "particle": {
+                "type": "minecraft:dripping_water"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
             },
-            "keepProperties": false
-          },
-          {
-            "type": "old_magic:block_transform",
-            "block": "minecraft:wet_sponge",
-            "filter": {
-              "type": "minecraft:matching_blocks",
-              "blocks": "minecraft:sponge"
-            },
-            "keepProperties": false
+            "target": "block"
           }
-        ]
+        ],
+        "handle_status": "chain"
       },
-      "combineAmount": 0,
+      "combine_amount": 0,
       "delay": 0
     }
-  ]
+  ],
+  "handle_status": "chain"
 }

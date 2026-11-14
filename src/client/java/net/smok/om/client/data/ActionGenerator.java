@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -13,23 +12,23 @@ import net.minecraft.data.worldgen.features.VegetationFeatures;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
-import net.minecraft.world.level.levelgen.structure.templatesystem.*;
+import net.smok.om.OMTags;
 import net.smok.om.entity.ProjectileProps;
 import net.smok.om.spell.actions.SpellAction;
+import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.actions.SpellActions;
 import net.smok.om.spell.actions.block.*;
 import net.smok.om.spell.actions.entity.*;
-import net.smok.om.spell.actions.logic.ChainListAction;
-import net.smok.om.spell.actions.logic.FirstEnterAction;
 import net.smok.om.spell.actions.logic.ListAction;
 import net.smok.om.spell.actions.logic.RandomSelectAction;
+import net.smok.om.spell.actions.misc.ParticleAction;
+import net.smok.om.utils.BlockParticleTemplate;
+import net.smok.om.utils.RandomBlockPredicate;
 import net.smok.om.utils.Shape;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -162,110 +161,156 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
 
     private void addEntries() {
 
+        /*
+        Holder<SpellAction> basic = add(SpellActions.BASIC, chain(
+                ShapeBlockTarget.sphere(builder4 -> builder4.range(3).filter(BlockPredicate.allOf(
+                        BlockPredicate.ONLY_IN_AIR_PREDICATE
+                ))).inline(),
+                forEachBlock(1, 0, BlockPlaceAction.placeOnAir(Blocks.GLASS.defaultBlockState()).inline())
+        ));*/
+
 
         Holder<SpellAction> basic = add(SpellActions.BASIC, list(
-                damageMagic(3),
-                Holder.direct(new KnockbackEntity(1, false))
+                DamageEntityAction.damage(3, "hit").inline(),
+                KnockbackEntity.defaultKnockback("hit").inline()
         ));
 
+        BlockPredicate filter2 = BlockPredicate.anyOf(
+                BlockPredicate.matchesBlocks(Blocks.GRASS_BLOCK),
+                BlockPredicate.matchesBlocks(Blocks.STONE),
+                BlockPredicate.matchesBlocks(Blocks.GRAVEL),
+                BlockPredicate.matchesBlocks(Blocks.SAND)
+        );
         Holder.Reference<SpellAction> basicBroken = add(SpellActions.BASIC_BROKEN, randomSelect(
                 damageMagic(2),
                 damageMagic(2),
                 damageMagic(2),
-                new KnockbackEntity(2, false).inline(),
-                new KnockbackEntity(2, false).inline(),
-                new KnockbackEntity(2, false).inline(),
+                KnockbackEntity.knockback(2, false).inline(),
+                KnockbackEntity.knockback(2, false).inline(),
+                KnockbackEntity.knockback(2, false).inline(),
                 chain(
-                        shapeSphere(2, true, false),
+                        ShapeBlockTarget.sphere(builder -> builder.range(2).filterSurface()).inline(),
                         list(
-                                transform(new RandomBlockMatchTest(Blocks.AIR, 0.3f), Blocks.BROWN_MUSHROOM.defaultBlockState()),
-                                transform(new RandomBlockMatchTest(Blocks.AIR, 0.3f), Blocks.RED_MUSHROOM.defaultBlockState())
+                                BlockPlaceAction.place(Blocks.BROWN_MUSHROOM.defaultBlockState(),
+                                        BlockPredicate.allOf(
+                                                new RandomBlockPredicate(0.3f),
+                                                BlockPredicate.matchesTag(BlockTags.AIR),
+                                                BlockPredicate.not(BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.AIR)
+                                                )
+                                        )
+                                ).inline(),
+                                BlockPlaceAction.place(Blocks.RED_MUSHROOM.defaultBlockState(),
+                                        BlockPredicate.allOf(
+                                                new RandomBlockPredicate(0.3f),
+                                                BlockPredicate.matchesTag(BlockTags.AIR),
+                                                BlockPredicate.not(BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.AIR)
+                                                )
+                                        )
+                                ).inline()
                         )
                 ),
                 chain(
-                        shapeSphere(2, true, true),
-                        transform(
-                                new RandomBlockMatchTest(Blocks.GRASS_BLOCK, 0.3f), Blocks.WARPED_NYLIUM.defaultBlockState(),
-                                new RandomBlockMatchTest(Blocks.GRASS_BLOCK, 0.3f), Blocks.CRIMSON_NYLIUM.defaultBlockState(),
-                                new RandomBlockMatchTest(Blocks.STONE, 0.3f), Blocks.NETHERRACK.defaultBlockState(),
-                                new RandomBlockMatchTest(Blocks.SAND, 0.3f), Blocks.SOUL_SAND.defaultBlockState(),
-                                new RandomBlockMatchTest(Blocks.GRAVEL, 0.3f), Blocks.SOUL_SOIL.defaultBlockState()
+                        ShapeBlockTarget.sphere(builder5 -> builder5.range(2).filter(filter2)).inline(),
+                        forEachBlock(1, 1,
+                                list(
+                                        randomSelect(
+                                                BlockTransform.transform(Blocks.WARPED_NYLIUM, false, BlockPredicate.matchesBlocks(Blocks.GRASS_BLOCK)).inline(),
+                                                BlockTransform.transform(Blocks.CRIMSON_NYLIUM, false, BlockPredicate.matchesBlocks(Blocks.GRASS_BLOCK)).inline()
+                                        ),
+                                        BlockTransform.transform(Blocks.NETHERRACK, false, BlockPredicate.matchesBlocks(Blocks.STONE)).inline(),
+                                        BlockTransform.transform(Blocks.SOUL_SAND, false, BlockPredicate.matchesBlocks(Blocks.SAND)).inline(),
+                                        BlockTransform.transform(Blocks.SOUL_SOIL, false, BlockPredicate.matchesBlocks(Blocks.GRAVEL)).inline()
+                                )
                         )
                 )
         ));
 
         Holder<SpellAction> fireSphere = add(SpellActions.FIRE_SPHERE, firstEnter(
                 chain(
-                        targetHitBlock(BlockPredicate.matchesTag(BlockTags.CAMPFIRES)),
+                        TargetHitBlock.hit(BlockPredicate.matchesTag(BlockTags.CAMPFIRES)).inline(),
                         transformBlockState(BlockStateTransform.builder().set(CampfireBlock.LIT, true))
                 ),
                 list(
                         chain(
-                                shapeSphere(3, false, false, BlockPredicate.allOf(
+                                ShapeBlockTarget.sphere(builder4 -> builder4.range(3).filter(BlockPredicate.allOf(
                                         BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.PLANKS),
                                         new RandomBlockPredicate(0.5f)
-                                )),
-                                forEachBlock(2, 4, placeBlock(Blocks.FIRE.defaultBlockState(), BlockPredicate.matchesBlocks(Blocks.AIR)))
+                                ))).inline(),
+                                forEachBlock(2, 4, BlockPlaceAction.placeOnAir(Blocks.FIRE.defaultBlockState()).inline())
                         ),
                         chain(
                                 targetNear(3, FLAMEABLE_ENTITIES),
                                 damageMagic(2),
-                                fireControl(20)
+                                FireControlAction.fire(20).inline()
                         )
                 )
         ));
 
         Holder<SpellAction> iceSphere = add(SpellActions.ICE_SPHERE, list(
-                list(
-                        shapeSphere(3, true, false),
-                        transformBlock(Blocks.FROSTED_ICE, false, BlockPredicate.matchesBlocks(Blocks.WATER)),
-                        new BreakAction(new BlockMatchTest(Blocks.TORCH), true).inline(),
-                        new BreakAction(new BlockMatchTest(Blocks.WALL_TORCH), true).inline(),
-                        new BreakAction(new BlockMatchTest(Blocks.COPPER_TORCH), true).inline(),
-                        new BreakAction(new BlockMatchTest(Blocks.COPPER_WALL_TORCH), true).inline(),
-                        new BreakAction(new BlockMatchTest(Blocks.FIRE), false).inline(),
-                        transformBlockState(BlockStateTransform.builder().set(CampfireBlock.LIT, false))
+                chain(
+                        ShapeBlockTarget.sphere(builder3 -> builder3.range(3).filterSurface()).inline(),
+                        forEachBlock(4, 4, chain(
+                                firstEnter(
+                                        transformBlock(Blocks.FROSTED_ICE, false, BlockPredicate.allOf(BlockPredicate.matchesBlocks(Blocks.WATER), BlockPredicate.matchesBlocks(new Vec3i(0, 1, 0), Blocks.AIR))),
+                                        BreakAction.breakBlock(BlockPredicate.matchesBlocks(Blocks.TORCH), true).inline(),
+                                        BreakAction.breakBlock(BlockPredicate.matchesBlocks(Blocks.WALL_TORCH), true).inline(),
+                                        BreakAction.breakBlock(BlockPredicate.matchesBlocks(Blocks.COPPER_TORCH), true).inline(),
+                                        BreakAction.breakBlock(BlockPredicate.matchesBlocks(Blocks.COPPER_WALL_TORCH), true).inline(),
+                                        BreakAction.breakBlock(BlockPredicate.matchesBlocks(Blocks.FIRE), false).inline(),
+                                        transformBlockState(BlockStateTransform.builder().set(CampfireBlock.LIT, false))
+                                ),
+                                ParticleAction.builder("block", ParticleTypes.SNOWFLAKE, builder -> builder.setOutline(0).setCount(50)).inline()
+                        ))
                 ),
                 chain(
                         targetNear(3, FLAMEABLE_ENTITIES),
                         damageMagic(4),
-                        fireControl(-1)
+                        FireControlAction.extinguish().inline()
                 )
         ));
 
         Holder<SpellAction> growPlants = add(SpellActions.GROW_PLANTS, firstEnter(
                 Holder.direct(BonemealAction.INSTANCE),
                 chain(
-                        shapeSphere(3, false, false, BlockPredicate.matchesTag(GROWABLE_PLANTS)),
+                        ShapeBlockTarget.sphere(builder3 -> builder3.range(3).filter(BlockPredicate.matchesTag(OMTags.GROWABLE_PLANTS))).inline(),
                         Holder.direct(BonemealAction.INSTANCE))
         ));
 
         Holder<SpellAction> servingPlants = add(SpellActions.SERVING_PLANTS, chain(
-                shapeSphere(3, false, false),
-                Holder.direct(new BreakAction(new TagMatchTest(SEVERING_PLANTS), true))
+                ShapeBlockTarget.sphere(builder2 -> builder2.range(3)).inline(),
+                forEachBlock(0, 0, BreakAction.breakBlock(BlockPredicate.matchesTag(SEVERING_PLANTS), true).inline()),
+                SpellActionType.DISCARD_PROJECTILE.action().inline()
         ));
 
-        Holder.Reference<SpellAction> pull = add(SpellActions.PULL, new MoveEntityAction(MoveEntityAction.Direction.PULL_TO_CASTER, 1, false).inline());
-        Holder.Reference<SpellAction> push = add(SpellActions.PUSH, new MoveEntityAction(MoveEntityAction.Direction.PUSH_FROM_CASTER, 1, false).inline());
+        Holder.Reference<SpellAction> pull = add(SpellActions.PULL, MoveEntityToPosition.move(1, false, "entity", "caster").inline()); // new MoveEntityAction(MoveEntityAction.Direction.PULL_TO_CASTER, 1, false).inline());
+        Holder.Reference<SpellAction> push = add(SpellActions.PUSH, MoveEntityToPosition.move(-1, false, "entity", "caster").inline()); // new MoveEntityAction(MoveEntityAction.Direction.PUSH_FROM_CASTER, 1, false).inline());
 
         Holder.Reference<SpellAction> puddle = add(SpellActions.PUDDLE, chain(
-                shapeSphere(1, true, false),
-                forEachBlock(0, 0, list(
-                        transformBlock(Blocks.MUD, false, BlockPredicate.matchesTag(BlockTags.CONVERTABLE_TO_MUD)),
-                        transformBlockState(BlockStateTransform.builder().set(FarmlandBlock.MOISTURE, FarmlandBlock.MAX_MOISTURE)),
-                        transformBlock(Blocks.CLAY, false, BlockPredicate.matchesTag(BlockTags.SAND)),
-                        transformBlock(Blocks.WET_SPONGE, false, BlockPredicate.matchesBlocks(Blocks.SPONGE))
+                ShapeBlockTarget.sphere(builder1 -> builder1.range(2).filterSurface()).inline(),
+                forEachBlock(0, 0, chain(
+                        firstEnter(
+                                transformBlock(Blocks.MUD, false, BlockPredicate.matchesTag(BlockTags.CONVERTABLE_TO_MUD)),
+                                transformBlockState(BlockStateTransform.builder().set(FarmlandBlock.MOISTURE, FarmlandBlock.MAX_MOISTURE)),
+                                transformBlock(Blocks.CLAY, false, BlockPredicate.matchesTag(BlockTags.SAND)),
+                                transformBlock(Blocks.WET_SPONGE, false, BlockPredicate.matchesBlocks(Blocks.SPONGE))
+                        ),
+                        ParticleAction.builder("block", ParticleTypes.DRIPPING_WATER, builder -> builder.setOutline(0).setCount(50)).inline()
                 ))
         ));
 
+        BlockPredicate filter = BlockPredicate.allOf(new RandomBlockPredicate(0.33f), BlockPredicate.matchesBlocks(Blocks.AIR), BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT));
         Holder.Reference<SpellAction> flowerField = add(SpellActions.FLOWER_FIELD, chain(
-                shapeSphere(3, false, false, BlockPredicate.allOf(new RandomBlockPredicate(0.33f), BlockPredicate.matchesBlocks(Blocks.AIR))),
-                randomSelect(
-                        new FeatureAction(VegetationFeatures.FLOWER_DEFAULT).inline(),
-                        new FeatureAction(VegetationFeatures.FLOWER_CHERRY).inline(),
-                        new FeatureAction(VegetationFeatures.FLOWER_FLOWER_FOREST).inline(),
-                        new FeatureAction(VegetationFeatures.FLOWER_MEADOW).inline()
-                )
+                ShapeBlockTarget.sphere(builder1 -> builder1.range(3).filter(filter)).inline(),
+                forEachBlock(4, 1, chain(
+                        randomSelect(
+                                new FeatureAction(VegetationFeatures.FLOWER_DEFAULT).inline(),
+                                new FeatureAction(VegetationFeatures.FLOWER_CHERRY).inline(),
+                                new FeatureAction(VegetationFeatures.FLOWER_FLOWER_FOREST).inline(),
+                                new FeatureAction(VegetationFeatures.FLOWER_MEADOW).inline()
+                        ),
+                        ParticleAction.builder("block", ParticleTypes.COMPOSTER,
+                                builder -> builder.setCount(10).setMovement(BlockParticleTemplate.MoveRule.TO_CENTER, 0.1, 0.1)).inline()
+                ))
         ));
 
         /* // todo надо заменить на готовые массивы стекла, шерсти и тд.
@@ -279,15 +324,15 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
         //add("invisible", new EffectAction(Potions.INVISIBILITY, 1))
 
         add(SpellActions.COLLECT_ITEMS, chain(
-                Holder.direct(new NearbyEntitiesTarget(7, EntityType.ITEM, Shape.SPHERE)),
-                Holder.direct(new MoveEntityAction(MoveEntityAction.Direction.PULL_TO_CASTER, 2, false))
+                NearbyEntitiesTarget.builder(builder -> builder.range(7).filter(EntityType.ITEM).shape(Shape.SPHERE)).inline(),
+                MoveEntityToPosition.move(2, true, "entity", "caster").inline()
         ));
-        add(SpellActions.PROJECTILE_BASIC, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ELECTRIC_SPARK).build(), null, basic));
+        add(SpellActions.PROJECTILE_BASIC, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ELECTRIC_SPARK).build(), basic, null));
         add(SpellActions.PROJECTILE_BASIC_BROKEN, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ASH).build(), basicBroken, basicBroken));
         add(SpellActions.PROJECTILE_FIRE_SPHERE, projectileHit(propsWithItem(Items.FIRE_CHARGE).build(), fireSphere, fireSphere));
         add(SpellActions.PROJECTILE_ICE_SPHERE, projectileHit(propsWithItem(Items.ICE).setParticleOptions(ParticleTypes.BUBBLE).build(), iceSphere, iceSphere));
         add(SpellActions.PROJECTILE_GROW_PLANTS, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), growPlants, null));
-        add(SpellActions.PROJECTILE_SERVING_PLANTS, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).setDiscardOnHitEntity(false).build(), servingPlants, null));
+        add(SpellActions.PROJECTILE_SERVING_PLANTS, projectileTick(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).setDiscardOnHitEntity(false).build(), servingPlants, 4));
         add(SpellActions.PROJECTILE_PULL, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), null, pull));
         add(SpellActions.PROJECTILE_PUSH, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.COMPOSTER).build(), null, push));
         add(SpellActions.PROJECTILE_PUDDLE, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.DRIPPING_WATER).setDiscardOnHitEntity(false).build(), puddle, null));
@@ -299,11 +344,11 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
     private void changeColorFillTag(TagKey<Block> tag, List<Holder<SpellAction>> collector, Block[] blocks) {
         List<Holder<SpellAction>> transformations = new ArrayList<>();
         for (Block block : blocks) {
-            transformations.add(transform(new TagMatchTest(tag), block.defaultBlockState()));
+            //transformations.add(transform(new TagMatchTest(tag), block.defaultBlockState()));
         }
 
         collector.add(chain(
-                shapeSphere(2, true, false, BlockPredicate.matchesTag(tag)),
+                ShapeBlockTarget.sphere(builder -> builder.range(2).filter(BlockPredicate.matchesTag(tag))).inline(),
                 new RandomSelectAction(transformations).inline()
         ));
     }
@@ -343,12 +388,12 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
 
     @SafeVarargs
     public static Holder<SpellAction> chain(Holder<SpellAction>... actions) {
-        return Holder.direct(new ChainListAction(actions));
+        return ListAction.chain(actions).inline();
     }
 
     @SafeVarargs
     public static Holder<SpellAction> firstEnter(Holder<SpellAction>... actions) {
-        return Holder.direct(new FirstEnterAction(actions));
+        return ListAction.firstEnter(actions).inline();
     }
 
     @SafeVarargs
@@ -370,133 +415,20 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
         return Holder.direct(new ProjectileSpawn(props, onTick, onBlockHit, onEntityHit, delay));
     }
 
-    public static Holder<SpellAction> transform(RuleTest ruleTest, BlockState blockState) {
-        return Holder.direct(new BlockTransformation(new BlockTransformation.TransformEntry(ruleTest, blockState)));
-    }
-
-    public static Holder<SpellAction> placeBlock(BlockState blockState, BlockPredicate filter) {
-        return new BlockPlaceAction(blockState, filter).inline();
-    }
-
-    public static Holder<SpellAction> transform(
-            RuleTest ruleTest, BlockState blockState,
-            RuleTest ruleTest1, BlockState blockState1,
-            RuleTest ruleTest2, BlockState blockState2
-    ) {
-        return Holder.direct(new BlockTransformation(
-                new BlockTransformation.TransformEntry(ruleTest, blockState),
-                new BlockTransformation.TransformEntry(ruleTest1, blockState1),
-                new BlockTransformation.TransformEntry(ruleTest2, blockState2)
-        ));
-    }
-
-    public static Holder<SpellAction> transform(
-            RuleTest ruleTest, BlockState blockState,
-            RuleTest ruleTest1, BlockState blockState1,
-            RuleTest ruleTest2, BlockState blockState2,
-            RuleTest ruleTest3, BlockState blockState3
-    ) {
-        return Holder.direct(new BlockTransformation(
-                new BlockTransformation.TransformEntry(ruleTest, blockState),
-                new BlockTransformation.TransformEntry(ruleTest1, blockState1),
-                new BlockTransformation.TransformEntry(ruleTest2, blockState2),
-                new BlockTransformation.TransformEntry(ruleTest3, blockState3)
-        ));
-    }
-
-    public static Holder<SpellAction> transform(
-            RuleTest ruleTest, BlockState blockState,
-            RuleTest ruleTest1, BlockState blockState1,
-            RuleTest ruleTest2, BlockState blockState2,
-            RuleTest ruleTest3, BlockState blockState3,
-            RuleTest ruleTest4, BlockState blockState4
-    ) {
-        return Holder.direct(new BlockTransformation(
-                new BlockTransformation.TransformEntry(ruleTest, blockState),
-                new BlockTransformation.TransformEntry(ruleTest1, blockState1),
-                new BlockTransformation.TransformEntry(ruleTest2, blockState2),
-                new BlockTransformation.TransformEntry(ruleTest3, blockState3),
-                new BlockTransformation.TransformEntry(ruleTest4, blockState4)
-        ));
-    }
-
-    public static Holder<SpellAction> transform(
-            RuleTest ruleTest, BlockState blockState,
-            RuleTest ruleTest1, BlockState blockState1,
-            RuleTest ruleTest2, BlockState blockState2,
-            RuleTest ruleTest3, BlockState blockState3,
-            RuleTest ruleTest4, BlockState blockState4,
-            RuleTest ruleTest5, BlockState blockState5
-    ) {
-        return Holder.direct(new BlockTransformation(
-                new BlockTransformation.TransformEntry(ruleTest, blockState),
-                new BlockTransformation.TransformEntry(ruleTest1, blockState1),
-                new BlockTransformation.TransformEntry(ruleTest2, blockState2),
-                new BlockTransformation.TransformEntry(ruleTest3, blockState3),
-                new BlockTransformation.TransformEntry(ruleTest4, blockState4),
-                new BlockTransformation.TransformEntry(ruleTest5, blockState5)
-        ));
-    }
-
-    public static Holder<SpellAction> shapeSphere(int range, boolean maskSurface, boolean maskSolid) {
-        return Holder.direct(new ShapeBlockTarget(Shape.SPHERE, range, maskSurface, maskSolid));
-    }
-
-    public static Holder<SpellAction> cubeSphere(int range, boolean maskSurface, boolean maskSolid) {
-        return Holder.direct(new ShapeBlockTarget(Shape.CUBE, range, maskSurface, maskSolid));
-    }
-
-    public static Holder<SpellAction> diamondSphere(int range, boolean maskSurface, boolean maskSolid) {
-        return Holder.direct(new ShapeBlockTarget(Shape.DIAMOND, range, maskSurface, maskSolid));
-    }
-
-    public static Holder<SpellAction> shapeSphere(int range, boolean maskSurface, boolean maskSolid, BlockPredicate filter) {
-        return Holder.direct(new ShapeBlockTarget(Shape.SPHERE, range, maskSurface, maskSolid, filter));
-    }
-
-    public static Holder<SpellAction> cubeSphere(int range, boolean maskSurface, boolean maskSolid, BlockPredicate filter) {
-        return Holder.direct(new ShapeBlockTarget(Shape.CUBE, range, maskSurface, maskSolid, filter));
-    }
-
-    public static Holder<SpellAction> diamondSphere(int range, boolean maskSurface, boolean maskSolid, BlockPredicate filter) {
-        return Holder.direct(new ShapeBlockTarget(Shape.DIAMOND, range, maskSurface, maskSolid, filter));
-    }
-
-    public static Holder<SpellAction> targetNear(float range, EntityType<?> entityType) {
-        return new NearbyEntitiesTarget(range, entityType, Shape.SPHERE).inline();
-    }
-
-    public static Holder<SpellAction> targetNear(float range, EntityType<?>... entityTypes) {
-        return new NearbyEntitiesTarget(range, Shape.SPHERE, entityTypes).inline();
-    }
-
-    public static Holder<SpellAction> targetNear(float range, HolderSet<EntityType<?>> entityTypes) {
-        return new NearbyEntitiesTarget(range, entityTypes, Shape.SPHERE).inline();
-    }
-
     public static Holder<SpellAction> forEachBlock(int delay, int combine, Holder<SpellAction> action) {
-        return new ForEachBlockTarget(delay, combine, action).inline();
+        return ForEachBlockTarget.target(action, delay, combine).inline();
     }
 
     public Holder<SpellAction> targetNear(float range, TagKey<EntityType<?>> entityTypes) {
-        return new NearbyEntitiesTarget(range, context.lookup(Registries.ENTITY_TYPE).getOrThrow(entityTypes), Shape.SPHERE).inline();
+        return NearbyEntitiesTarget.builder(builder -> builder.filter(context.lookup(Registries.ENTITY_TYPE).getOrThrow(entityTypes)).range(range)).inline();
     }
 
     public static @NotNull Holder<SpellAction> damageMagic(int damageAmount) {
-        return Holder.direct(new DamageEntityAction(DamageTypes.MAGIC, damageAmount));
-    }
-
-    public static @NotNull Holder<SpellAction> fireControl(int fireTicks) {
-        return Holder.direct(new FireControlAction(fireTicks));
-    }
-
-    public static @NotNull Holder<SpellAction> targetHitBlock(@Nullable BlockPredicate filter) {
-        if (filter == null) return TargetHitBlock.ANY.inline();
-        return new TargetHitBlock(filter).inline();
+        return DamageEntityAction.damage(damageAmount).inline();
     }
 
     public static @NotNull Holder<SpellAction> transformBlock(Block block, boolean keepProperties, @Nullable BlockPredicate filter) {
-        return new BlockTransform(block, keepProperties, Objects.requireNonNullElse(filter, BlockPredicate.alwaysTrue())).inline();
+        return BlockTransform.transform(block, keepProperties, Objects.requireNonNullElse(filter, BlockPredicate.alwaysTrue())).inline();
     }
 
     public static @NotNull Holder<SpellAction> transformBlockState(BlockStateTransform.Builder blockStateBuilder) {

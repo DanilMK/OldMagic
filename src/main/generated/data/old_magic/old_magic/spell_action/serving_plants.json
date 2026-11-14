@@ -1,20 +1,27 @@
 {
-  "type": "old_magic:chain",
+  "type": "old_magic:list",
   "action_list": [
     {
       "type": "old_magic:target_by_shape_blocks",
-      "maskSolid": false,
-      "maskSurface": false,
       "range": 3,
       "shape": "sphere"
     },
     {
-      "type": "old_magic:blocks_break",
-      "blocks": {
-        "predicate_type": "minecraft:tag_match",
-        "tag": "old_magic:severing_plants"
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:blocks_break",
+        "drop_resources": true,
+        "filter": {
+          "type": "minecraft:matching_block_tag",
+          "tag": "old_magic:severing_plants"
+        }
       },
-      "dropResources": true
+      "combine_amount": 0,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:discard_projectile"
     }
-  ]
+  ],
+  "handle_status": "chain"
 }

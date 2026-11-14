@@ -1,17 +1,19 @@
 {
-  "type": "old_magic:chain",
+  "type": "old_magic:list",
   "action_list": [
     {
       "type": "old_magic:target_by_nearby_entities",
+      "center_position_target": "entities",
       "filter": "minecraft:item",
       "range": 7.0,
       "shape": "sphere"
     },
     {
-      "type": "old_magic:move_entity",
-      "direction": "pull_to_caster",
-      "ignoreKnockbackResist": false,
+      "type": "old_magic:move_entity_to_position",
+      "ignore_knockback_resistance": true,
+      "positionTarget": "caster",
       "power": 2.0
     }
-  ]
+  ],
+  "handle_status": "chain"
 }

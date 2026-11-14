@@ -1,6 +1,7 @@
 {
   "type": "old_magic:projectile",
-  "onBlockHit": "old_magic:serving_plants",
+  "onTick": "old_magic:serving_plants",
+  "onTickDelay": 4,
   "properties": {
     "discardOnHitEntity": false,
     "itemRender": "minecraft:air",

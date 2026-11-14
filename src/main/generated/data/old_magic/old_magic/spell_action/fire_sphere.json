@@ -1,15 +1,16 @@
 {
-  "type": "old_magic:first_enter",
+  "type": "old_magic:list",
   "action_list": [
     {
-      "type": "old_magic:chain",
+      "type": "old_magic:list",
       "action_list": [
         {
           "type": "old_magic:target_hit_block",
           "filter": {
             "type": "minecraft:matching_block_tag",
             "tag": "minecraft:campfires"
-          }
+          },
+          "forwardOffset": 0
         },
         {
           "type": "old_magic:block_state_transform",
@@ -20,13 +21,14 @@
             }
           ]
         }
-      ]
+      ],
+      "handle_status": "chain"
     },
     {
       "type": "old_magic:list",
       "action_list": [
         {
-          "type": "old_magic:chain",
+          "type": "old_magic:list",
           "action_list": [
             {
               "type": "old_magic:target_by_shape_blocks",
@@ -48,8 +50,6 @@
                   }
                 ]
               },
-              "maskSolid": false,
-              "maskSurface": false,
               "range": 3,
               "shape": "sphere"
             },
@@ -57,7 +57,7 @@
               "type": "old_magic:for_each_block_target",
               "action": {
                 "type": "old_magic:block_place",
-                "blockState": {
+                "block_state": {
                   "Name": "minecraft:fire",
                   "Properties": {
                     "age": "0",
@@ -69,23 +69,25 @@
                   }
                 },
                 "filter": {
-                  "type": "minecraft:matching_blocks",
-                  "blocks": "minecraft:air"
+                  "type": "minecraft:matching_block_tag",
+                  "tag": "minecraft:air"
                 }
               },
-              "combineAmount": 4,
+              "combine_amount": 4,
               "delay": 2
             }
-          ]
+          ],
+          "handle_status": "chain"
         },
         {
-          "type": "old_magic:chain",
+          "type": "old_magic:list",
           "action_list": [
             {
               "type": "old_magic:target_by_nearby_entities",
+              "center_position_target": "entities",
               "filter": "#old_magic:flameable",
               "range": 3.0,
-              "shape": "sphere"
+              "shape": "cube"
             },
             {
               "type": "old_magic:damage_entities",
@@ -96,9 +98,11 @@
               "type": "old_magic:fire_control",
               "fire_ticks": 20
             }
-          ]
+          ],
+          "handle_status": "chain"
         }
       ]
     }
-  ]
+  ],
+  "handle_status": "first_enter"
 }

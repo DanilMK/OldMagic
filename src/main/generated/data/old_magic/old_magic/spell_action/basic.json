@@ -2,13 +2,34 @@
   "type": "old_magic:list",
   "action_list": [
     {
-      "type": "old_magic:damage_entities",
-      "amount": 3.0,
-      "damage_type": "minecraft:magic"
+      "type": "old_magic:target_by_shape_blocks",
+      "available_blocks": {
+        "type": "minecraft:all_of",
+        "predicates": [
+          {
+            "type": "minecraft:matching_block_tag",
+            "tag": "minecraft:air"
+          }
+        ]
+      },
+      "range": 3,
+      "shape": "sphere"
     },
     {
-      "type": "old_magic:knockback_entity",
-      "power": 1.0
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:block_place",
+        "block_state": {
+          "Name": "minecraft:glass"
+        },
+        "filter": {
+          "type": "minecraft:matching_block_tag",
+          "tag": "minecraft:air"
+        }
+      },
+      "combine_amount": 0,
+      "delay": 1
     }
-  ]
+  ],
+  "handle_status": "chain"
 }

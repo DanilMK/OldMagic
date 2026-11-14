@@ -1,5 +1,5 @@
 {
-  "type": "old_magic:chain",
+  "type": "old_magic:list",
   "action_list": [
     {
       "type": "old_magic:target_by_shape_blocks",
@@ -13,34 +13,81 @@
           {
             "type": "minecraft:matching_blocks",
             "blocks": "minecraft:air"
+          },
+          {
+            "type": "minecraft:matching_block_tag",
+            "offset": [
+              0,
+              -1,
+              0
+            ],
+            "tag": "minecraft:dirt"
           }
         ]
       },
-      "maskSolid": false,
-      "maskSurface": false,
       "range": 3,
       "shape": "sphere"
     },
     {
-      "type": "old_magic:random_select",
-      "action_list": [
-        {
-          "type": "old_magic:place_feature",
-          "feature": "minecraft:flower_default"
-        },
-        {
-          "type": "old_magic:place_feature",
-          "feature": "minecraft:flower_cherry"
-        },
-        {
-          "type": "old_magic:place_feature",
-          "feature": "minecraft:flower_flower_forest"
-        },
-        {
-          "type": "old_magic:place_feature",
-          "feature": "minecraft:flower_meadow"
-        }
-      ]
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:random_select",
+            "action_list": [
+              {
+                "type": "old_magic:place_feature",
+                "feature": "minecraft:flower_default"
+              },
+              {
+                "type": "old_magic:place_feature",
+                "feature": "minecraft:flower_cherry"
+              },
+              {
+                "type": "old_magic:place_feature",
+                "feature": "minecraft:flower_flower_forest"
+              },
+              {
+                "type": "old_magic:place_feature",
+                "feature": "minecraft:flower_meadow"
+              }
+            ]
+          },
+          {
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "solid"
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 10,
+              "move": {
+                "moveRule": "to_center",
+                "randomness": 0.1,
+                "speed": 0.1
+              },
+              "particle": {
+                "type": "minecraft:composter"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "target": "block"
+          }
+        ],
+        "handle_status": "chain"
+      },
+      "combine_amount": 1,
+      "delay": 4
     }
-  ]
+  ],
+  "handle_status": "chain"
 }

@@ -1,11 +1,15 @@
 {
-  "type": "old_magic:first_enter",
+  "type": "old_magic:list",
   "action_list": [
     {
-      "type": "old_magic:bonemeal_blocks"
+      "type": "old_magic:bonemeal_blocks",
+      "blockTarget": "block",
+      "filter": {
+        "type": "minecraft:true"
+      }
     },
     {
-      "type": "old_magic:chain",
+      "type": "old_magic:list",
       "action_list": [
         {
           "type": "old_magic:target_by_shape_blocks",
@@ -13,15 +17,19 @@
             "type": "minecraft:matching_block_tag",
             "tag": "old_magic:growable_plants"
           },
-          "maskSolid": false,
-          "maskSurface": false,
           "range": 3,
           "shape": "sphere"
         },
         {
-          "type": "old_magic:bonemeal_blocks"
+          "type": "old_magic:bonemeal_blocks",
+          "blockTarget": "block",
+          "filter": {
+            "type": "minecraft:true"
+          }
         }
-      ]
+      ],
+      "handle_status": "chain"
     }
-  ]
+  ],
+  "handle_status": "first_enter"
 }
