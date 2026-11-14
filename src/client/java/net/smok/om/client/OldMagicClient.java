@@ -59,5 +59,9 @@ public class OldMagicClient implements ClientModInitializer {
                 if (!payload.startOrRelease()) caster.oldMagic$getCastHolder().removeUsed(payload.spellSlot());
             }
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(BlockParticleTemplate.TYPE,
+                (blockParticleTemplate, context) ->
+                        blockParticleTemplate.addParticleClient(context.client().level));
 	}
 }

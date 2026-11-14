@@ -75,6 +75,7 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<PositionBlockTarget> POSITION_BLOCK_TARGET = register("position_block_target", PositionBlockTarget.MAP_CODEC);
     SpellActionType<RelativeEntityPositionTarget> RELATIVE_ENTITY_POSITION_TARGET = register("relative_entity_position_target", RelativeEntityPositionTarget.MAP_CODEC);
     SpellActionType<EntityPositionTarget> ENTITY_POSITION_TARGET = register("entity_position_target", EntityPositionTarget.MAP_CODEC);
+    SpellActionType<ParticleAction> PARTICLE = register("particle", ParticleAction.MAP_CODEC);
     SpellActionType<?> REPOSITION_TARGET = register("reposition_target", RepositionTarget.MAP_CODEC);
     SpellActionType<?> FOR_EACH_ENTITY_TARGET = register("for_each_entity_target", ForEachEntityTarget.MAP_CODEC);
 

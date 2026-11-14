@@ -2,6 +2,7 @@ package net.smok.om.network;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.smok.om.utils.BlockParticleTemplate;
 
 public interface NetworkHandler {
 
@@ -15,6 +16,7 @@ public interface NetworkHandler {
 
         PayloadTypeRegistry.clientboundPlay().register(SpellCooldownPayload.TYPE, SpellCooldownPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SpellCastPayload.TYPE, SpellCastPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(BlockParticleTemplate.TYPE, BlockParticleTemplate.STREAM_CODEC);
 
     }
 }
