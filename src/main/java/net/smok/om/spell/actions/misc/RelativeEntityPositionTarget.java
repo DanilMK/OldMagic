@@ -1,4 +1,4 @@
-package net.smok.om.spell.actions.position;
+package net.smok.om.spell.actions.misc;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -10,6 +10,7 @@ import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
 
+@Deprecated
 public record RelativeEntityPositionTarget(RelativeType relativeType, RelativeValue relativeValue) implements SpellAction {
     public static final MapCodec<RelativeEntityPositionTarget> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             StringRepresentable.fromEnum(RelativeType::values).fieldOf("relative_type").forGetter(RelativeEntityPositionTarget::relativeType),
