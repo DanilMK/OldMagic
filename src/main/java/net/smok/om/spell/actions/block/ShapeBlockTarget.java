@@ -12,6 +12,7 @@ import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
+import net.smok.om.utils.SelectionMode;
 import net.smok.om.utils.Shape;
 import net.smok.om.utils.StoredValueType;
 import org.jetbrains.annotations.NotNull;
@@ -19,16 +20,28 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.UnaryOperator;
 
-public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, boolean continuesPick, boolean shuffle, String setBlocksListTarget, String centerBlockTarget) implements SpellAction {
+public record ShapeBlockTarget(
+        Shape shape,
+        int range,
+        BlockPredicate filter,
+        SelectionMode mode,
+        boolean continuesPick,
+        boolean shuffle,
+        String setBlocksListTarget,
+        String centerBlockTarget,
+        String setPreviousTarget
+) implements SpellAction {
 
     public static final MapCodec<ShapeBlockTarget> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Shape.SHAPE_CODEC.fieldOf("shape").forGetter(ShapeBlockTarget::shape),
             Codec.INT.fieldOf("range").forGetter(ShapeBlockTarget::range),
             BlockPredicate.CODEC.optionalFieldOf("available_blocks", BlockPredicate.alwaysTrue()).forGetter(ShapeBlockTarget::filter),
+            SelectionMode.CODEC.optionalFieldOf("selection_mode", SelectionMode.REPLACE).forGetter(ShapeBlockTarget::mode),
             Codec.BOOL.optionalFieldOf("continues_pick", false).forGetter(ShapeBlockTarget::continuesPick),
             Codec.BOOL.optionalFieldOf("shuffle", false).forGetter(ShapeBlockTarget::shuffle),
             Codec.STRING.optionalFieldOf("blocks_list_target", "blocks").forGetter(ShapeBlockTarget::setBlocksListTarget),
-            Codec.STRING.optionalFieldOf("center_block_target", "actor").forGetter(ShapeBlockTarget::centerBlockTarget)
+            Codec.STRING.optionalFieldOf("center_block_target", "actor").forGetter(ShapeBlockTarget::centerBlockTarget),
+            Codec.STRING.optionalFieldOf("set_previous_target", "previous_blocks").forGetter(ShapeBlockTarget::centerBlockTarget)
     ).apply(instance, ShapeBlockTarget::new));
 
     public static ShapeBlockTarget sphere(@NotNull UnaryOperator<Builder> builder) {
@@ -65,8 +78,10 @@ public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, bo
                     list.set(j, a);
                 }
             }
-            spellRunner.addBlockTargets(list);
-            return !spellRunner.getBlockTargets().isEmpty();
+            List<BlockPos> previous = mode.shouldSavePrevious() ? spellRunner.getOrCreateList(setPreviousTarget, StoredValueType.BLOCK) : List.of();
+            List<BlockPos> selection = spellRunner.getOrCreateList(setBlocksListTarget, StoredValueType.BLOCK);
+            mode.apply(selection, list, previous);
+            return !selection.isEmpty();
         });
     }
 
@@ -106,10 +121,12 @@ public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, bo
         private Shape shape;
         private int range = 1;
         private BlockPredicate filter = BlockPredicate.alwaysTrue();
+        private SelectionMode mode = SelectionMode.REPLACE;
         private boolean continuesPick = false;
         private boolean shuffle = false;
         private String setBlocksListTarget = "blocks";
         private String centerBlockTarget = "actor";
+        private String setPreviousTarget = "previous_blocks";
 
         public Builder(Shape shape) {
             this.shape = shape;
@@ -122,6 +139,11 @@ public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, bo
 
         public Builder range(int range) {
             this.range = range;
+            return this;
+        }
+
+        public Builder setMode(SelectionMode mode) {
+            this.mode = mode;
             return this;
         }
 
@@ -155,8 +177,13 @@ public record ShapeBlockTarget(Shape shape, int range, BlockPredicate filter, bo
             return this;
         }
 
+        public Builder setSetPreviousTarget(String setPreviousTarget) {
+            this.setPreviousTarget = setPreviousTarget;
+            return this;
+        }
+
         public ShapeBlockTarget build() {
-            return new ShapeBlockTarget(shape, range, filter, continuesPick, shuffle, setBlocksListTarget, centerBlockTarget);
+            return new ShapeBlockTarget(shape, range, filter, mode, continuesPick, shuffle, setBlocksListTarget, centerBlockTarget, setPreviousTarget);
         }
     }
 }

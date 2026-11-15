@@ -5,6 +5,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class EntityHolder {
@@ -35,5 +36,14 @@ public class EntityHolder {
         this.entity = level.getEntity(uuid);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof EntityHolder that)) return false;
+        return Objects.equals(uuid, that.uuid);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uuid);
+    }
 }
