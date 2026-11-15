@@ -78,6 +78,8 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<ParticleAction> PARTICLE = register("particle", ParticleAction.MAP_CODEC);
     SpellActionType<?> REPOSITION_TARGET = register("reposition_target", RepositionTarget.MAP_CODEC);
     SpellActionType<?> FOR_EACH_ENTITY_TARGET = register("for_each_entity_target", ForEachEntityTarget.MAP_CODEC);
+    SpellActionType<?> MOB_EFFECT = register("mob_effect", MobEffectAction.MAP_CODEC);
+    SpellActionType<?> SOUND = register("sound", SoundAction.MAP_CODEC);
 
     MapCodec<A> codec();
 
