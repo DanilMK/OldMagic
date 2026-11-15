@@ -168,7 +168,9 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
 
         Holder<SpellAction> basic = add(SpellActions.BASIC, list(
                 DamageEntityAction.damage(3, "hit").inline(),
-                KnockbackEntity.defaultKnockback("hit").inline()
+                KnockbackEntity.defaultKnockback("hit").inline(),
+                ParticleAction.builder("hit", ParticleTypes.CRIT, builder -> builder.setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1).setCount(20)).inline(),
+                SoundAction.create(Identifier.withDefaultNamespace("entity.firework_rocket.twinkle"), "caster", builder -> builder.setVolume(0.8f).setPitch(2f)).inline()
         ));
 
         BlockPredicate filter2 = BlockPredicate.anyOf(
@@ -268,17 +270,20 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
         )).inline();
 
         add(SpellActions.FIRE_RING, list(
+                SoundAction.create(Identifier.withDefaultNamespace("entity.blaze.shoot"), "actor", builder -> builder.setVolume(0.3f).setPitch(0.9f)).inline(),
                 ShapeBlockTarget.sphere(builder -> builder.range(1).setMode(SelectionMode.REPLACE_WITHOUT_PREVIOUS)).inline(),
                 ShapeBlockTarget.sphere(builder -> builder.range(2).setMode(SelectionMode.REPLACE_WITHOUT_PREVIOUS)).inline(),
                 fireRingBlockActions,
                 NearbyEntitiesTarget.builder(builder -> builder.shape(Shape.SPHERE).filter(getByTag(OMTags.FLAMEABLE_ENTITIES)).range(2).setMode(SelectionMode.REPLACE_WITHOUT_PREVIOUS)).inline(),
                 fireRingEntityAction,
                 new WaitAction(4).inline(),
+                SoundAction.create(Identifier.withDefaultNamespace("entity.blaze.shoot"), "actor", builder -> builder.setVolume(0.4f).setPitch(0.8f)).inline(),
                 ShapeBlockTarget.sphere(builder -> builder.range(3).setMode(SelectionMode.REPLACE_WITHOUT_PREVIOUS)).inline(),
                 fireRingEntityAction,
                 NearbyEntitiesTarget.builder(builder -> builder.shape(Shape.SPHERE).filter(getByTag(OMTags.FLAMEABLE_ENTITIES)).range(3).setMode(SelectionMode.REPLACE_WITHOUT_PREVIOUS)).inline(),
                 fireRingBlockActions,
                 new WaitAction(4).inline(),
+                SoundAction.create(Identifier.withDefaultNamespace("entity.blaze.shoot"), "actor", builder -> builder.setVolume(0.6f).setPitch(0.7f)).inline(),
                 ShapeBlockTarget.sphere(builder -> builder.range(4).setMode(SelectionMode.REPLACE_WITHOUT_PREVIOUS)).inline(),
                 fireRingEntityAction,
                 NearbyEntitiesTarget.builder(builder -> builder.shape(Shape.SPHERE).filter(getByTag(OMTags.FLAMEABLE_ENTITIES)).range(4).setMode(SelectionMode.REPLACE_WITHOUT_PREVIOUS)).inline(),
@@ -295,7 +300,8 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                         BreakAction.breakBlock(BlockPredicate.matchesBlocks(Blocks.FIRE), false).inline(),
                         transformBlockState(BlockStateTransform.builder().set(CampfireBlock.LIT, false))
                 ),
-                ParticleAction.builder("block", ParticleTypes.SNOWFLAKE, builder4 -> builder4.setOutline(0).setCount(50)).inline()
+                ParticleAction.builder("block", ParticleTypes.SNOWFLAKE, builder4 -> builder4.setOutline(0).setCount(50)).inline(),
+                SoundAction.create(Identifier.withDefaultNamespace("entity.creaking.freeze"), "actor", UnaryOperator.identity()).inline()
         )).inline();
 
         Holder<SpellAction> iceSphereEntityActions = ForEachEntityTarget.target(list(
@@ -354,9 +360,8 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                 ))
         ));
 
-        BlockPredicate filter = BlockPredicate.allOf(new RandomBlockPredicate(0.33f), BlockPredicate.matchesBlocks(Blocks.AIR), BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT));
         Holder.Reference<SpellAction> flowerField = add(SpellActions.FLOWER_FIELD, chain(
-                ShapeBlockTarget.sphere(builder1 -> builder1.range(3).filter(filter)).inline(),
+                ShapeBlockTarget.sphere(builder1 -> builder1.range(3).filter(BlockPredicate.allOf(new RandomBlockPredicate(0.33f), BlockPredicate.matchesBlocks(Blocks.AIR), BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.DIRT)))).inline(),
                 forEachBlock(4, 1, chain(
                         randomSelect(
                                 new FeatureAction(VegetationFeatures.FLOWER_DEFAULT).inline(),
@@ -383,7 +388,10 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                 NearbyEntitiesTarget.builder(builder -> builder.range(7).filter(EntityType.ITEM).shape(Shape.SPHERE)).inline(),
                 MoveEntityToPosition.move(2, true, "entity", "caster").inline()
         ));
-        add(SpellActions.PROJECTILE_BASIC, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ELECTRIC_SPARK).build(), null, basic));
+        add(SpellActions.PROJECTILE_BASIC, list(
+                projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ELECTRIC_SPARK).build(), null, basic),
+                SoundAction.create(Identifier.withDefaultNamespace("block.copper_bulb.hit"), "caster", builder -> builder.setVolume(0.8f).setPitch(1.5f)).inline()
+        ));
         add(SpellActions.PROJECTILE_BASIC_BROKEN, projectileHit(propsEmpty().setParticleOptions(ParticleTypes.ASH).build(), basicBroken, basicBroken));
         add(SpellActions.PROJECTILE_FIRE_SPHERE, projectileHit(propsWithItem(Items.FIRE_CHARGE).build(), fireSphere, fireSphere));
         add(SpellActions.PROJECTILE_ICE_SPHERE, projectile(propsWithItem(Items.ICE).setParticleOptions(ParticleTypes.BUBBLE).build(), iceSphereInWater, iceSphere, iceSphere, 2));

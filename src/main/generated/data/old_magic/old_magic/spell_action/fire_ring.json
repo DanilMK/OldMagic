@@ -2,6 +2,21 @@
   "type": "old_magic:list",
   "action_list": [
     {
+      "type": "old_magic:sound",
+      "target": "actor",
+      "template": {
+        "minVolume": 1.0,
+        "pitch": 0.9,
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sound": "minecraft:entity.blaze.shoot",
+        "volume": 0.3
+      }
+    },
+    {
       "type": "old_magic:target_by_shape_blocks",
       "range": 1,
       "selection_mode": "replace_without_previous",
@@ -86,7 +101,7 @@
           },
           {
             "type": "old_magic:fire_control",
-            "fire_ticks": 20
+            "fire_ticks": 60
           }
         ]
       },
@@ -96,6 +111,21 @@
     {
       "type": "old_magic:wait",
       "wait_ticks": 4
+    },
+    {
+      "type": "old_magic:sound",
+      "target": "actor",
+      "template": {
+        "minVolume": 1.0,
+        "pitch": 0.8,
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sound": "minecraft:entity.blaze.shoot",
+        "volume": 0.4
+      }
     },
     {
       "type": "old_magic:target_by_shape_blocks",
@@ -116,7 +146,7 @@
           },
           {
             "type": "old_magic:fire_control",
-            "fire_ticks": 20
+            "fire_ticks": 60
           }
         ]
       },
@@ -187,6 +217,21 @@
       "wait_ticks": 4
     },
     {
+      "type": "old_magic:sound",
+      "target": "actor",
+      "template": {
+        "minVolume": 1.0,
+        "pitch": 0.7,
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sound": "minecraft:entity.blaze.shoot",
+        "volume": 0.6
+      }
+    },
+    {
       "type": "old_magic:target_by_shape_blocks",
       "range": 4,
       "selection_mode": "replace_without_previous",
@@ -205,7 +250,7 @@
           },
           {
             "type": "old_magic:fire_control",
-            "fire_ticks": 20
+            "fire_ticks": 60
           }
         ]
       },

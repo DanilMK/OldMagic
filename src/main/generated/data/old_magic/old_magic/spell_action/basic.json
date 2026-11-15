@@ -11,6 +11,49 @@
       "type": "old_magic:knockback_entity",
       "power": 1.0,
       "target": "hit"
+    },
+    {
+      "type": "old_magic:particle",
+      "particleTemplate": {
+        "appearing": {
+          "type": "solid"
+        },
+        "centerOffset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "count": 20,
+        "move": {
+          "moveRule": "from_center",
+          "randomness": 0.1,
+          "speed": 0.2
+        },
+        "particle": {
+          "type": "minecraft:crit"
+        },
+        "size": [
+          0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "target": "hit"
+    },
+    {
+      "type": "old_magic:sound",
+      "target": "caster",
+      "template": {
+        "minVolume": 1.0,
+        "pitch": 2.0,
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sound": "minecraft:entity.firework_rocket.twinkle",
+        "volume": 0.8
+      }
     }
   ]
 }

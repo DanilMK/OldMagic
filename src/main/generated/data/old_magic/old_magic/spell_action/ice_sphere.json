@@ -119,6 +119,21 @@
               ]
             },
             "target": "block"
+          },
+          {
+            "type": "old_magic:sound",
+            "target": "actor",
+            "template": {
+              "minVolume": 1.0,
+              "pitch": 1.0,
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "sound": "minecraft:entity.creaking.freeze",
+              "volume": 1.0
+            }
           }
         ],
         "handle_status": "chain"
@@ -275,6 +290,21 @@
               ]
             },
             "target": "block"
+          },
+          {
+            "type": "old_magic:sound",
+            "target": "actor",
+            "template": {
+              "minVolume": 1.0,
+              "pitch": 1.0,
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "sound": "minecraft:entity.creaking.freeze",
+              "volume": 1.0
+            }
           }
         ],
         "handle_status": "chain"
@@ -431,6 +461,21 @@
               ]
             },
             "target": "block"
+          },
+          {
+            "type": "old_magic:sound",
+            "target": "actor",
+            "template": {
+              "minVolume": 1.0,
+              "pitch": 1.0,
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "sound": "minecraft:entity.creaking.freeze",
+              "volume": 1.0
+            }
           }
         ],
         "handle_status": "chain"

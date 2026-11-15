@@ -1,10 +1,30 @@
 {
-  "type": "old_magic:projectile",
-  "onEntityHit": "old_magic:basic",
-  "properties": {
-    "itemRender": "minecraft:air",
-    "particle": {
-      "type": "minecraft:electric_spark"
+  "type": "old_magic:list",
+  "action_list": [
+    {
+      "type": "old_magic:projectile",
+      "onEntityHit": "old_magic:basic",
+      "properties": {
+        "itemRender": "minecraft:air",
+        "particle": {
+          "type": "minecraft:electric_spark"
+        }
+      }
+    },
+    {
+      "type": "old_magic:sound",
+      "target": "caster",
+      "template": {
+        "minVolume": 1.0,
+        "pitch": 1.5,
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "sound": "minecraft:block.copper_bulb.hit",
+        "volume": 0.8
+      }
     }
-  }
+  ]
 }
