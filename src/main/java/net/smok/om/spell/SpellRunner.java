@@ -14,8 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.smok.om.entity.SpellProjectile;
 import net.smok.om.spell.actions.SpellAction;
@@ -127,7 +126,6 @@ public class SpellRunner {
         }
 
         currentIndex = 0;
-
         // Берем корневое действие из холдера нашего Spell
         ProcessStatus status = action.value().run(this);
 
@@ -215,12 +213,8 @@ public class SpellRunner {
         getOrCreateList("positions", StoredValueType.POSITION).add(position);
     }
 
-    public void targetEntityByHit(@NotNull EntityHitResult hitResult) {
+    public void targetEntityByHit(@NotNull HitResult hitResult) {
         put("hit", StoredValueType.HIT, HitHolder.byHit(hitResult));
-    }
-
-    public void targetBlockByHit(@NotNull BlockHitResult blockHitResult) {
-        put("hit", StoredValueType.HIT, HitHolder.byHit(blockHitResult));
     }
 
     public <T> void put(String key, StoredValueType<T> type, T value) {
@@ -257,6 +251,10 @@ public class SpellRunner {
 
     public ItemStack getWand() {
         return wand;
+    }
+
+    public String info() {
+        return "Action: " + action + ", Actor: " + actor + ", Values: Singles: " + storedValues.singlesSize() + ", Lists: " + storedValues.listsSize();
     }
 
 

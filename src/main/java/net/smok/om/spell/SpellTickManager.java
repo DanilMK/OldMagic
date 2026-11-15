@@ -88,4 +88,7 @@ public class SpellTickManager extends SavedData {
         setDirty();
     }
 
+    public List<SpellRunner> getActiveRunners() {
+        return activeRunners;
+    }
 }

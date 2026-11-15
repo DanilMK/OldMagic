@@ -95,4 +95,11 @@ public class StoredValues {
         return value.toType(type);
     }
 
+    public int singlesSize() {
+        return singles.size();
+    }
+
+    public int listsSize() {
+        return lists.size();
+    }
 }

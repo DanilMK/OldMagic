@@ -14,15 +14,20 @@ import net.minecraft.commands.arguments.ResourceSelectorArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.smok.om.Values;
 import net.smok.om.item.*;
+import net.smok.om.spell.SpellRunner;
+import net.smok.om.spell.SpellTickManager;
 import net.smok.om.spell.cast.PlayerCaster;
 import net.smok.om.spell.Spell;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -102,8 +107,20 @@ public class SpellCommand implements CommandRegistrationCallback {
                             .executes(commandContext -> lockAllSpells(commandContext, EntityArgument.getPlayer(commandContext, "player")))
                     )
                 )
+            ).then(Commands.literal("runner")
+                .executes(this::runnerInfo)
+
             )
         );
+    }
+
+    private int runnerInfo(@NotNull CommandContext<CommandSourceStack> context) {
+        ServerLevel level = context.getSource().getLevel();
+        SpellTickManager manager = SpellTickManager.get(level);
+        List<SpellRunner> activeRunners = manager.getActiveRunners();
+        if (activeRunners.isEmpty()) sendFeedback(context, () -> Component.literal("No active runners"));
+        else activeRunners.forEach(spellRunner -> sendFeedback(context, () -> Component.literal(spellRunner.info())));
+        return activeRunners.size();
     }
 
     private int unlockSpell(CommandContext<CommandSourceStack> context, Holder.Reference<Spell> spell, Player player) {
