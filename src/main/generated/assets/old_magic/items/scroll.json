@@ -78,6 +78,13 @@
           "model": "old_magic:item/scroll/fire_ring"
         },
         "when": "old_magic:fire_ring"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/scroll/invisibility"
+        },
+        "when": "old_magic:invisibility"
       }
     ],
     "fallback": {

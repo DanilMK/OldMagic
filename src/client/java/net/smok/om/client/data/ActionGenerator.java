@@ -29,16 +29,15 @@ import net.smok.om.spell.actions.logic.ListAction;
 import net.smok.om.spell.actions.logic.RandomSelectAction;
 import net.smok.om.spell.actions.logic.WaitAction;
 import net.smok.om.spell.actions.misc.ParticleAction;
-import net.smok.om.utils.BlockParticleTemplate;
-import net.smok.om.utils.RandomBlockPredicate;
-import net.smok.om.utils.SelectionMode;
-import net.smok.om.utils.Shape;
+import net.smok.om.spell.actions.misc.SoundAction;
+import net.smok.om.utils.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.UnaryOperator;
 
 import static net.smok.om.OMTags.*;
 
@@ -372,6 +371,10 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                         ParticleAction.builder("block", ParticleTypes.COMPOSTER,
                                 builder -> builder.setCount(10).setMovement(BlockParticleTemplate.MoveRule.TO_CENTER, 0.1, 0.1)).inline()
                 ))
+        ));
+
+        add(SpellActions.INVISIBILITY, list(
+                new MobEffectAction(MobEffects.INVISIBILITY, 15*20, 0, false, "caster", "caster").inline()
         ));
 
         /* // todo надо заменить на готовые массивы стекла, шерсти и тд.

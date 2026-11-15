@@ -51,6 +51,7 @@ public class SpellGenerator extends FabricDynamicRegistryProvider {
         add(Spells.PUDDLE, new Spell(new Casting(20, 0, false, false), action(SpellActions.PROJECTILE_PUDDLE), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
         add(Spells.FLOWER_FIELD, new Spell(new Casting(20, 0, false, false), action(SpellActions.PROJECTILE_FLOWER_FIELD), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
         add(Spells.FIRE_RING, new Spell(new Casting(60, 0, false, false), action(SpellActions.FIRE_RING), action(SpellActions.FIRE_LOCK)));
+        add(Spells.INVISIBILITY, new Spell(new Casting(10*20, 0, false, false), action(SpellActions.INVISIBILITY), action(SpellActions.BASIC_BROKEN)));
         //add(Spells.CHANGE_COLOR, new Spell(new Casting(20, 0, false, false), action(SpellActions.PROJECTILE_CHANGE_CLOR), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
     }
 

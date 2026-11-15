@@ -21,6 +21,7 @@ public interface SpellActions {
     ResourceKey<SpellAction> FLOWER_FIELD = register("flower_field");
     ResourceKey<SpellAction> FIRE_RING = register("fire_ring");
     ResourceKey<SpellAction> FIRE_LOCK = register("fire_lock");
+    ResourceKey<SpellAction> INVISIBILITY = register("invisibility");
 
     ResourceKey<SpellAction> PROJECTILE_BASIC = register("projectile_basic");
     ResourceKey<SpellAction> PROJECTILE_BASIC_BROKEN = register("projectile_basic_broken");

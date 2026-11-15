@@ -78,6 +78,13 @@
           "model": "old_magic:item/spell_book/fire_ring"
         },
         "when": "old_magic:fire_ring"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/invisibility"
+        },
+        "when": "old_magic:invisibility"
       }
     ],
     "fallback": {
