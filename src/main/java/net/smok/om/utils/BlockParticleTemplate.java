@@ -298,6 +298,11 @@ public record BlockParticleTemplate(
             return this;
         }
 
+        public Builder setSize(double x, double y, double z) {
+            this.size = new Vec3(x, y, z);
+            return this;
+        }
+
         public Builder setCount(int count) {
             this.count = count;
             return this;
