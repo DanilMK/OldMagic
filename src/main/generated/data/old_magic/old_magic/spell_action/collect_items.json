@@ -3,9 +3,9 @@
   "action_list": [
     {
       "type": "old_magic:target_by_nearby_entities",
-      "center_position_target": "entities",
       "filter": "minecraft:item",
       "range": 7.0,
+      "set_previous_target": "previous_blocks",
       "shape": "sphere"
     },
     {

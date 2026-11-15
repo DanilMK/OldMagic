@@ -1,5 +1,5 @@
 {
-  "broken": "old_magic:projectile_basic_broken",
+  "broken": "old_magic:fire_lock",
   "castings": {
     "cancelable": false,
     "cast_ticks": 20,

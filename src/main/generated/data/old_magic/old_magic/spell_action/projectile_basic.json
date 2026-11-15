@@ -1,6 +1,6 @@
 {
   "type": "old_magic:projectile",
-  "onBlockHit": "old_magic:basic",
+  "onEntityHit": "old_magic:basic",
   "properties": {
     "itemRender": "minecraft:air",
     "particle": {

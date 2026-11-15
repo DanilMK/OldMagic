@@ -4,6 +4,7 @@
     {
       "type": "old_magic:target_by_shape_blocks",
       "range": 3,
+      "set_previous_target": "actor",
       "shape": "sphere"
     },
     {

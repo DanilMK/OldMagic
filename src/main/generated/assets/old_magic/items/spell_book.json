@@ -71,6 +71,13 @@
           "model": "old_magic:item/spell_book/flower_field"
         },
         "when": "old_magic:flower_field"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/fire_ring"
+        },
+        "when": "old_magic:fire_ring"
       }
     ],
     "fallback": {

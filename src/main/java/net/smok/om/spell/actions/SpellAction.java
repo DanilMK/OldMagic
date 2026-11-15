@@ -26,8 +26,7 @@ public interface SpellAction {
 
     static void run(@NotNull ServerLevel level, @NotNull Holder<SpellAction> action, @NotNull Entity actor, @NotNull ItemStack wand, @Nullable HitResult hitResult) {
         SpellRunner spellRunner = new SpellRunner(action, actor, wand);
-        if (hitResult instanceof BlockHitResult blockHitResult) spellRunner.targetBlockByHit(blockHitResult);
-        if (hitResult instanceof EntityHitResult entityHitResult) spellRunner.targetEntityByHit(entityHitResult);
+        if (hitResult != null) spellRunner.targetEntityByHit(hitResult);
         SpellTickManager.get(level).startSpell(spellRunner);
     }
 

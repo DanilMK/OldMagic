@@ -2,242 +2,468 @@
   "type": "old_magic:list",
   "action_list": [
     {
-      "type": "old_magic:list",
-      "action_list": [
-        {
-          "type": "old_magic:target_by_shape_blocks",
-          "available_blocks": {
-            "type": "minecraft:all_of",
-            "predicates": [
-              {
-                "type": "minecraft:true"
-              },
-              {
-                "type": "minecraft:all_of",
-                "predicates": [
-                  {
-                    "type": "minecraft:solid"
-                  },
-                  {
-                    "type": "minecraft:any_of",
-                    "predicates": [
-                      {
-                        "type": "minecraft:not",
-                        "predicate": {
-                          "type": "minecraft:solid",
-                          "offset": [
-                            -1,
-                            0,
-                            0
-                          ]
-                        }
-                      },
-                      {
-                        "type": "minecraft:not",
-                        "predicate": {
-                          "type": "minecraft:solid",
-                          "offset": [
-                            1,
-                            0,
-                            0
-                          ]
-                        }
-                      },
-                      {
-                        "type": "minecraft:not",
-                        "predicate": {
-                          "type": "minecraft:solid",
-                          "offset": [
-                            0,
-                            0,
-                            -1
-                          ]
-                        }
-                      },
-                      {
-                        "type": "minecraft:not",
-                        "predicate": {
-                          "type": "minecraft:solid",
-                          "offset": [
-                            0,
-                            0,
-                            1
-                          ]
-                        }
-                      },
-                      {
-                        "type": "minecraft:not",
-                        "predicate": {
-                          "type": "minecraft:solid",
-                          "offset": [
-                            0,
-                            -1,
-                            0
-                          ]
-                        }
-                      },
-                      {
-                        "type": "minecraft:not",
-                        "predicate": {
-                          "type": "minecraft:solid",
-                          "offset": [
-                            0,
-                            1,
-                            0
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "range": 3,
-          "shape": "sphere"
-        },
-        {
-          "type": "old_magic:for_each_block_target",
-          "action": {
+      "type": "old_magic:target_by_shape_blocks",
+      "range": 1,
+      "selection_mode": "replace_without_previous",
+      "set_previous_target": "actor",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
             "type": "old_magic:list",
             "action_list": [
               {
-                "type": "old_magic:list",
-                "action_list": [
-                  {
-                    "type": "old_magic:block_transform",
-                    "block": "minecraft:frosted_ice",
-                    "filter": {
-                      "type": "minecraft:all_of",
-                      "predicates": [
-                        {
-                          "type": "minecraft:matching_blocks",
-                          "blocks": "minecraft:water"
-                        },
-                        {
-                          "type": "minecraft:matching_blocks",
-                          "blocks": "minecraft:air",
-                          "offset": [
-                            0,
-                            1,
-                            0
-                          ]
-                        }
-                      ]
+                "type": "old_magic:block_transform",
+                "block": "minecraft:frosted_ice",
+                "filter": {
+                  "type": "minecraft:all_of",
+                  "predicates": [
+                    {
+                      "type": "minecraft:matching_blocks",
+                      "blocks": "minecraft:water"
                     },
-                    "keep_properties": false
-                  },
-                  {
-                    "type": "old_magic:blocks_break",
-                    "drop_resources": true,
-                    "filter": {
+                    {
                       "type": "minecraft:matching_blocks",
-                      "blocks": "minecraft:torch"
+                      "blocks": "minecraft:air",
+                      "offset": [
+                        0,
+                        1,
+                        0
+                      ]
                     }
-                  },
-                  {
-                    "type": "old_magic:blocks_break",
-                    "drop_resources": true,
-                    "filter": {
-                      "type": "minecraft:matching_blocks",
-                      "blocks": "minecraft:wall_torch"
-                    }
-                  },
-                  {
-                    "type": "old_magic:blocks_break",
-                    "drop_resources": true,
-                    "filter": {
-                      "type": "minecraft:matching_blocks",
-                      "blocks": "minecraft:copper_torch"
-                    }
-                  },
-                  {
-                    "type": "old_magic:blocks_break",
-                    "drop_resources": true,
-                    "filter": {
-                      "type": "minecraft:matching_blocks",
-                      "blocks": "minecraft:copper_wall_torch"
-                    }
-                  },
-                  {
-                    "type": "old_magic:blocks_break",
-                    "drop_resources": false,
-                    "filter": {
-                      "type": "minecraft:matching_blocks",
-                      "blocks": "minecraft:fire"
-                    }
-                  },
-                  {
-                    "type": "old_magic:block_state_transform",
-                    "properties": [
-                      {
-                        "name": "lit",
-                        "valueChanger": "false"
-                      }
-                    ]
-                  }
-                ],
-                "handle_status": "first_enter"
-              },
-              {
-                "type": "old_magic:particle",
-                "particleTemplate": {
-                  "appearing": {
-                    "type": "outline",
-                    "thickness": 0.0
-                  },
-                  "centerOffset": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "count": 50,
-                  "move": {
-                    "moveRule": "static",
-                    "randomness": 0.0,
-                    "speed": 0.0
-                  },
-                  "particle": {
-                    "type": "minecraft:snowflake"
-                  },
-                  "size": [
-                    0.5,
-                    0.5,
-                    0.5
                   ]
                 },
-                "target": "block"
+                "keep_properties": false
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:wall_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:copper_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:copper_wall_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": false,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:fire"
+                }
+              },
+              {
+                "type": "old_magic:block_state_transform",
+                "properties": [
+                  {
+                    "name": "lit",
+                    "valueChanger": "false"
+                  }
+                ]
               }
             ],
-            "handle_status": "chain"
+            "handle_status": "first_enter"
           },
-          "combine_amount": 4,
-          "delay": 4
-        }
-      ],
-      "handle_status": "chain"
+          {
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "outline",
+                "thickness": 0.0
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 50,
+              "move": {
+                "moveRule": "static",
+                "randomness": 0.0,
+                "speed": 0.0
+              },
+              "particle": {
+                "type": "minecraft:snowflake"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "target": "block"
+          }
+        ],
+        "handle_status": "chain"
+      },
+      "combine_amount": 1,
+      "delay": 0
     },
     {
-      "type": "old_magic:list",
-      "action_list": [
-        {
-          "type": "old_magic:target_by_nearby_entities",
-          "center_position_target": "entities",
-          "filter": "#old_magic:flameable",
-          "range": 3.0,
-          "shape": "cube"
-        },
-        {
-          "type": "old_magic:damage_entities",
-          "amount": 4.0,
-          "damage_type": "minecraft:magic"
-        },
-        {
-          "type": "old_magic:fire_control",
-          "fire_ticks": 0
-        }
-      ],
-      "handle_status": "chain"
+      "type": "old_magic:target_by_nearby_entities",
+      "filter": "#old_magic:flameable",
+      "mode": "replace_without_previous",
+      "range": 1.0,
+      "set_previous_target": "previous_blocks",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_entity_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:damage_entities",
+            "amount": 4.0,
+            "damage_type": "minecraft:magic"
+          },
+          {
+            "type": "old_magic:fire_control",
+            "fire_ticks": 0
+          }
+        ]
+      },
+      "combine_amount": 0,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:wait",
+      "wait_ticks": 4
+    },
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "range": 2,
+      "selection_mode": "replace_without_previous",
+      "set_previous_target": "actor",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:list",
+            "action_list": [
+              {
+                "type": "old_magic:block_transform",
+                "block": "minecraft:frosted_ice",
+                "filter": {
+                  "type": "minecraft:all_of",
+                  "predicates": [
+                    {
+                      "type": "minecraft:matching_blocks",
+                      "blocks": "minecraft:water"
+                    },
+                    {
+                      "type": "minecraft:matching_blocks",
+                      "blocks": "minecraft:air",
+                      "offset": [
+                        0,
+                        1,
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "keep_properties": false
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:wall_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:copper_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:copper_wall_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": false,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:fire"
+                }
+              },
+              {
+                "type": "old_magic:block_state_transform",
+                "properties": [
+                  {
+                    "name": "lit",
+                    "valueChanger": "false"
+                  }
+                ]
+              }
+            ],
+            "handle_status": "first_enter"
+          },
+          {
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "outline",
+                "thickness": 0.0
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 50,
+              "move": {
+                "moveRule": "static",
+                "randomness": 0.0,
+                "speed": 0.0
+              },
+              "particle": {
+                "type": "minecraft:snowflake"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "target": "block"
+          }
+        ],
+        "handle_status": "chain"
+      },
+      "combine_amount": 1,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:target_by_nearby_entities",
+      "filter": "#old_magic:flameable",
+      "mode": "replace_without_previous",
+      "range": 2.0,
+      "set_previous_target": "previous_blocks",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_entity_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:damage_entities",
+            "amount": 4.0,
+            "damage_type": "minecraft:magic"
+          },
+          {
+            "type": "old_magic:fire_control",
+            "fire_ticks": 0
+          }
+        ]
+      },
+      "combine_amount": 0,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:wait",
+      "wait_ticks": 4
+    },
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "range": 3,
+      "selection_mode": "replace_without_previous",
+      "set_previous_target": "actor",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:list",
+            "action_list": [
+              {
+                "type": "old_magic:block_transform",
+                "block": "minecraft:frosted_ice",
+                "filter": {
+                  "type": "minecraft:all_of",
+                  "predicates": [
+                    {
+                      "type": "minecraft:matching_blocks",
+                      "blocks": "minecraft:water"
+                    },
+                    {
+                      "type": "minecraft:matching_blocks",
+                      "blocks": "minecraft:air",
+                      "offset": [
+                        0,
+                        1,
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "keep_properties": false
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:wall_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:copper_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": true,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:copper_wall_torch"
+                }
+              },
+              {
+                "type": "old_magic:blocks_break",
+                "drop_resources": false,
+                "filter": {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": "minecraft:fire"
+                }
+              },
+              {
+                "type": "old_magic:block_state_transform",
+                "properties": [
+                  {
+                    "name": "lit",
+                    "valueChanger": "false"
+                  }
+                ]
+              }
+            ],
+            "handle_status": "first_enter"
+          },
+          {
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "outline",
+                "thickness": 0.0
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 50,
+              "move": {
+                "moveRule": "static",
+                "randomness": 0.0,
+                "speed": 0.0
+              },
+              "particle": {
+                "type": "minecraft:snowflake"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "target": "block"
+          }
+        ],
+        "handle_status": "chain"
+      },
+      "combine_amount": 1,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:target_by_nearby_entities",
+      "filter": "#old_magic:flameable",
+      "mode": "replace_without_previous",
+      "range": 3.0,
+      "set_previous_target": "previous_blocks",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_entity_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:damage_entities",
+            "amount": 4.0,
+            "damage_type": "minecraft:magic"
+          },
+          {
+            "type": "old_magic:fire_control",
+            "fire_ticks": 0
+          }
+        ]
+      },
+      "combine_amount": 0,
+      "delay": 0
     }
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "type": "old_magic:list",
+  "action_list": [
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "available_blocks": {
+        "type": "minecraft:matching_blocks",
+        "blocks": "minecraft:water"
+      },
+      "range": 1,
+      "set_previous_target": "actor",
+      "shape": "cube"
+    },
+    "old_magic:ice_sphere",
+    {
+      "type": "old_magic:discard_projectile"
+    }
+  ],
+  "handle_status": "chain"
+}

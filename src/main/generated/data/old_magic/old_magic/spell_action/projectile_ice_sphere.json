@@ -2,6 +2,8 @@
   "type": "old_magic:projectile",
   "onBlockHit": "old_magic:ice_sphere",
   "onEntityHit": "old_magic:ice_sphere",
+  "onTick": "old_magic:ice_sphere_in_water",
+  "onTickDelay": 2,
   "properties": {
     "itemRender": "minecraft:ice",
     "particle": {

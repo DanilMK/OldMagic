@@ -41,7 +41,7 @@ public class SpellGenerator extends FabricDynamicRegistryProvider {
     private void addEntries() {
 
         add(Spells.BASIC, new Spell(new Casting(4, 0, false, false), action(SpellActions.PROJECTILE_BASIC), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
-        add(Spells.FIRE, new Spell(new Casting(4, 20, false, false), action(SpellActions.PROJECTILE_FIRE_SPHERE), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
+        add(Spells.FIRE, new Spell(new Casting(4, 20, false, false), action(SpellActions.PROJECTILE_FIRE_SPHERE), action(SpellActions.FIRE_LOCK)));
         add(Spells.ICE, new Spell(new Casting(20, 4, false, false), action(SpellActions.PROJECTILE_ICE_SPHERE), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
         add(Spells.GROW_PLANTS, new Spell(new Casting(4, 8, false, false), action(SpellActions.PROJECTILE_GROW_PLANTS), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
         add(Spells.SEVERING_PLANTS, new Spell(new Casting(4, 8, false, false), action(SpellActions.PROJECTILE_SERVING_PLANTS), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
@@ -50,6 +50,7 @@ public class SpellGenerator extends FabricDynamicRegistryProvider {
         add(Spells.PUSH, new Spell(new Casting(10, 0, false, false), action(SpellActions.PROJECTILE_PUSH), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
         add(Spells.PUDDLE, new Spell(new Casting(20, 0, false, false), action(SpellActions.PROJECTILE_PUDDLE), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
         add(Spells.FLOWER_FIELD, new Spell(new Casting(20, 0, false, false), action(SpellActions.PROJECTILE_FLOWER_FIELD), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
+        add(Spells.FIRE_RING, new Spell(new Casting(60, 0, false, false), action(SpellActions.FIRE_RING), action(SpellActions.FIRE_LOCK)));
         //add(Spells.CHANGE_COLOR, new Spell(new Casting(20, 0, false, false), action(SpellActions.PROJECTILE_CHANGE_CLOR), action(SpellActions.PROJECTILE_BASIC_BROKEN)));
     }
 

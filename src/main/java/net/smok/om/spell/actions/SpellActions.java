@@ -10,6 +10,7 @@ public interface SpellActions {
     ResourceKey<SpellAction> BASIC_BROKEN = register("basic_broken");
     ResourceKey<SpellAction> FIRE_SPHERE = register("fire_sphere");
     ResourceKey<SpellAction> ICE_SPHERE = register("ice_sphere");
+    ResourceKey<SpellAction> ICE_SPHERE_IN_WATER = register("ice_sphere_in_water");
     ResourceKey<SpellAction> GROW_PLANTS = register("grow_plants");
     ResourceKey<SpellAction> SERVING_PLANTS = register("serving_plants");
     ResourceKey<SpellAction> PULL = register("pull");
@@ -18,6 +19,8 @@ public interface SpellActions {
     ResourceKey<SpellAction> COLLECT_ITEMS = register("collect_items");
     ResourceKey<SpellAction> CHANGE_COLOR = register("change_color");
     ResourceKey<SpellAction> FLOWER_FIELD = register("flower_field");
+    ResourceKey<SpellAction> FIRE_RING = register("fire_ring");
+    ResourceKey<SpellAction> FIRE_LOCK = register("fire_lock");
 
     ResourceKey<SpellAction> PROJECTILE_BASIC = register("projectile_basic");
     ResourceKey<SpellAction> PROJECTILE_BASIC_BROKEN = register("projectile_basic_broken");

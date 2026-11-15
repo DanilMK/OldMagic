@@ -1,0 +1,127 @@
+{
+  "type": "old_magic:random_select",
+  "action_list": [
+    {
+      "type": "old_magic:block_place",
+      "block_state": {
+        "Name": "minecraft:fire",
+        "Properties": {
+          "age": "0",
+          "east": "false",
+          "north": "false",
+          "south": "false",
+          "up": "false",
+          "west": "false"
+        }
+      },
+      "filter": {
+        "type": "minecraft:matching_block_tag",
+        "tag": "minecraft:air"
+      }
+    },
+    {
+      "type": "old_magic:block_place",
+      "block_state": {
+        "Name": "minecraft:fire",
+        "Properties": {
+          "age": "0",
+          "east": "false",
+          "north": "false",
+          "south": "false",
+          "up": "false",
+          "west": "false"
+        }
+      },
+      "filter": {
+        "type": "minecraft:matching_block_tag",
+        "tag": "minecraft:air"
+      }
+    },
+    {
+      "type": "old_magic:block_place",
+      "block_state": {
+        "Name": "minecraft:fire",
+        "Properties": {
+          "age": "0",
+          "east": "false",
+          "north": "false",
+          "south": "false",
+          "up": "false",
+          "west": "false"
+        }
+      },
+      "filter": {
+        "type": "minecraft:matching_block_tag",
+        "tag": "minecraft:air"
+      }
+    },
+    {
+      "type": "old_magic:fire_control",
+      "fire_ticks": 10,
+      "target": "caster"
+    },
+    {
+      "type": "old_magic:fire_control",
+      "fire_ticks": 10,
+      "target": "caster"
+    },
+    {
+      "type": "old_magic:fire_control",
+      "fire_ticks": 10,
+      "target": "caster"
+    },
+    {
+      "type": "old_magic:list",
+      "action_list": [
+        {
+          "type": "old_magic:target_by_shape_blocks",
+          "available_blocks": {
+            "type": "minecraft:all_of",
+            "predicates": [
+              {
+                "type": "minecraft:solid",
+                "offset": [
+                  0,
+                  -1,
+                  0
+                ]
+              },
+              {
+                "type": "minecraft:matching_block_tag",
+                "tag": "minecraft:air"
+              }
+            ]
+          },
+          "range": 2,
+          "set_previous_target": "actor",
+          "shape": "cube",
+          "shuffle": true
+        },
+        {
+          "type": "old_magic:for_each_block_target",
+          "action": {
+            "type": "old_magic:block_place",
+            "block_state": {
+              "Name": "minecraft:fire",
+              "Properties": {
+                "age": "0",
+                "east": "false",
+                "north": "false",
+                "south": "false",
+                "up": "false",
+                "west": "false"
+              }
+            },
+            "filter": {
+              "type": "old_magic:random",
+              "probability": 0.5
+            }
+          },
+          "combine_amount": 1,
+          "delay": 5
+        }
+      ],
+      "handle_status": "chain"
+    }
+  ]
+}

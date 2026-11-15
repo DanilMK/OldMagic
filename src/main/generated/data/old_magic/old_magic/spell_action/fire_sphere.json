@@ -51,6 +51,7 @@
                 ]
               },
               "range": 3,
+              "set_previous_target": "actor",
               "shape": "sphere"
             },
             {
@@ -84,9 +85,9 @@
           "action_list": [
             {
               "type": "old_magic:target_by_nearby_entities",
-              "center_position_target": "entities",
               "filter": "#old_magic:flameable",
               "range": 3.0,
+              "set_previous_target": "previous_blocks",
               "shape": "cube"
             },
             {

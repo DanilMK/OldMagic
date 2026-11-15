@@ -19,6 +19,7 @@ public interface Spells {
     ResourceKey<Spell> PUDDLE = register("puddle");
     ResourceKey<Spell> FLOWER_FIELD = register("flower_field");
     ResourceKey<Spell> CHANGE_COLOR = register("change_color");
+    ResourceKey<Spell> FIRE_RING = register("fire_ring");
 
     List<ResourceKey<Spell>> ALL = List.of(
             BASIC,
@@ -30,7 +31,8 @@ public interface Spells {
             GROW_PLANTS,
             SEVERING_PLANTS,
             PUDDLE,
-            FLOWER_FIELD
+            FLOWER_FIELD,
+            FIRE_RING
     );
 
     private static ResourceKey<Spell> register(String name) {

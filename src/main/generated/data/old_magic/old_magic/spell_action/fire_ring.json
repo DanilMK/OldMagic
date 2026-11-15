@@ -1,0 +1,275 @@
+{
+  "type": "old_magic:list",
+  "action_list": [
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "range": 1,
+      "selection_mode": "replace_without_previous",
+      "set_previous_target": "actor",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "range": 2,
+      "selection_mode": "replace_without_previous",
+      "set_previous_target": "actor",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:block_state_transform",
+            "filter": {
+              "type": "minecraft:matching_block_tag",
+              "tag": "minecraft:campfires"
+            },
+            "properties": [
+              {
+                "name": "lit",
+                "valueChanger": "true"
+              }
+            ]
+          },
+          {
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "solid"
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 5,
+              "move": {
+                "moveRule": "from_center",
+                "randomness": 0.1,
+                "speed": 0.1
+              },
+              "particle": {
+                "type": "minecraft:flame"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "target": "block"
+          }
+        ]
+      },
+      "combine_amount": 1,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:target_by_nearby_entities",
+      "filter": "#old_magic:flameable",
+      "mode": "replace_without_previous",
+      "range": 2.0,
+      "set_previous_target": "previous_blocks",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_entity_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:damage_entities",
+            "amount": 2.0,
+            "damage_type": "minecraft:magic"
+          },
+          {
+            "type": "old_magic:fire_control",
+            "fire_ticks": 20
+          }
+        ]
+      },
+      "combine_amount": 0,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:wait",
+      "wait_ticks": 4
+    },
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "range": 3,
+      "selection_mode": "replace_without_previous",
+      "set_previous_target": "actor",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_entity_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:damage_entities",
+            "amount": 2.0,
+            "damage_type": "minecraft:magic"
+          },
+          {
+            "type": "old_magic:fire_control",
+            "fire_ticks": 20
+          }
+        ]
+      },
+      "combine_amount": 0,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:target_by_nearby_entities",
+      "filter": "#old_magic:flameable",
+      "mode": "replace_without_previous",
+      "range": 3.0,
+      "set_previous_target": "previous_blocks",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:block_state_transform",
+            "filter": {
+              "type": "minecraft:matching_block_tag",
+              "tag": "minecraft:campfires"
+            },
+            "properties": [
+              {
+                "name": "lit",
+                "valueChanger": "true"
+              }
+            ]
+          },
+          {
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "solid"
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 5,
+              "move": {
+                "moveRule": "from_center",
+                "randomness": 0.1,
+                "speed": 0.1
+              },
+              "particle": {
+                "type": "minecraft:flame"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "target": "block"
+          }
+        ]
+      },
+      "combine_amount": 1,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:wait",
+      "wait_ticks": 4
+    },
+    {
+      "type": "old_magic:target_by_shape_blocks",
+      "range": 4,
+      "selection_mode": "replace_without_previous",
+      "set_previous_target": "actor",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_entity_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:damage_entities",
+            "amount": 2.0,
+            "damage_type": "minecraft:magic"
+          },
+          {
+            "type": "old_magic:fire_control",
+            "fire_ticks": 20
+          }
+        ]
+      },
+      "combine_amount": 0,
+      "delay": 0
+    },
+    {
+      "type": "old_magic:target_by_nearby_entities",
+      "filter": "#old_magic:flameable",
+      "mode": "replace_without_previous",
+      "range": 4.0,
+      "set_previous_target": "previous_blocks",
+      "shape": "sphere"
+    },
+    {
+      "type": "old_magic:for_each_block_target",
+      "action": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:block_state_transform",
+            "filter": {
+              "type": "minecraft:matching_block_tag",
+              "tag": "minecraft:campfires"
+            },
+            "properties": [
+              {
+                "name": "lit",
+                "valueChanger": "true"
+              }
+            ]
+          },
+          {
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "solid"
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 5,
+              "move": {
+                "moveRule": "from_center",
+                "randomness": 0.1,
+                "speed": 0.1
+              },
+              "particle": {
+                "type": "minecraft:flame"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "target": "block"
+          }
+        ]
+      },
+      "combine_amount": 1,
+      "delay": 0
+    }
+  ]
+}

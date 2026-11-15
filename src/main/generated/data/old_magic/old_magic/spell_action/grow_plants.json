@@ -18,6 +18,7 @@
             "tag": "old_magic:growable_plants"
           },
           "range": 3,
+          "set_previous_target": "actor",
           "shape": "sphere"
         },
         {

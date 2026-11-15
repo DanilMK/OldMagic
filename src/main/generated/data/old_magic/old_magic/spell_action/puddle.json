@@ -91,6 +91,7 @@
         ]
       },
       "range": 2,
+      "set_previous_target": "actor",
       "shape": "sphere"
     },
     {
