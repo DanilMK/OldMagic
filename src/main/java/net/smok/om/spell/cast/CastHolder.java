@@ -88,6 +88,8 @@ public class CastHolder {
 
     public void tick(Player player) {
         tickCount++;
+        boolean alive = !player.isDeadOrDying();
+
         if (!cooldowns.isEmpty()) {
             Iterator<Map.Entry<Identifier, CooldownInstance>> iterator = cooldowns.entrySet().iterator();
             while (iterator.hasNext()) {
@@ -104,12 +106,12 @@ public class CastHolder {
             while (iterator.hasNext()) {
                 Map.Entry<Integer, CastInstance> next = iterator.next();
 
-                if (player.getItemInHand(InteractionHand.MAIN_HAND).is(next.getValue().item())) {
+                if (alive && player.getItemInHand(InteractionHand.MAIN_HAND).is(next.getValue().item())) {
                     if (next.getValue().endTime <= tickCount) {
                         iterator.remove();
                         onUseFinish(next.getKey(), next.getValue().spell(), player.getItemInHand(InteractionHand.MAIN_HAND), next.getValue().forceLocked);
                     }
-                } else if (player.getItemInHand(InteractionHand.OFF_HAND).is(next.getValue().item())) {
+                } else if (alive && player.getItemInHand(InteractionHand.OFF_HAND).is(next.getValue().item())) {
                     if (next.getValue().endTime <= tickCount) {
                         iterator.remove();
                         onUseFinish(next.getKey(), next.getValue().spell(), player.getItemInHand(InteractionHand.OFF_HAND), next.getValue().forceLocked);
