@@ -33,7 +33,7 @@ public record MobEffectAction(Holder<MobEffect> effect, int duration, int amplif
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
         return spellRunner.executeFor(target, StoredValueType.ENTITY, (_, entityHolder) -> {
             if (entityHolder.getEntity() instanceof LivingEntity livingEntity) {
-                if (duration > 0) {
+                if (amplifier >= 0) {
                     MobEffectInstance instance = new MobEffectInstance(effect, effect.value().isInstantenous() ? 1 : duration, amplifier, false, showParticle);
                     return livingEntity.addEffect(instance, spellRunner.getOptional(effectSource, StoredValueType.ENTITY).map(EntityHolder::getEntity).orElse(null));
                 } else return livingEntity.removeEffect(effect);
