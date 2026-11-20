@@ -37,7 +37,7 @@ public record WandSpellsRenderer(Minecraft minecraft) implements HudElement {
 
                 WandContents spellStacks = itemStack.get(OMDataComponents.WAND_CONTENTS);
                 if (spellStacks != null) {
-                    int x = guiGraphicsExtractor.guiWidth() / 2 - 200 - spellStacks.spells().size();
+                    int x = guiGraphicsExtractor.guiWidth() / 2 - 220 - spellStacks.spells().size();
                     int y = guiGraphicsExtractor.guiHeight() - BACKGROUND_SIZE - 1;
                     renderSpellList(guiGraphicsExtractor, x, y, spellStacks, caster.oldMagic$getCastHolder(), deltaTracker.getGameTimeDeltaPartialTick(false));
                 }
