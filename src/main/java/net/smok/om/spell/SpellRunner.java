@@ -257,6 +257,14 @@ public class SpellRunner {
         return "Action: " + action + ", Actor: " + actor + ", Values: Singles: " + storedValues.singlesSize() + ", Lists: " + storedValues.listsSize();
     }
 
+    public @NotNull StoredValues getStoredValues() {
+        return storedValues;
+    }
+
+    public void setStoredValues(@NotNull StoredValues values) {
+        storedValues.putAll(values);
+    }
+
 
     public interface BlockTargetPredicate {
         boolean test(ServerLevel level, BlockPos blockPos, BlockState blockState);

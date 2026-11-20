@@ -102,4 +102,9 @@ public class StoredValues {
     public int listsSize() {
         return lists.size();
     }
+
+    public void putAll(@NotNull StoredValues values) {
+        this.singles.putAll(values.singles);
+        this.lists.putAll(values.lists);
+    }
 }
