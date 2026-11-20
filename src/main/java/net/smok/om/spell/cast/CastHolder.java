@@ -17,13 +17,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.smok.om.network.CastSpellPayload;
-import net.smok.om.network.SpellCastPayload;
-import net.smok.om.network.SpellCooldownPayload;
+import net.smok.om.network.*;
 import net.smok.om.spell.Spell;
+import net.smok.om.spell.SpellRunner;
 import net.smok.om.spell.actions.SpellAction;
+import net.smok.om.utils.StoredValues;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,18 +35,21 @@ public class CastHolder {
     private final Map<Identifier, CooldownInstance> cooldowns;
     private final Map<Integer, CastInstance> used;
     private final Set<Holder<Spell>> unlockedSpells;
+    private final Map<Holder<Spell>, ToggleInstance> toggledSpells;
     private int tickCount;
 
     public CastHolder() {
         cooldowns = new HashMap<>();
         used = new HashMap<>();
         unlockedSpells = new HashSet<>();
+        toggledSpells = new HashMap<>();
     }
 
-    private CastHolder(Map<Identifier, CooldownInstance> cooldowns, Map<Integer, CastInstance> used, Set<Holder<Spell>> unlockedSpells) {
+    private CastHolder(Map<Identifier, CooldownInstance> cooldowns, Map<Integer, CastInstance> used, Set<Holder<Spell>> unlockedSpells, Map<Holder<Spell>, ToggleInstance> toggledSpells) {
         this.cooldowns = cooldowns;
         this.used = used;
         this.unlockedSpells = unlockedSpells;
+        this.toggledSpells = toggledSpells;
     }
 
     @Contract(" -> new")
@@ -123,6 +127,60 @@ public class CastHolder {
             }
         }
 
+        if (!toggledSpells.isEmpty()) {
+            Iterator<Map.Entry<Holder<Spell>, ToggleInstance>> iterator = toggledSpells.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Holder<Spell>, ToggleInstance> next = iterator.next();
+                ToggleInstance instance = next.getValue();
+
+                if (alive && player.getItemInHand(InteractionHand.MAIN_HAND).is(instance.wand)) {
+                    if (instance.tickDelay > 0 && instance.endTime <= tickCount && instance.onTick != null) {
+                        onTickToggleRun(next.getKey(), instance.onTick, player.getItemInHand(InteractionHand.MAIN_HAND), instance.values);
+                        instance.endTime += instance.tickDelay;
+                    }
+                } else if (alive && player.getItemInHand(InteractionHand.OFF_HAND).is(instance.wand)) {
+                    if (instance.tickDelay > 0 && instance.endTime <= tickCount && instance.onTick != null) {
+                        onTickToggleRun(next.getKey(), instance.onTick, player.getItemInHand(InteractionHand.OFF_HAND), instance.values);
+                        instance.endTime += instance.tickDelay;
+                    }
+                } else {
+                    iterator.remove();
+                    if (instance.onEnd != null) {
+                        onEndToggleRun(next.getKey(), instance.onEnd, instance.wand, instance.values);
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean isToggled(Holder<Spell> spell) {
+        return spell != null && toggledSpells.containsKey(spell);
+    }
+
+    public boolean enableToggle(@NotNull Holder<Item> wand,
+                                @Nullable Holder<Spell> spell,
+                                @Nullable Holder<SpellAction> onEnd,
+                                @Nullable Holder<SpellAction> onTick,
+                                int tickDelay,
+                                @Nullable StoredValues storedValues) {
+
+        if (spell == null || toggledSpells.containsKey(spell)) return false;
+        if (onEnd != null || (onTick != null && tickDelay > 0)) {
+            toggledSpells.put(spell, new ToggleInstance(onEnd, onTick, wand, storedValues, tickDelay, tickCount, tickCount + tickDelay));
+            spell.unwrapKey().ifPresent(key -> addCooldown(key.identifier(), 4));
+            return true;
+        }
+        return false;
+    }
+
+    public void enableToggle(@NotNull Holder<Spell> spell, int tickDelay, @NotNull Holder<Item> wand) {
+        toggledSpells.put(spell, new ToggleInstance(null, null, wand, null, Math.max(tickDelay, 20), tickCount, tickCount + tickDelay));
+        spell.unwrapKey().ifPresent(key -> addCooldown(key.identifier(), spell.value().casting().rechargeTime()));
+    }
+
+    public void disableToggle(@Nullable Holder<Spell> spell) {
+        toggledSpells.remove(spell);
+        if (spell != null) spell.unwrapKey().ifPresent(key -> addCooldown(key.identifier(), spell.value().casting().rechargeTime()));
     }
 
     public void addCooldown(Identifier id, int time) {
@@ -172,6 +230,10 @@ public class CastHolder {
 
     protected void onUseStop(int slot) {}
 
+    protected void onTickToggleRun(Holder<Spell> spell, @NotNull Holder<SpellAction> action, ItemStack itemStack, @Nullable StoredValues values) {}
+
+    protected void onEndToggleRun(Holder<Spell> spell, @NotNull Holder<SpellAction> action, Holder<Item> item, @Nullable StoredValues values) {}
+
     public boolean isSpellOpened(Holder<Spell> spellHolder) {
         return unlockedSpells.contains(spellHolder);
     }
@@ -216,7 +278,7 @@ public class CastHolder {
 
     public void castSpell(int tickRemains, ServerLevel level, LivingEntity caster, ItemStack wandItem, Holder<Spell> spell, boolean forceOpen) {
         if (canCast(tickRemains, spell)) {
-            SpellAction.run(level, forceOpen || unlockedSpells.contains(spell) ? spell.value().main() : spell.value().broken(), caster, wandItem);
+            SpellAction.run(level, spell, forceOpen || unlockedSpells.contains(spell) ? spell.value().main() : spell.value().broken(), caster, wandItem);
             afterCast(spell);
         }
     }
@@ -240,7 +302,7 @@ public class CastHolder {
         }
     }
 
-    public void readData(ValueInput input) {
+    public void readData(@NotNull ValueInput input) {
         cooldowns.clear();
         used.clear();
         unlockedSpells.clear();
@@ -248,14 +310,56 @@ public class CastHolder {
         input.read("cooldowns", COOLDOWN_MAP_CODEC).ifPresent(cooldowns::putAll);
         input.read("cast_used", CAST_MAP_CODEC).ifPresent(used::putAll);
         input.read("unlocked", UNLOCK_CODEC).ifPresent(unlockedSpells::addAll);
+        input.read("toggles", TOGGLES_CODEC).ifPresent(toggledSpells::putAll);
     }
 
-    public void writeData(ValueOutput output) {
+    public void writeData(@NotNull ValueOutput output) {
         output.store("cooldowns", COOLDOWN_MAP_CODEC, cooldowns);
         output.store("cast_used", CAST_MAP_CODEC, used);
         output.store("unlocked", UNLOCK_CODEC, unlockedSpells);
+        output.store("toggles", TOGGLES_CODEC, toggledSpells);
     }
 
+    private static class ToggleInstance {
+        @Nullable public final Holder<SpellAction> onEnd;
+        @Nullable public final Holder<SpellAction> onTick;
+        @NotNull private final Holder<Item> wand;
+        @Nullable private final StoredValues values;
+        public final int tickDelay;
+        public int startTime;
+        public int endTime;
+
+        private ToggleInstance(@Nullable Holder<SpellAction> onEnd,
+                               @Nullable Holder<SpellAction> onTick,
+                               @NotNull Holder<Item> wand,
+                               @Nullable StoredValues values,
+                               int tickDelay, int startTime, int endTime
+        ) {
+            this.onEnd = onEnd;
+            this.onTick = onTick;
+            this.wand = wand;
+            this.values = values;
+            this.tickDelay = tickDelay;
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+
+        @Contract(pure = true)
+        public @NotNull Optional<Holder<SpellAction>> optionalEnd() {
+            return Optional.ofNullable(onEnd);
+        }
+
+        @Contract(pure = true)
+        public @NotNull Optional<Holder<SpellAction>> optionalTick() {
+            return Optional.ofNullable(onTick);
+        }
+
+        @Contract(pure = true)
+        public @NotNull Optional<StoredValues> optionalValues() {
+            return Optional.ofNullable(values);
+        }
+
+    }
 
     private record CooldownInstance(int startTime, int endTime) {}
 
@@ -281,10 +385,24 @@ public class CastHolder {
 
     private static final Codec<Set<Holder<Spell>>> UNLOCK_CODEC = Spell.HOLDER_CODEC.listOf().xmap(HashSet::new, ArrayList::new);
 
+    private static final Codec<ToggleInstance> TOGGLE_INSTANCE_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            SpellAction.HOLDER_CODEC.optionalFieldOf("on_end").forGetter(ToggleInstance::optionalEnd),
+            SpellAction.HOLDER_CODEC.optionalFieldOf("on_tick").forGetter(ToggleInstance::optionalTick),
+            Item.CODEC.fieldOf("item").forGetter(toggleInstance -> toggleInstance.wand),
+            StoredValues.CODEC.optionalFieldOf("values").forGetter(ToggleInstance::optionalValues),
+            Codec.INT.fieldOf("tick_delay").forGetter(toggleInstance -> toggleInstance.tickDelay),
+            Codec.INT.fieldOf("start_time").forGetter(toggleInstance -> toggleInstance.startTime),
+            Codec.INT.fieldOf("end_time").forGetter(toggleInstance -> toggleInstance.endTime)
+    ).apply(instance, (end, tick, item, values, tickDelay, startTime, endTime) ->
+            new ToggleInstance(end.orElse(null), tick.orElse(null), item, values.orElse(null), tickDelay, startTime, endTime)));
+
+    private static final Codec<Map<Holder<Spell>, ToggleInstance>> TOGGLES_CODEC = Codec.unboundedMap(Spell.HOLDER_CODEC, TOGGLE_INSTANCE_CODEC);
+
     public static final Codec<CastHolder> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             COOLDOWN_MAP_CODEC.fieldOf("cooldowns").forGetter(CastHolder::relativeCooldowns),
             CAST_MAP_CODEC.fieldOf("casts").forGetter(CastHolder::relativeUsed),
-            UNLOCK_CODEC.fieldOf("unlocked").forGetter(ch -> ch.unlockedSpells)
+            UNLOCK_CODEC.fieldOf("unlocked").forGetter(ch -> ch.unlockedSpells),
+            TOGGLES_CODEC.fieldOf("toggles").forGetter(ch -> ch.toggledSpells)
     ).apply(instance, CastHolder::new));
 
     public static class ServerCastHolder extends CastHolder {
@@ -314,11 +432,8 @@ public class CastHolder {
 
         @Override
         protected void onUseFinish(int slot, Holder<Spell> spell, ItemStack itemStack, boolean forceLocked) {
-            super.onUseFinish(slot, spell, itemStack, forceLocked);/*
-            spell.value().props()
-                    .ifPresentOrElse(projectileProps -> SpellProjectile.cast(player.level(), player, itemStack, spell, projectileProps),
-                            () -> SpellAction.run(player.level(), spell.value().spellAction(), player, itemStack)); //spell.value().runActions(new SpellContext(player.level(), player)));*/
-            SpellAction.run(player.level(), forceLocked || isSpellOpened(spell) ? spell.value().main() : spell.value().broken(), player, itemStack);
+            super.onUseFinish(slot, spell, itemStack, forceLocked);
+            SpellAction.run(player.level(), spell, forceLocked || isSpellOpened(spell) ? spell.value().main() : spell.value().broken(), player, itemStack);
 
             afterCast(spell);
             ServerPlayNetworking.send(player, new CastSpellPayload(slot, false));
@@ -328,6 +443,39 @@ public class CastHolder {
         protected void onUseStop(int slot) {
             super.onUseStop(slot);
             ServerPlayNetworking.send(player, new CastSpellPayload(slot, false));
+        }
+
+        @Override
+        public boolean enableToggle(
+                @NotNull Holder<Item> wand,
+                @Nullable Holder<Spell> spell,
+                @Nullable Holder<SpellAction> onEnd,
+                @Nullable Holder<SpellAction> onTick,
+                int tickDelay,
+                @NotNull StoredValues storedValues
+        ) {
+            boolean toggle = super.enableToggle(wand, spell, onEnd, onTick, tickDelay, storedValues);
+            if (toggle && spell != null) ServerPlayNetworking.send(player, new EnableToggleSpellPayload(spell, wand, tickDelay));
+            return toggle;
+        }
+
+        @Override
+        public void disableToggle(@Nullable Holder<Spell> spell) {
+            super.disableToggle(spell);
+            if (spell != null) ServerPlayNetworking.send(player, new DisableToggleSpellPayload(spell));
+        }
+
+        @Override
+        protected void onTickToggleRun(Holder<Spell> spell, @NotNull Holder<SpellAction> action, ItemStack itemStack, @Nullable StoredValues values) {
+            SpellRunner run = SpellAction.run(player.level(), spell, action, player, itemStack);
+            if (values != null) run.setStoredValues(values);
+        }
+
+        @Override
+        protected void onEndToggleRun(Holder<Spell> spell, @NotNull Holder<SpellAction> action, Holder<Item> item, @Nullable StoredValues values) {
+            SpellRunner run = SpellAction.run(player.level(), spell, action, player, item.value().getDefaultInstance());
+            if (values != null) run.setStoredValues(values);
+            ServerPlayNetworking.send(player, new DisableToggleSpellPayload(spell));
         }
     }
 }

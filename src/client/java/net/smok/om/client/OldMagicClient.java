@@ -16,9 +16,7 @@ import net.smok.om.client.render.screens.Screens;
 import net.smok.om.client.render.screens.WandCraftTableScreen;
 import net.smok.om.entity.OMEntities;
 import net.smok.om.menu.OMMenus;
-import net.smok.om.network.CastSpellPayload;
-import net.smok.om.network.SpellCastPayload;
-import net.smok.om.network.SpellCooldownPayload;
+import net.smok.om.network.*;
 import net.smok.om.spell.cast.PlayerCaster;
 import net.smok.om.utils.BlockParticleTemplate;
 
@@ -63,5 +61,17 @@ public class OldMagicClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(BlockParticleTemplate.TYPE,
                 (blockParticleTemplate, context) ->
                         blockParticleTemplate.addParticleClient(context.client().level));
+
+
+        ClientPlayNetworking.registerGlobalReceiver(EnableToggleSpellPayload.TYPE, (enableToggleSpellPayload, context) -> {
+            if (context.player() instanceof PlayerCaster caster)
+                caster.oldMagic$enableToggle(enableToggleSpellPayload.spellHolder(), enableToggleSpellPayload.delay(), enableToggleSpellPayload.item());
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(DisableToggleSpellPayload.TYPE, (toggleSpellPayload, context) -> {
+            if (context.player() instanceof PlayerCaster caster)
+                caster.oldMagic$disableToggle(toggleSpellPayload.spellHolder());
+        });
+
 	}
 }

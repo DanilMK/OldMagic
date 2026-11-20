@@ -17,6 +17,8 @@ public interface NetworkHandler {
         PayloadTypeRegistry.clientboundPlay().register(SpellCooldownPayload.TYPE, SpellCooldownPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SpellCastPayload.TYPE, SpellCastPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(BlockParticleTemplate.TYPE, BlockParticleTemplate.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(EnableToggleSpellPayload.TYPE, EnableToggleSpellPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(DisableToggleSpellPayload.TYPE, DisableToggleSpellPayload.STREAM_CODEC);
 
     }
 }

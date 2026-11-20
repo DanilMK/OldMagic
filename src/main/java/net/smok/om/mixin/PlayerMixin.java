@@ -1,11 +1,18 @@
 package net.smok.om.mixin;
 
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.smok.om.spell.Spell;
+import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.cast.CastHolder;
 import net.smok.om.spell.cast.PlayerCaster;
+import net.smok.om.utils.StoredValues;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -55,4 +62,32 @@ public class PlayerMixin implements PlayerCaster {
     public CastHolder oldMagic$getCastHolder() {
         return castHolder;
     }
+
+    @Override
+    public boolean oldMagic$enableToggleServer(
+            @NotNull Holder<Item> wand,
+            @Nullable Holder<Spell> spell,
+            @Nullable Holder<SpellAction> onEnd,
+            @Nullable Holder<SpellAction> onTick,
+            int tickDelay,
+            @Nullable StoredValues storedValues
+            ) {
+        return castHolder.enableToggle(wand, spell, onEnd, onTick, tickDelay, storedValues);
+    }
+
+    @Override
+    public void oldMagic$enableToggle(@NotNull Holder<Spell> spell, int tickDelay, @NotNull Holder<Item> wand) {
+        castHolder.enableToggle(spell, tickDelay, wand);
+    }
+
+    @Override
+    public void oldMagic$disableToggle(@Nullable Holder<Spell> spell) {
+        castHolder.disableToggle(spell);
+    }
+
+    @Override
+    public boolean oldMagic$isToggled(Holder<Spell> spell) {
+        return castHolder.isToggled(spell);
+    }
+
 }
