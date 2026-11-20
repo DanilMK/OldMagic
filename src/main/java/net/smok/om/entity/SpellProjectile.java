@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.*;
+import net.smok.om.spell.Spell;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.entity.ProjectileSpawn;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,7 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
 
     private ItemStack wand;
 
+    @Nullable private Holder<Spell> spell;
     @Nullable private Holder<SpellAction> onTick;
     @Nullable private Holder<SpellAction> onEntityHit;
     @Nullable private Holder<SpellAction> onBlockHit;
@@ -37,8 +39,8 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
     }
 
 
-    public static void cast(ServerLevel level, LivingEntity caster, ItemStack wand, ProjectileSpawn action, ProjectileProps props) {
-        Projectile.spawnProjectileFromRotation(SpellProjectile::new, level, wand, caster, 0, 1.5f, 1).setActions(props, 1, action.onTick(), action.onEntityHit(), action.onBlockHit());
+    public static void cast(ServerLevel level, LivingEntity caster, ItemStack wand, Holder<Spell> spell, ProjectileSpawn action, ProjectileProps props) {
+        Projectile.spawnProjectileFromRotation(SpellProjectile::new, level, wand, caster, 0, 1.5f, 1).setActions(props, spell, 1, action.onTick(), action.onEntityHit(), action.onBlockHit());
     }
 
 
@@ -50,7 +52,7 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
         getEntityData().set(PROJ_PROPS, projectileProps);
     }
 
-    public void setActions(ProjectileProps props, int onTickDelay, @Nullable Holder<SpellAction> onTick, @Nullable Holder<SpellAction> onEntityHit, @Nullable Holder<SpellAction> onBlockHit) {
+    public void setActions(ProjectileProps props, @Nullable Holder<Spell> spell, int onTickDelay, @Nullable Holder<SpellAction> onTick, @Nullable Holder<SpellAction> onEntityHit, @Nullable Holder<SpellAction> onBlockHit) {
         setProps(props);
         reapplyPosition();
         refreshDimensions();
@@ -58,6 +60,7 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
         this.onTick = onTick;
         this.onEntityHit = onEntityHit;
         this.onBlockHit = onBlockHit;
+        this.spell = spell;
     }
 
     @Override
@@ -91,7 +94,7 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
     public void tick() {
         if (!level().isClientSide()) {
             if (liveTime % onTickDelay == 0 && onTick != null) {
-                SpellAction.run((ServerLevel) level(), onTick, this, wand);
+                SpellAction.run((ServerLevel) level(), spell, onTick, this, wand);
             }
             if (liveTime++ > getProps().lifetime()) {
                 discard();
@@ -112,6 +115,7 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
         if (onTick != null) output.store("onTick", SpellAction.HOLDER_CODEC, onTick);
         if (onEntityHit != null) output.store("onEntityHit", SpellAction.HOLDER_CODEC, onEntityHit);
         if (onBlockHit != null) output.store("onBlockHit", SpellAction.HOLDER_CODEC, onBlockHit);
+        output.store("spell", Spell.HOLDER_CODEC, spell);
     }
 
     @Override
@@ -124,6 +128,7 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
         onTick = input.read("onTick", SpellAction.HOLDER_CODEC).orElse(null);
         onEntityHit = input.read("onEntityHit", SpellAction.HOLDER_CODEC).orElse(null);
         onBlockHit = input.read("onBlockHit", SpellAction.HOLDER_CODEC).orElse(null);
+        spell = input.read("spell", Spell.HOLDER_CODEC).orElse(null);
     }
 
     @Override
@@ -135,7 +140,7 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
     protected void onHitEntity(EntityHitResult hitResult) {
         super.onHitEntity(hitResult);
         if (onEntityHit != null && level() instanceof ServerLevel level) {
-            SpellAction.run(level, onEntityHit, this, wand, hitResult);
+            SpellAction.run(level, spell, onEntityHit, this, wand).targetByHit(hitResult);
             //spell.value().runActions(new SpellContext(level, this, hitResult));
         }
         if (getProps().discardOnHitEntity()) discard();
@@ -145,7 +150,7 @@ public class SpellProjectile extends AbstractHurtingProjectile implements ItemSu
     protected void onHitBlock(BlockHitResult hitResult) {
         super.onHitBlock(hitResult);
         if (onBlockHit != null && level() instanceof ServerLevel level) {
-            SpellAction.run(level, onBlockHit, this, wand, hitResult);
+            SpellAction.run(level, spell, onBlockHit, this, wand).targetByHit(hitResult);
             //spell.value().runActions(new SpellContext(level, this, hitResult));
         }
         if (getProps().discardOnHitBlock()) discard();

@@ -24,6 +24,7 @@ import net.smok.om.utils.HitHolder;
 import net.smok.om.utils.StoredValueType;
 import net.smok.om.utils.StoredValues;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -33,6 +34,7 @@ public class SpellRunner {
 
     // Статический кодек для полной сериализации ранера
     public static final Codec<SpellRunner> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Spell.HOLDER_CODEC.optionalFieldOf("spell").forGetter(r -> Optional.ofNullable(r.spell)),
             SpellAction.HOLDER_CODEC.fieldOf("action").forGetter(r -> r.action),
             UUIDUtil.CODEC.fieldOf("actor_uuid").forGetter(r -> r.actorUUID),
             ItemStack.CODEC.fieldOf("wand").forGetter(r -> r.wand),
@@ -40,9 +42,12 @@ public class SpellRunner {
             Codec.INT.fieldOf("last_index").forGetter(r -> r.lastIndex),
             Codec.INT.fieldOf("wait_ticks_left").forGetter(r -> r.waitTicksLeft),
             StoredValues.CODEC.fieldOf("stored_values").forGetter(r -> r.storedValues)
-    ).apply(instance, SpellRunner::new));
+    ).apply(instance, (spell, action1, actorUUID1, wand1, randomSeed1, lastIndex1, waitTicksLeft1, storedValues1) ->
+            new SpellRunner(spell.orElse(null), action1, actorUUID1, wand1, randomSeed1, lastIndex1, waitTicksLeft1, storedValues1)));
 
     // Константные данные каста
+    @Nullable
+    private final Holder<Spell> spell;
     private final Holder<SpellAction> action;
     private final UUID actorUUID;
     private final ItemStack wand;
@@ -63,7 +68,8 @@ public class SpellRunner {
     private RandomSource randomSource;
 
     // Конструктор создания (при первом касте)
-    public SpellRunner(Holder<SpellAction> action, Entity actor, ItemStack wand) {
+    public SpellRunner(Holder<Spell> spell, Holder<SpellAction> action, Entity actor, ItemStack wand) {
+        this.spell = spell;
         this.action = action;
         this.wand = wand;
         this.actor = actor;
@@ -85,8 +91,9 @@ public class SpellRunner {
     }
 
     // Десериализационный конструктор для Codec
-    private SpellRunner(Holder<SpellAction> action, UUID actorUUID, ItemStack wand,
+    private SpellRunner(Holder<Spell> spell, Holder<SpellAction> action, UUID actorUUID, ItemStack wand,
                         int randomSeed, int lastIndex, int waitTicksLeft, StoredValues storedValues) {
+        this.spell = spell;
         this.action = action;
         this.actorUUID = actorUUID;
         this.wand = wand;
@@ -255,6 +262,10 @@ public class SpellRunner {
 
     public String info() {
         return "Action: " + action + ", Actor: " + actor + ", Values: Singles: " + storedValues.singlesSize() + ", Lists: " + storedValues.listsSize();
+    }
+
+    public @Nullable Holder<Spell> getSpell() {
+        return spell;
     }
 
     public @NotNull StoredValues getStoredValues() {

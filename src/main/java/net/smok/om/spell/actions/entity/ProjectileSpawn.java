@@ -35,7 +35,7 @@ public record ProjectileSpawn(ProjectileProps props, @Nullable Holder<SpellActio
     public SpellRunner.ProcessStatus run(SpellRunner spellRunner) {
         return spellRunner.execute(level -> {
             if (spellRunner.caster() instanceof LivingEntity caster) {
-                SpellProjectile.cast(level, caster, spellRunner.getWand(), this, props);
+                SpellProjectile.cast(level, caster, spellRunner.getWand(), spellRunner.getSpell(), this, props);
                 return true;
             }
             return false;
