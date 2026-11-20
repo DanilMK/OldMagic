@@ -6,10 +6,8 @@ import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.smok.om.Values;
+import net.smok.om.spell.Spell;
 import net.smok.om.spell.SpellRunner;
 import net.smok.om.spell.SpellTickManager;
 import org.jetbrains.annotations.NotNull;
@@ -20,15 +18,12 @@ public interface SpellAction {
     Codec<Holder<SpellAction>> HOLDER_CODEC = RegistryFileCodec.create(Values.SPELL_ACTIONS_KEY, DIRECT_CODEC);
 
 
-    static void run(@NotNull ServerLevel level, @NotNull Holder<SpellAction> action, @NotNull Entity actor, @NotNull ItemStack wand) {
-        SpellTickManager.get(level).startSpell(new SpellRunner(action, actor, wand));
+    static @NotNull SpellRunner run(@NotNull ServerLevel level, @Nullable Holder<Spell> spell, @NotNull Holder<SpellAction> action, @NotNull Entity actor, @NotNull ItemStack wand) {
+        SpellRunner runner = new SpellRunner(spell, action, actor, wand);
+        SpellTickManager.get(level).startSpell(runner);
+        return runner;
     }
 
-    static void run(@NotNull ServerLevel level, @NotNull Holder<SpellAction> action, @NotNull Entity actor, @NotNull ItemStack wand, @Nullable HitResult hitResult) {
-        SpellRunner spellRunner = new SpellRunner(action, actor, wand);
-        if (hitResult != null) spellRunner.targetEntityByHit(hitResult);
-        SpellTickManager.get(level).startSpell(spellRunner);
-    }
 
     SpellActionType<?> actionType();
 

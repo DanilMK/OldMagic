@@ -213,7 +213,7 @@ public class SpellRunner {
         getOrCreateList("positions", StoredValueType.POSITION).add(position);
     }
 
-    public void targetEntityByHit(@NotNull HitResult hitResult) {
+    public void targetByHit(@NotNull HitResult hitResult) {
         put("hit", StoredValueType.HIT, HitHolder.byHit(hitResult));
     }
 
