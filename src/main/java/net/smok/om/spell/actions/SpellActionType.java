@@ -38,7 +38,6 @@ public interface SpellActionType<A extends SpellAction> {
         }
         return SpellRunner.ProcessStatus.FAILURE;
     });
-    SpellActionType<PotionAction> POTION_EFFECT = register("potion_effect", PotionAction.MAP_CODEC);
     SpellActionType<ProjectileSpawn> PROJECTILE = register("projectile", ProjectileSpawn.MAP_CODEC);
     StaticActionType CASTER_ENTITY_TARGET = register("caster_entity_target", spellRunner -> spellRunner.execute(_ -> {
         spellRunner.addEntityTarget(spellRunner.caster());
@@ -80,6 +79,7 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<?> FOR_EACH_ENTITY_TARGET = register("for_each_entity_target", ForEachEntityTarget.MAP_CODEC);
     SpellActionType<?> MOB_EFFECT = register("mob_effect", MobEffectAction.MAP_CODEC);
     SpellActionType<?> SOUND = register("sound", SoundAction.MAP_CODEC);
+    SpellActionType<?> TOGGLE = register("toggle", ToggleAction.MAP_CODEC);
 
     MapCodec<A> codec();
 
