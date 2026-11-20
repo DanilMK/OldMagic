@@ -2,12 +2,94 @@
   "type": "old_magic:list",
   "action_list": [
     {
-      "type": "old_magic:mob_effect",
-      "amplifier": 0,
-      "duration": 300,
-      "effect": "minecraft:invisibility",
-      "show_particle": false,
-      "target": "caster"
+      "type": "old_magic:toggle",
+      "delay": 0,
+      "onEnd": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:mob_effect",
+            "amplifier": -1,
+            "duration": -1,
+            "effect": "minecraft:invisibility",
+            "show_particle": false,
+            "target": "caster"
+          },
+          {
+            "type": "old_magic:sound",
+            "target": "caster",
+            "template": {
+              "minVolume": 1.0,
+              "pitch": 0.7,
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "sound": "minecraft:block.amethyst_cluster.place",
+              "volume": 0.5
+            }
+          },
+          {
+            "type": "old_magic:sound",
+            "target": "caster",
+            "template": {
+              "minVolume": 1.0,
+              "pitch": 0.9,
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "sound": "minecraft:block.amethyst_cluster.chime",
+              "volume": 4.0
+            }
+          }
+        ]
+      },
+      "onStart": {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:mob_effect",
+            "amplifier": 0,
+            "duration": -1,
+            "effect": "minecraft:invisibility",
+            "show_particle": true,
+            "target": "caster"
+          },
+          {
+            "type": "old_magic:sound",
+            "target": "caster",
+            "template": {
+              "minVolume": 1.0,
+              "pitch": 0.7,
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "sound": "minecraft:block.amethyst_cluster.break",
+              "volume": 0.5
+            }
+          },
+          {
+            "type": "old_magic:sound",
+            "target": "caster",
+            "template": {
+              "minVolume": 1.0,
+              "pitch": 0.9,
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "sound": "minecraft:block.amethyst_cluster.chime",
+              "volume": 4.0
+            }
+          }
+        ]
+      }
     }
   ]
 }

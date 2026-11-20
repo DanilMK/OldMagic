@@ -9,9 +9,11 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.VegetationFeatures;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -30,6 +32,7 @@ import net.smok.om.spell.actions.logic.RandomSelectAction;
 import net.smok.om.spell.actions.logic.WaitAction;
 import net.smok.om.spell.actions.misc.ParticleAction;
 import net.smok.om.spell.actions.misc.SoundAction;
+import net.smok.om.spell.actions.misc.ToggleAction;
 import net.smok.om.utils.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -373,9 +376,17 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                 ))
         ));
 
-        add(SpellActions.INVISIBILITY, list(
-                new MobEffectAction(MobEffects.INVISIBILITY, 15*20, 0, false, "caster", "caster").inline()
-        ));
+        add(SpellActions.INVISIBILITY,
+                ToggleAction.startEnd(list(
+                        new MobEffectAction(MobEffects.INVISIBILITY, -1, 0, true, "caster", "caster").inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("block.amethyst_cluster.break"), "caster", builder -> builder.setVolume(0.5f).setPitch(0.7f)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("block.amethyst_cluster.chime"), "caster", builder -> builder.setVolume(4).setPitch(0.9f)).inline()
+                ), list(
+                        new MobEffectAction(MobEffects.INVISIBILITY, -1, -1, false, "caster", "caster").inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("block.amethyst_cluster.place"), "caster", builder -> builder.setVolume(0.5f).setPitch(0.7f)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("block.amethyst_cluster.chime"), "caster", builder -> builder.setVolume(4).setPitch(0.9f)).inline()
+                )).inline()
+        );
 
         /* // todo надо заменить на готовые массивы стекла, шерсти и тд.
         ArrayList<Holder<SpellAction>> changeColorTagList = new ArrayList<>();
