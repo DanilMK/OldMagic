@@ -306,6 +306,7 @@ public class CastHolder {
         cooldowns.clear();
         used.clear();
         unlockedSpells.clear();
+        toggledSpells.clear();
         tickCount = 0;
         input.read("cooldowns", COOLDOWN_MAP_CODEC).ifPresent(cooldowns::putAll);
         input.read("cast_used", CAST_MAP_CODEC).ifPresent(used::putAll);
