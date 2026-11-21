@@ -187,7 +187,6 @@ public class SpellRunner {
 
     // Геттеры для работы логики действий заклинаний
     public List<BlockPos> getBlockTargets() { return getOrCreateList("blocks", StoredValueType.BLOCK); }
-    public List<Entity> getEntityTargets() { return getOrCreateList("entities", StoredValueType.ENTITY).stream().map(EntityHolder::getEntity).toList(); }
     public List<Vec3> getPositionTargets() { return getOrCreateList("positions", StoredValueType.POSITION); }
 
 
@@ -202,14 +201,6 @@ public class SpellRunner {
 
     public List<Pair<BlockPos, BlockState>> getBlockTargetStates() {
         return getOrCreateList("blocks", StoredValueType.BLOCK).stream().map(blockPos -> new Pair<>(blockPos, level.getBlockState(blockPos))).toList();
-    }
-
-    public void replaceEntityTargets(Collection<Entity> entities) {
-        replaceList("entities", StoredValueType.ENTITY, new ArrayList<>(entities.stream().map(EntityHolder::new).toList()));
-    }
-
-    public void addBlockTargets(Collection<BlockPos> blockPos) {
-        getOrCreateList("blocks", StoredValueType.BLOCK).addAll(blockPos);
     }
 
     public void addEntityTarget(Entity entity) {

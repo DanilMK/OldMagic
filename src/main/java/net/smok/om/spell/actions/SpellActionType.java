@@ -19,7 +19,6 @@ import java.util.function.Function;
 public interface SpellActionType<A extends SpellAction> {
 
     SpellActionType<ShapeBlockTarget> TARGET_BY_SHAPE_BLOCKS = register("target_by_shape_blocks", ShapeBlockTarget.MAP_CODEC);
-    SpellActionType<BlockTransformation> BLOCKS_TRANSFORMATION = register("blocks_transformation", BlockTransformation.MAP_CODEC);
     SpellActionType<BreakAction> BLOCKS_BREAK = register("blocks_break", BreakAction.MAP_CODEC);
     SpellActionType<FeatureAction> PLACE_FEATURE = register("place_feature", FeatureAction.MAP_CODEC);
     SpellActionType<BonemealAction> BONEMEAL_BLOCKS = register("bonemeal_blocks", BonemealAction.MAP_CODEC);
@@ -63,18 +62,12 @@ public interface SpellActionType<A extends SpellAction> {
 
 
     SpellActionType<ListAction> LIST = register("list", ListAction.MAP_CODEC);
-    SpellActionType<ChainListAction> CHAIN = register("chain", ChainListAction.MAP_CODEC);
-    SpellActionType<EmptyAction> EMPTY = register("empty", EmptyAction.MAP_CODEC);
-    SpellActionType<MoveEntityAction> MOVE_ENTITY = register("move_entity", MoveEntityAction.MAP_CODEC);
-    SpellActionType<FirstEnterAction> FIRST_ENTER = register("first_enter", FirstEnterAction.MAP_CODEC);
+    StaticActionType EMPTY = register("empty", _ -> SpellRunner.ProcessStatus.SUCCESS);
     SpellActionType<WaitAction> WAIT = register("wait", WaitAction.MAP_CODEC);
     SpellActionType<?> FIRE_CONTROL = register("fire_control", FireControlAction.MAP_CODEC);
     SpellActionType<?> RANDOM_SELECT = register("random_select", RandomSelectAction.MAP_CODEC);
     SpellActionType<RepeatAction> REPEAT_ACTION = register("repeat", RepeatAction.MAP_CODEC);
 
-    SpellActionType<PositionBlockTarget> POSITION_BLOCK_TARGET = register("position_block_target", PositionBlockTarget.MAP_CODEC);
-    SpellActionType<RelativeEntityPositionTarget> RELATIVE_ENTITY_POSITION_TARGET = register("relative_entity_position_target", RelativeEntityPositionTarget.MAP_CODEC);
-    SpellActionType<EntityPositionTarget> ENTITY_POSITION_TARGET = register("entity_position_target", EntityPositionTarget.MAP_CODEC);
     SpellActionType<ParticleAction> PARTICLE = register("particle", ParticleAction.MAP_CODEC);
     SpellActionType<?> REPOSITION_TARGET = register("reposition_target", RepositionTarget.MAP_CODEC);
     SpellActionType<?> FOR_EACH_ENTITY_TARGET = register("for_each_entity_target", ForEachEntityTarget.MAP_CODEC);

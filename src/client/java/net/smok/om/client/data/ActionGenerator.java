@@ -351,8 +351,8 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                 SpellActionType.DISCARD_PROJECTILE.action().inline()
         ));
 
-        Holder.Reference<SpellAction> pull = add(SpellActions.PULL, MoveEntityToPosition.move(1, false, "entity", "caster").inline()); // new MoveEntityAction(MoveEntityAction.Direction.PULL_TO_CASTER, 1, false).inline());
-        Holder.Reference<SpellAction> push = add(SpellActions.PUSH, MoveEntityToPosition.move(-1, false, "entity", "caster").inline()); // new MoveEntityAction(MoveEntityAction.Direction.PUSH_FROM_CASTER, 1, false).inline());
+        Holder.Reference<SpellAction> pull = add(SpellActions.PULL, MoveEntityToPosition.move(1, false, "entity", "caster").inline());
+        Holder.Reference<SpellAction> push = add(SpellActions.PUSH, MoveEntityToPosition.move(-1, false, "entity", "caster").inline());
 
         Holder.Reference<SpellAction> puddle = add(SpellActions.PUDDLE, chain(
                 ShapeBlockTarget.sphere(builder1 -> builder1.range(2).filterSurface()).inline(),

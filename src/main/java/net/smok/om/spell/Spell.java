@@ -11,8 +11,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.smok.om.Values;
 import net.smok.om.spell.actions.SpellAction;
+import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.cast.Casting;
-import net.smok.om.spell.actions.logic.EmptyAction;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public record Spell(@NotNull Casting casting, @NotNull Holder<SpellAction> main,
     public static final Codec<Spell> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Casting.CODEC.fieldOf("castings").forGetter(Spell::casting),
             SpellAction.HOLDER_CODEC.fieldOf("main").forGetter(Spell::main),
-            SpellAction.HOLDER_CODEC.optionalFieldOf("broken", EmptyAction.INSTANCE.inline()).forGetter(Spell::broken)
+            SpellAction.HOLDER_CODEC.optionalFieldOf("broken", SpellActionType.EMPTY.holder()).forGetter(Spell::broken)
     ).apply(instance, Spell::new));
 
     public static final Codec<Holder<Spell>> HOLDER_CODEC = RegistryFixedCodec.create(Values.SPELLS_KEY);

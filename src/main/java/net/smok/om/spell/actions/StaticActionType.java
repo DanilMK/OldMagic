@@ -1,7 +1,10 @@
 package net.smok.om.spell.actions;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.core.Holder;
 import net.smok.om.spell.SpellRunner;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -17,6 +20,11 @@ public final class StaticActionType implements SpellActionType<StaticActionType.
 
     public Action action() {
         return action;
+    }
+
+    @Contract(value = " -> new", pure = true)
+    public @NotNull Holder<SpellAction> holder() {
+        return Holder.direct(action);
     }
 
     @Override
