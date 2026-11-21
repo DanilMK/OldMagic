@@ -273,6 +273,7 @@ public class SpellRunner {
     }
 
     public void setStoredValues(@NotNull StoredValues values) {
+        values.init(level);
         storedValues.putAll(values);
     }
 
