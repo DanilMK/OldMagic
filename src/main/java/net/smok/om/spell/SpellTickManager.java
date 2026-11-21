@@ -62,14 +62,9 @@ public class SpellTickManager extends SavedData {
         if (activeRunners.isEmpty()) return;
 
         boolean changed = false;
-        Iterator<SpellRunner> iterator = activeRunners.iterator();
-
-        while (iterator.hasNext()) {
-            SpellRunner runner = iterator.next();
-
-            // Если tick() вернул true — заклинание полностью завершено
-            if (runner.tick()) {
-                iterator.remove();
+        for (int i = activeRunners.size() - 1; i >= 0; i--) {
+            if (activeRunners.get(i).tick()) {
+                activeRunners.remove(i);
                 changed = true;
             }
         }

@@ -179,7 +179,8 @@ public class CastHolder {
     }
 
     public void disableToggle(@Nullable Holder<Spell> spell) {
-        toggledSpells.remove(spell);
+        ToggleInstance remove = toggledSpells.remove(spell);
+        if (remove != null && remove.onEnd != null) onEndToggleRun(spell, remove.onEnd, remove.wand, remove.values);
         if (spell != null) spell.unwrapKey().ifPresent(key -> addCooldown(key.identifier(), spell.value().casting().rechargeTime()));
     }
 
