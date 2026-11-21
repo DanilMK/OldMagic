@@ -80,6 +80,7 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<?> MOB_EFFECT = register("mob_effect", MobEffectAction.MAP_CODEC);
     SpellActionType<?> SOUND = register("sound", SoundAction.MAP_CODEC);
     SpellActionType<?> TOGGLE = register("toggle", ToggleAction.MAP_CODEC);
+    SpellActionType<?> ADD_TO_LIST = register("add_to_list", AddToList.MAP_CODEC);
 
     MapCodec<A> codec();
 
