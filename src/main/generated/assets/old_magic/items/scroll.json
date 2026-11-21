@@ -85,6 +85,13 @@
           "model": "old_magic:item/scroll/invisibility"
         },
         "when": "old_magic:invisibility"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/scroll/levitation"
+        },
+        "when": "old_magic:levitation"
       }
     ],
     "fallback": {

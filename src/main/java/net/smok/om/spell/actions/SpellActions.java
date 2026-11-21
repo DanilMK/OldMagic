@@ -22,6 +22,7 @@ public interface SpellActions {
     ResourceKey<SpellAction> FIRE_RING = register("fire_ring");
     ResourceKey<SpellAction> FIRE_LOCK = register("fire_lock");
     ResourceKey<SpellAction> INVISIBILITY = register("invisibility");
+    ResourceKey<SpellAction> LEVITATION = register("levitation");
 
     ResourceKey<SpellAction> PROJECTILE_BASIC = register("projectile_basic");
     ResourceKey<SpellAction> PROJECTILE_BASIC_BROKEN = register("projectile_basic_broken");
@@ -34,6 +35,8 @@ public interface SpellActions {
     ResourceKey<SpellAction> PROJECTILE_PUDDLE = register("projectile_puddle");
     ResourceKey<SpellAction> PROJECTILE_FLOWER_FIELD = register("projectile_flower_field");
     ResourceKey<SpellAction> PROJECTILE_CHANGE_COLOR = register("projectile_change_color");
+    ResourceKey<SpellAction> PROJECTILE_LEVITATION = register("projectile_levitation");
+    ResourceKey<SpellAction> LEVITATION_LOCK = register("levitation_lock");
 
     private static ResourceKey<SpellAction> register(String name) {
         return ResourceKey.create(Values.SPELL_ACTIONS_KEY, Values.id(name));

@@ -1,0 +1,20 @@
+{
+  "type": "old_magic:list",
+  "action_list": [
+    {
+      "type": "old_magic:disable_toggle"
+    },
+    {
+      "type": "old_magic:projectile",
+      "onEntityHit": "old_magic:levitation",
+      "properties": {
+        "itemRender": "minecraft:air",
+        "particle": {
+          "type": "minecraft:tinted_leaves",
+          "color": 268435455
+        }
+      }
+    }
+  ],
+  "handle_status": "first_enter"
+}

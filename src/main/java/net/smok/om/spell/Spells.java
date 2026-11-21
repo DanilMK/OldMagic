@@ -15,12 +15,12 @@ public interface Spells {
     ResourceKey<Spell> PUSH = register("push");
     ResourceKey<Spell> GROW_PLANTS = register("grow_plants");
     ResourceKey<Spell> SEVERING_PLANTS = register("severing_plants");
-    ResourceKey<Spell> LEVITATION = register("levitation");
     ResourceKey<Spell> PUDDLE = register("puddle");
     ResourceKey<Spell> FLOWER_FIELD = register("flower_field");
     ResourceKey<Spell> CHANGE_COLOR = register("change_color");
     ResourceKey<Spell> FIRE_RING = register("fire_ring");
     ResourceKey<Spell> INVISIBILITY = register("invisibility");
+    ResourceKey<Spell> LEVITATION = register("levitation");
 
     List<ResourceKey<Spell>> ALL = List.of(
             BASIC,
@@ -34,7 +34,8 @@ public interface Spells {
             PUDDLE,
             FLOWER_FIELD,
             FIRE_RING,
-            INVISIBILITY
+            INVISIBILITY,
+            LEVITATION
     );
 
     private static ResourceKey<Spell> register(String name) {

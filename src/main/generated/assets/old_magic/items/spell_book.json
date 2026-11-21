@@ -85,6 +85,13 @@
           "model": "old_magic:item/spell_book/invisibility"
         },
         "when": "old_magic:invisibility"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "old_magic:item/spell_book/levitation"
+        },
+        "when": "old_magic:levitation"
       }
     ],
     "fallback": {

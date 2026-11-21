@@ -1,0 +1,10 @@
+{
+  "broken": "old_magic:levitation_lock",
+  "castings": {
+    "cancelable": false,
+    "cast_ticks": 0,
+    "recharge_ticks": 80,
+    "single_use": false
+  },
+  "main": "old_magic:projectile_levitation"
+}
