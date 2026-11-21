@@ -1,10 +1,8 @@
 package net.smok.om.spell;
 
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.level.ServerLevel;
@@ -13,9 +11,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.smok.om.entity.SpellProjectile;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.cast.PlayerCaster;
@@ -168,27 +164,6 @@ public class SpellRunner {
         return ProcessStatus.SUCCESS;
     }
 
-    public ProcessStatus executeForAnyBlock(BlockTargetPredicate action) {
-        boolean check = false;
-        for (BlockPos blockTarget : new ArrayList<>(getBlockTargets())) {
-            check |= action.test(level, blockTarget, level.getBlockState(blockTarget));
-        }
-        return check ? ProcessStatus.SUCCESS : ProcessStatus.FAILURE;
-    }
-
-    public ProcessStatus executeForAnyEntity(BiPredicate<ServerLevel, Entity> action) {
-
-        boolean check = false;
-        for (EntityHolder entity : new ArrayList<>(getOrCreateList("entities", StoredValueType.ENTITY))) {
-            check |= action.test(level, entity.getEntity());
-        }
-        return check ? ProcessStatus.SUCCESS : ProcessStatus.FAILURE;
-    }
-
-    // Геттеры для работы логики действий заклинаний
-    public List<BlockPos> getBlockTargets() { return getOrCreateList("blocks", StoredValueType.BLOCK); }
-    public List<Vec3> getPositionTargets() { return getOrCreateList("positions", StoredValueType.POSITION); }
-
 
     public RandomSource getRandom() {
         randomSource.setSeed(currentIndex + randomSeed);
@@ -199,17 +174,6 @@ public class SpellRunner {
         return actor instanceof SpellProjectile projectile ? projectile.getOwner() : actor;
     }
 
-    public List<Pair<BlockPos, BlockState>> getBlockTargetStates() {
-        return getOrCreateList("blocks", StoredValueType.BLOCK).stream().map(blockPos -> new Pair<>(blockPos, level.getBlockState(blockPos))).toList();
-    }
-
-    public void addEntityTarget(Entity entity) {
-        getOrCreateList("blocks", StoredValueType.ENTITY).add(new EntityHolder(entity));
-    }
-
-    public void addPositionTarget(Vec3 position) {
-        getOrCreateList("positions", StoredValueType.POSITION).add(position);
-    }
 
     public void targetByHit(@NotNull HitResult hitResult) {
         put("hit", StoredValueType.HIT, HitHolder.byHit(hitResult));
@@ -280,11 +244,6 @@ public class SpellRunner {
     public void setStoredValues(@NotNull StoredValues values) {
         values.init(level);
         storedValues.putAll(values);
-    }
-
-
-    public interface BlockTargetPredicate {
-        boolean test(ServerLevel level, BlockPos blockPos, BlockState blockState);
     }
 
 

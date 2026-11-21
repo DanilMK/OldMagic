@@ -3,7 +3,6 @@ package net.smok.om.spell.actions;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.phys.Vec3;
 import net.smok.om.Values;
 import net.smok.om.entity.SpellProjectile;
 import net.smok.om.spell.SpellRunner;
@@ -13,7 +12,6 @@ import net.smok.om.spell.actions.logic.*;
 import net.smok.om.spell.actions.misc.*;
 import net.smok.om.spell.cast.PlayerCaster;
 
-import java.util.List;
 import java.util.function.Function;
 
 public interface SpellActionType<A extends SpellAction> {
@@ -39,17 +37,6 @@ public interface SpellActionType<A extends SpellAction> {
         return SpellRunner.ProcessStatus.FAILURE;
     });
     SpellActionType<ProjectileSpawn> PROJECTILE = register("projectile", ProjectileSpawn.MAP_CODEC);
-    StaticActionType CASTER_ENTITY_TARGET = register("caster_entity_target", spellRunner -> spellRunner.execute(_ -> {
-        spellRunner.addEntityTarget(spellRunner.caster());
-        return true;
-    }));
-    StaticActionType TELEPORT_ENTITY_TO_POSITION = register("teleport_entity_to_position", spellRunner -> spellRunner.executeForAnyEntity((_, entity) -> {
-        List<Vec3> positionTargets = spellRunner.getPositionTargets();
-        if (positionTargets.isEmpty()) return false;
-        Vec3 position = positionTargets.getFirst();
-        entity.teleportTo(position.x, position.y, position.z);
-        return true;
-    }));
     SpellActionType<MoveEntityToPosition> MOVE_ENTITY_TO_POSITION = register("move_entity_to_position", MoveEntityToPosition.MAP_CODEC);
     SpellActionType<KnockbackEntity> KNOCKBACK_ENTITY = register("knockback_entity", KnockbackEntity.MAP_CODEC);
 
