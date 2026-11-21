@@ -60,7 +60,6 @@ public record ToggleAction(@Nullable Holder<SpellAction> onStart, @Nullable Hold
         if (spellRunner.caster() instanceof PlayerCaster caster) {
             if (caster.oldMagic$isToggled(spellRunner.getSpell())) {
                 caster.oldMagic$disableToggle(spellRunner.getSpell());
-                if (onEnd != null) return onEnd.value().run(spellRunner);
                 return SpellRunner.ProcessStatus.SUCCESS;
             } else {
                 if (onStart != null) onStart.value().run(spellRunner);

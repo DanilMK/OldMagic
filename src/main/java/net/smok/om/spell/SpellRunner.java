@@ -232,6 +232,10 @@ public class SpellRunner {
         storedValues.putIfAbsent(key, type, value);
     }
 
+    public void put(String setTargetName, StoredValueType.Value<?> value) {
+        storedValues.put(setTargetName, value);
+    }
+
     public <T> T get(String key, StoredValueType<T> type) {
         return storedValues.get(key, type);
     }
@@ -244,12 +248,26 @@ public class SpellRunner {
         return storedValues.getOptional(key, type);
     }
 
+    @Nullable
+    public StoredValueType.Value<?> getAny(@NotNull String key) {
+        return storedValues.getAny(key);
+    }
+
     public <T> List<T> getOrCreateList(String key, StoredValueType<T> type) {
         return storedValues.getOrCreateList(key, type);
     }
 
     public <T> void replaceList(String key, StoredValueType<T> type, ArrayList<T> list) {
         storedValues.replaceList(key, type, list);
+    }
+
+    public void replaceList(String key, StoredValueType.ListValue<?> list) {
+        storedValues.replaceList(key, list);
+    }
+
+    @Nullable
+    public StoredValueType.ListValue<?> getAnyList(@NotNull String key) {
+        return storedValues.getAnyList(key);
     }
 
     public Entity getActor() {

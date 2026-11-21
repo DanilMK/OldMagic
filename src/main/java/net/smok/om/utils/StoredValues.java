@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -40,6 +41,10 @@ public class StoredValues {
     }
 
 
+    public void put(String key, StoredValueType.Value<?> value) {
+        singles.put(key, value);
+    }
+
     public <T> void put(String key, StoredValueType<T> type, T value) {
         if (value == null) singles.remove(key);
         else singles.put(key, new StoredValueType.Value<>(type, value));
@@ -49,12 +54,21 @@ public class StoredValues {
         if (value != null) singles.putIfAbsent(key, new StoredValueType.Value<>(type, value));
     }
 
+    public void putAll(@NotNull StoredValues values) {
+        this.singles.putAll(values.singles);
+        this.lists.putAll(values.lists);
+    }
+
     public <T> T get(@NotNull String key, @NotNull StoredValueType<T> type) {
         StoredValueType.Value<?> value = singles.get(key);
         if (value == null) return null;
         if (value.type().equals(type)) //noinspection unchecked
             return (T) value.value();
         return value.toType(type).orElse(null);
+    }
+
+    public @Nullable StoredValueType.Value<?> getAny(@NotNull String key) {
+        return singles.get(key);
     }
 
     public <T> T getOrCreateDefault(String key, StoredValueType<T> type) {
@@ -79,8 +93,16 @@ public class StoredValues {
         return list.list();
     }
 
+    public @Nullable StoredValueType.ListValue<?> getAnyList(@NotNull String key) {
+        return lists.get(key);
+    }
+
     public <T> void replaceList(String key, StoredValueType<T> type, ArrayList<T> list) {
         lists.put(key, new StoredValueType.ListValue<>(type, list));
+    }
+
+    public void replaceList(String key, StoredValueType.ListValue<?> list) {
+        lists.put(key, list);
     }
 
 
@@ -103,8 +125,4 @@ public class StoredValues {
         return lists.size();
     }
 
-    public void putAll(@NotNull StoredValues values) {
-        this.singles.putAll(values.singles);
-        this.lists.putAll(values.lists);
-    }
 }
