@@ -11,6 +11,7 @@ import net.smok.om.spell.actions.block.*;
 import net.smok.om.spell.actions.entity.*;
 import net.smok.om.spell.actions.logic.*;
 import net.smok.om.spell.actions.misc.*;
+import net.smok.om.spell.cast.PlayerCaster;
 
 import java.util.List;
 import java.util.function.Function;
@@ -82,6 +83,13 @@ public interface SpellActionType<A extends SpellAction> {
     SpellActionType<?> TOGGLE = register("toggle", ToggleAction.MAP_CODEC);
     SpellActionType<?> RESAVE_TARGET = register("resave_target", ResaveTarget.MAP_CODEC);
     SpellActionType<?> ADD_TO_LIST = register("add_to_list", AddToList.MAP_CODEC);
+    StaticActionType DISABLE_TOGGLE = register("disable_toggle", spellRunner -> {
+        if (spellRunner.caster() instanceof PlayerCaster caster && caster.oldMagic$isToggled(spellRunner.getSpell())) {
+            caster.oldMagic$disableToggle(spellRunner.getSpell());
+            return SpellRunner.ProcessStatus.SUCCESS;
+        }
+        return SpellRunner.ProcessStatus.FAILURE;
+    });
 
     MapCodec<A> codec();
 

@@ -31,7 +31,7 @@ public record ResaveTarget(String getTargetName, String setTargetName, @Nullable
 
     @Contract("_, _, _ -> new")
     public static @NotNull Holder<SpellAction> create(String get, String set, StoredValueType<?> castTo) {
-        return new ResaveTarget(get, set, null).inline();
+        return new ResaveTarget(get, set, castTo).inline();
     }
 
     @Override
