@@ -18,12 +18,17 @@ public record HitHolder(Vec3 position, BlockPos blockPos, @Nullable EntityHolder
     public static final Codec<HitHolder> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Vec3.CODEC.fieldOf("position").forGetter(HitHolder::position),
         BlockPos.CODEC.fieldOf("block").forGetter(HitHolder::blockPos),
-        EntityHolder.CODEC.optionalFieldOf("entity").forGetter(hitHolder -> Optional.ofNullable(hitHolder.entity)),
+        EntityHolder.CODEC.optionalFieldOf("entity").forGetter(HitHolder::optionalEntityHolder),
             Direction.CODEC.optionalFieldOf("block_hit_direction").forGetter(hitHolder -> Optional.ofNullable(hitHolder.hitDirection))
     ).apply(instance, (vec3, blockPos1, entityHolder, hitDirection) -> new HitHolder(vec3, blockPos1, entityHolder.orElse(null), hitDirection.orElse(null))));
 
-    public void init(ServerLevel level) {
+    public boolean init(ServerLevel level) {
         if (entity != null) entity.init(level);
+        return false;
+    }
+
+    public Optional<EntityHolder> optionalEntityHolder() {
+        return entity != null && entity.getEntity() != null ? Optional.of(entity) : Optional.empty();
     }
 
     public static HitHolder byHit(HitResult hitResult) {

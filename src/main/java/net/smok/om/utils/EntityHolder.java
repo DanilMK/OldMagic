@@ -32,8 +32,9 @@ public class EntityHolder {
         return uuid;
     }
 
-    public void init(ServerLevel level) {
+    public boolean init(ServerLevel level) {
         this.entity = level.getEntity(uuid);
+        return entity == null;
     }
 
     @Override

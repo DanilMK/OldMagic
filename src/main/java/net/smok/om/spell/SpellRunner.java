@@ -240,10 +240,6 @@ public class SpellRunner {
         return storedValues.get(key, type);
     }
 
-    public <T> T getOrCreateDefault(String key, StoredValueType<T> type) {
-        return storedValues.getOrCreateDefault(key, type);
-    }
-
     public <T> Optional<T> getOptional(String key, StoredValueType<T> type) {
         return storedValues.getOptional(key, type);
     }

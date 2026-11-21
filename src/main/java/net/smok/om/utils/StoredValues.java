@@ -36,7 +36,7 @@ public class StoredValues {
     }
 
     public void init(ServerLevel level) {
-        singles.values().forEach(value -> value.init(level));
+        singles.values().removeIf(value -> value.init(level));
         lists.values().forEach(listValue -> listValue.init(level));
     }
 
@@ -71,14 +71,6 @@ public class StoredValues {
         return singles.get(key);
     }
 
-    public <T> T getOrCreateDefault(String key, StoredValueType<T> type) {
-        if (singles.containsKey(key)) return get(key, type);
-        if (type.defaultValue() == null) return null;
-        T result = type.defaultValue().get();
-        if (result != null) put(key, type, result);
-        return result;
-    }
-
     public <T> List<T> getOrCreateList(String key, StoredValueType<T> type) {
         if (lists.containsKey(key)) {
             StoredValueType.ListValue<?> listValue = lists.get(key);
@@ -108,10 +100,7 @@ public class StoredValues {
 
     public <T> Optional<T> getOptional(String key, StoredValueType<T> type) {
         StoredValueType.Value<?> value = singles.get(key);
-        if (value == null) {
-            if (type.defaultValue() == null) return Optional.empty();
-            return Optional.ofNullable(type.defaultValue().get());
-        }
+        if (value == null) return Optional.empty();
         if (value.type().equals(type)) //noinspection unchecked
             return Optional.ofNullable((T) value.value());
         return value.toType(type);
