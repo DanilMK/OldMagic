@@ -3,7 +3,7 @@
   "action_list": [
     {
       "type": "old_magic:bonemeal_blocks",
-      "blockTarget": "block",
+      "blockTarget": "hit",
       "filter": {
         "type": "minecraft:true"
       }

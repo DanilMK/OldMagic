@@ -242,21 +242,27 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
         Holder<SpellAction> fireSphere = add(SpellActions.FIRE_SPHERE, firstEnter(
                 chain(
                         TargetHitBlock.hit(BlockPredicate.matchesTag(BlockTags.CAMPFIRES)).inline(),
-                        transformBlockState(BlockStateTransform.builder().set(CampfireBlock.LIT, true))
+                        transformBlockState(BlockStateTransform.builder().set(CampfireBlock.LIT, true)),
+                        ParticleAction.builder("hit", ParticleTypes.FLAME, builder -> builder.setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1).setCount(20)).inline()
                 ),
                 list(
                         chain(
                                 ShapeBlockTarget.sphere(builder4 -> builder4.range(3).filter(BlockPredicate.allOf(
-                                        BlockPredicate.matchesTag(new Vec3i(0, -1, 0), BlockTags.PLANKS),
+                                        BlockPredicate.solid(new Vec3i(0, -1, 0)),
+                                        BlockPredicate.ONLY_IN_AIR_PREDICATE,
                                         new RandomBlockPredicate(0.5f)
                                 ))).inline(),
                                 forEachBlock(2, 4, BlockPlaceAction.placeOnAir(Blocks.FIRE.defaultBlockState()).inline())
                         ),
                         chain(
                                 targetNear(3, FLAMEABLE_ENTITIES),
-                                damageMagic(2),
-                                FireControlAction.fire(20).inline()
-                        )
+                                ForEachEntityTarget.target(list(
+                                        damageMagic(2),
+                                        FireControlAction.fire(20).inline()
+                                )).inline()
+                        ),
+                        ParticleAction.builder("hit", ParticleTypes.FLAME, builder -> builder.setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.3, 0.1).setSize(3, 1, 3).setCount(50)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.blaze.shoot"), "actor", builder -> builder.setVolume(0.3f).setPitch(0.9f)).inline()
                 )
         ));
 
@@ -395,8 +401,6 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                 ),
                 new MobEffectAction(MobEffects.LEVITATION, -1, -1, true, "entity_target", "caster").inline(),
                 list(
-                        ParticleAction.builder("entity_target", ParticleTypes.CLOUD, builder -> builder.setCount(10).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline(),
-                        SoundAction.create(Identifier.withDefaultNamespace("entity.breeze.idle_ground"), "entity_target", builder -> builder.setVolume(0.1f).setPitch(0.4f)).inline(),
                         chain(
                                 FindSurface.create(4, "entity_target", BlockPredicate.anyOf(BlockPredicate.solid(), BlockPredicate.matchesBlocks(Blocks.WATER, Blocks.LAVA))),
                                 new MobEffectAction(MobEffects.LEVITATION, 4, 3, true, "entity_target", "caster").inline()
@@ -405,6 +409,11 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                                 AddToList.create("entity_target", "entities"),
                                 NearbyEntitiesTarget.builder(builder -> builder.shape(Shape.SPHERE).range(8).setMode(SelectionMode.SUBTRACT).centerTarget("caster")).inline(),
                                 ForEachEntityTarget.target(MoveEntityToPosition.move(0.05f, true, "entity", "caster").inline()).inline()
+                        ),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.breeze.idle_ground"), "entity_target", builder -> builder.setVolume(0.1f).setPitch(0.4f)).inline(),
+                        firstEnter(
+                                ParticleAction.builder("entity_target", ParticleTypes.CLOUD, builder -> builder.setCount(10).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline(),
+                                SpellActionType.DISABLE_TOGGLE.action().inline()
                         )
                 ),
                 4

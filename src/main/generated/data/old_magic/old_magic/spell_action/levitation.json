@@ -47,49 +47,6 @@
     "type": "old_magic:list",
     "action_list": [
       {
-        "type": "old_magic:particle",
-        "particleTemplate": {
-          "appearing": {
-            "type": "solid"
-          },
-          "centerOffset": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "count": 10,
-          "move": {
-            "moveRule": "from_center",
-            "randomness": 0.1,
-            "speed": 0.2
-          },
-          "particle": {
-            "type": "minecraft:cloud"
-          },
-          "size": [
-            0.5,
-            0.5,
-            0.5
-          ]
-        },
-        "target": "entity_target"
-      },
-      {
-        "type": "old_magic:sound",
-        "target": "entity_target",
-        "template": {
-          "minVolume": 1.0,
-          "pitch": 0.4,
-          "position": [
-            0.0,
-            0.0,
-            0.0
-          ],
-          "sound": "minecraft:entity.breeze.idle_ground",
-          "volume": 0.1
-        }
-      },
-      {
         "type": "old_magic:list",
         "action_list": [
           {
@@ -153,6 +110,58 @@
           }
         ],
         "handle_status": "chain"
+      },
+      {
+        "type": "old_magic:sound",
+        "target": "entity_target",
+        "template": {
+          "minVolume": 1.0,
+          "pitch": 0.4,
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "sound": "minecraft:entity.breeze.idle_ground",
+          "volume": 0.1
+        }
+      },
+      {
+        "type": "old_magic:list",
+        "action_list": [
+          {
+            "type": "old_magic:particle",
+            "particleTemplate": {
+              "appearing": {
+                "type": "solid"
+              },
+              "centerOffset": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "count": 10,
+              "move": {
+                "moveRule": "from_center",
+                "randomness": 0.1,
+                "speed": 0.2
+              },
+              "particle": {
+                "type": "minecraft:cloud"
+              },
+              "size": [
+                0.5,
+                0.5,
+                0.5
+              ]
+            },
+            "target": "entity_target"
+          },
+          {
+            "type": "old_magic:disable_toggle"
+          }
+        ],
+        "handle_status": "first_enter"
       }
     ]
   }

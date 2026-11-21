@@ -20,6 +20,34 @@
               "valueChanger": "true"
             }
           ]
+        },
+        {
+          "type": "old_magic:particle",
+          "particleTemplate": {
+            "appearing": {
+              "type": "solid"
+            },
+            "centerOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "count": 20,
+            "move": {
+              "moveRule": "from_center",
+              "randomness": 0.1,
+              "speed": 0.2
+            },
+            "particle": {
+              "type": "minecraft:flame"
+            },
+            "size": [
+              0.5,
+              0.5,
+              0.5
+            ]
+          },
+          "target": "hit"
         }
       ],
       "handle_status": "chain"
@@ -36,13 +64,16 @@
                 "type": "minecraft:all_of",
                 "predicates": [
                   {
-                    "type": "minecraft:matching_block_tag",
+                    "type": "minecraft:solid",
                     "offset": [
                       0,
                       -1,
                       0
-                    ],
-                    "tag": "minecraft:planks"
+                    ]
+                  },
+                  {
+                    "type": "minecraft:matching_block_tag",
+                    "tag": "minecraft:air"
                   },
                   {
                     "type": "old_magic:random",
@@ -91,16 +122,69 @@
               "shape": "cube"
             },
             {
-              "type": "old_magic:damage_entities",
-              "amount": 2.0,
-              "damage_type": "minecraft:magic"
-            },
-            {
-              "type": "old_magic:fire_control",
-              "fire_ticks": 20
+              "type": "old_magic:for_each_entity_target",
+              "action": {
+                "type": "old_magic:list",
+                "action_list": [
+                  {
+                    "type": "old_magic:damage_entities",
+                    "amount": 2.0,
+                    "damage_type": "minecraft:magic"
+                  },
+                  {
+                    "type": "old_magic:fire_control",
+                    "fire_ticks": 20
+                  }
+                ]
+              },
+              "combine_amount": 0,
+              "delay": 0
             }
           ],
           "handle_status": "chain"
+        },
+        {
+          "type": "old_magic:particle",
+          "particleTemplate": {
+            "appearing": {
+              "type": "solid"
+            },
+            "centerOffset": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "count": 50,
+            "move": {
+              "moveRule": "from_center",
+              "randomness": 0.1,
+              "speed": 0.3
+            },
+            "particle": {
+              "type": "minecraft:flame"
+            },
+            "size": [
+              3.0,
+              1.0,
+              3.0
+            ]
+          },
+          "target": "hit"
+        },
+        {
+          "type": "old_magic:sound",
+          "target": "actor",
+          "template": {
+            "minVolume": 1.0,
+            "pitch": 0.9,
+            "position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "sound": "minecraft:entity.blaze.shoot",
+            "volume": 0.3
+          }
         }
       ]
     }
