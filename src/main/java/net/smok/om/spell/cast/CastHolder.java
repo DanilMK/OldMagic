@@ -315,10 +315,19 @@ public class CastHolder {
     }
 
     public void writeData(@NotNull ValueOutput output) {
-        output.store("cooldowns", COOLDOWN_MAP_CODEC, cooldowns);
-        output.store("cast_used", CAST_MAP_CODEC, used);
+        output.store("cooldowns", COOLDOWN_MAP_CODEC, cooldowns.entrySet().stream().collect(Collectors.toMap(
+                entry -> entry.getKey(),
+                entry -> entry.getValue().save(tickCount))
+        ));
+        output.store("cast_used", CAST_MAP_CODEC, used.entrySet().stream().collect(Collectors.toMap(
+                entry -> entry.getKey(),
+                entry -> entry.getValue().save(tickCount)
+        )));
         output.store("unlocked", UNLOCK_CODEC, unlockedSpells);
-        output.store("toggles", TOGGLES_CODEC, toggledSpells);
+        output.store("toggles", TOGGLES_CODEC, toggledSpells.entrySet().stream().collect(Collectors.toMap(
+                entry -> entry.getKey(),
+                entry -> entry.getValue().save(tickCount)
+        )));
     }
 
     private static class ToggleInstance {
@@ -360,11 +369,23 @@ public class CastHolder {
             return Optional.ofNullable(values);
         }
 
+        public ToggleInstance save(int tickCount) {
+            return new ToggleInstance(onEnd, onTick, wand, values, tickDelay, startTime - tickCount, endTime - tickCount);
+        }
+
     }
 
-    private record CooldownInstance(int startTime, int endTime) {}
+    private record CooldownInstance(int startTime, int endTime) {
+        public CooldownInstance save(int tickCount) {
+            return new CooldownInstance(startTime - tickCount, endTime - tickCount);
+        }
+    }
 
-    private record CastInstance(Holder<Item> item, Holder<Spell> spell, boolean forceLocked, int startTime, int endTime) {}
+    private record CastInstance(Holder<Item> item, Holder<Spell> spell, boolean forceLocked, int startTime, int endTime) {
+        public CastInstance save(int tickCount) {
+            return new CastInstance(item, spell, forceLocked, startTime - tickCount, endTime - tickCount);
+        }
+    }
 
     private static final Codec<CooldownInstance> COOLDOWN_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.fieldOf("start_time").forGetter(CooldownInstance::startTime),
