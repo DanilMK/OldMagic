@@ -62,8 +62,10 @@ public record ToggleAction(@Nullable Holder<SpellAction> onStart, @Nullable Hold
                 caster.oldMagic$disableToggle(spellRunner.getSpell());
                 return SpellRunner.ProcessStatus.SUCCESS;
             } else {
-                if (onStart != null) onStart.value().run(spellRunner);
-                return spellRunner.execute(_ -> caster
+                boolean b;
+                if (onStart != null) b = onStart.value().run(spellRunner) == SpellRunner.ProcessStatus.SUCCESS;
+                else b = true;
+                return spellRunner.execute(_ -> b && caster
                         .oldMagic$enableToggleServer(BuiltInRegistries.ITEM.wrapAsHolder(spellRunner.getWand().getItem()), spellRunner.getSpell(), onEnd, onTick, delay, spellRunner.getStoredValues()));
             }
         }
