@@ -3,7 +3,6 @@ package net.smok.om.spell.actions.entity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -12,7 +11,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
-import net.smok.om.Debug;
 import net.smok.om.spell.actions.SpellAction;
 import net.smok.om.spell.actions.SpellActionType;
 import net.smok.om.spell.SpellRunner;
@@ -86,20 +84,13 @@ public record NearbyEntitiesTarget(
         return spellRunner.executeFor(centerTarget, StoredValueType.POSITION, (level, center) -> {
             ArrayList<Entity> entities = new ArrayList<>();
             level.getEntities(ANY_ENTITY, AABB.unitCubeFromLowerCorner(center).inflate(range, range, range),
-                    e -> {
-                        boolean a = filter == null || e.is(filter);
-                        boolean b = shape.isInRange(center, e.position(), range);
-                        Debug.log("Entity in filter " + a + " + " + b);
-                        return a && b;
-                    }, entities);
+                    e -> (filter == null || e.is(filter)) && shape.isInRange(center, e.position(), range), entities);
 
-            Debug.log("Total entities in list: " + entities.size());
 
             List<EntityHolder> list = new ArrayList<>(entities.stream().map(EntityHolder::new).toList());
             List<EntityHolder> previous = mode.shouldSavePrevious() ? spellRunner.getOrCreateList(setPreviousTarget, StoredValueType.ENTITY) : List.of();
             List<EntityHolder> selection = spellRunner.getOrCreateList(entityTargets, StoredValueType.ENTITY);
             mode.apply(selection, list, previous);
-            Debug.log("Entities in selection: " + selection.size());
             return !selection.isEmpty();
         });
     }

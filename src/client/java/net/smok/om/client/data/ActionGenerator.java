@@ -6,6 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.VegetationFeatures;
@@ -30,9 +31,7 @@ import net.smok.om.spell.actions.entity.*;
 import net.smok.om.spell.actions.logic.ListAction;
 import net.smok.om.spell.actions.logic.RandomSelectAction;
 import net.smok.om.spell.actions.logic.WaitAction;
-import net.smok.om.spell.actions.misc.ParticleAction;
-import net.smok.om.spell.actions.misc.SoundAction;
-import net.smok.om.spell.actions.misc.ToggleAction;
+import net.smok.om.spell.actions.misc.*;
 import net.smok.om.utils.*;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -387,6 +386,72 @@ public class ActionGenerator extends FabricDynamicRegistryProvider {
                         SoundAction.create(Identifier.withDefaultNamespace("block.amethyst_cluster.chime"), "caster", builder -> builder.setVolume(4).setPitch(0.9f)).inline()
                 )).inline()
         );
+
+        Holder.Reference<SpellAction> levitation = add(SpellActions.LEVITATION, ToggleAction.all(
+                list(
+                        ResaveTarget.create("hit", "entity_target", StoredValueType.ENTITY),
+                        new MobEffectAction(MobEffects.LEVITATION, 16, 6, true, "entity_target", "caster").inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.allay.ambient_without_item"), "entity_target", builder -> builder.setVolume(0.5f).setPitch(1.3f)).inline()
+                ),
+                new MobEffectAction(MobEffects.LEVITATION, -1, -1, true, "entity_target", "caster").inline(),
+                list(
+                        ParticleAction.builder("entity_target", ParticleTypes.CLOUD, builder -> builder.setCount(10).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.breeze.idle_ground"), "entity_target", builder -> builder.setVolume(0.1f).setPitch(0.4f)).inline(),
+                        chain(
+                                FindSurface.create(4, "entity_target", BlockPredicate.anyOf(BlockPredicate.solid(), BlockPredicate.matchesBlocks(Blocks.WATER, Blocks.LAVA))),
+                                new MobEffectAction(MobEffects.LEVITATION, 4, 3, true, "entity_target", "caster").inline()
+                        ),
+                        chain(
+                                AddToList.create("entity_target", "entities"),
+                                NearbyEntitiesTarget.builder(builder -> builder.shape(Shape.SPHERE).range(8).setMode(SelectionMode.SUBTRACT).centerTarget("caster")).inline(),
+                                ForEachEntityTarget.target(MoveEntityToPosition.move(0.05f, true, "entity", "caster").inline()).inline()
+                        )
+                ),
+                4
+        ).inline());
+
+        add(SpellActions.PROJECTILE_LEVITATION, firstEnter(
+                SpellActionType.DISABLE_TOGGLE.action().inline(),
+                projectileHit(
+                        propsEmpty().setParticleOptions(ColorParticleOption.create(ParticleTypes.TINTED_LEAVES, 0xFFFFFFF)).build(),
+                        null,
+                        levitation
+                )
+        ));
+
+        add(SpellActions.LEVITATION_LOCK, randomSelect(
+                chain(
+                        NearbyEntitiesTarget.builder(builder -> builder.centerTarget("caster").range(3)).inline(),
+                        ForEachEntityTarget.target(chain(
+                                new MobEffectAction(MobEffects.LEVITATION, 20, 0, true, "caster", "caster").inline(),
+                                ParticleAction.builder("caster", ParticleTypes.CLOUD, builder -> builder.setCount(20).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline()
+                        )).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.breeze.idle_ground"), "hit", builder -> builder.setVolume(0.2f).setPitch(0.4f)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.allay.ambient_without_item"), "hit", builder -> builder.setVolume(0.5f).setPitch(1.3f)).inline()
+                ),
+                chain(
+                        new MobEffectAction(MobEffects.LEVITATION, 20*3, 0, true, "caster", "caster").inline(),
+                        ParticleAction.builder("caster", ParticleTypes.CLOUD, builder -> builder.setCount(20).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.allay.ambient_without_item"), "hit", builder -> builder.setVolume(0.5f).setPitch(1.3f)).inline()
+                        ),
+                chain(
+                        new MobEffectAction(MobEffects.LEVITATION, 20*4, 0, true, "caster", "caster").inline(),
+                        ParticleAction.builder("caster", ParticleTypes.CLOUD, builder -> builder.setCount(20).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.allay.ambient_without_item"), "hit", builder -> builder.setVolume(0.5f).setPitch(1.3f)).inline()
+                        ),
+                chain(
+                        ParticleAction.builder("caster", ParticleTypes.CLOUD, builder -> builder.setCount(20).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.allay.ambient_without_item"), "hit", builder -> builder.setVolume(0.5f).setPitch(1.3f)).inline()
+                ),
+                chain(
+                        ParticleAction.builder("caster", ParticleTypes.CLOUD, builder -> builder.setCount(20).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.allay.ambient_without_item"), "hit", builder -> builder.setVolume(0.5f).setPitch(1.3f)).inline()
+                ),
+                chain(
+                        ParticleAction.builder("caster", ParticleTypes.CLOUD, builder -> builder.setCount(20).setMovement(BlockParticleTemplate.MoveRule.FROM_CENTER, 0.2, 0.1)).inline(),
+                        SoundAction.create(Identifier.withDefaultNamespace("entity.allay.ambient_without_item"), "hit", builder -> builder.setVolume(0.5f).setPitch(1.3f)).inline()
+                )
+        ));
 
         /* // todo надо заменить на готовые массивы стекла, шерсти и тд.
         ArrayList<Holder<SpellAction>> changeColorTagList = new ArrayList<>();

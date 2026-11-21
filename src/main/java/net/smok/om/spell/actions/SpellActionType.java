@@ -90,6 +90,7 @@ public interface SpellActionType<A extends SpellAction> {
         }
         return SpellRunner.ProcessStatus.FAILURE;
     });
+    SpellActionType<?> FIND_SURFACE = register("find_surface", FindSurface.MAP_CODEC);
 
     MapCodec<A> codec();
 
